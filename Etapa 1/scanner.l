@@ -27,7 +27,7 @@ extern int get_line_number (void);
 
 [ \t\r\n\v]
 "//".*\n
-"/*".*"*/"
+"/*"((.|\n)*)"*/"
 
 "int" {return TK_PR_INT;}
 "float" {return TK_PR_FLOAT;}
