@@ -26,8 +26,8 @@ extern int get_line_number (void);
 %%
 
 [ \t\r\n\v]
-"//".*\n
-"/*"((.|\n)*)"*/"
+"//"((.|\t|\r|\v)*)\n
+"/*"((.|\t|\r|\n|\v)*)"*/"
 
 "int" {return TK_PR_INT;}
 "float" {return TK_PR_FLOAT;}
