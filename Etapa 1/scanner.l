@@ -2,19 +2,6 @@
 
 %{
 #include "tokens.h"
-
-/* protótipos deste módulo - as implementações estão após a main */
-void print_token_normal (char *token);
-void print_token_especial (int token);
-int print_token (int token);
-
-extern int yylex(void);
-extern int yylex_destroy(void);
-
-extern FILE *yyin;
-extern char *yytext;
-extern int get_line_number (void);
-
 %}
 
 %%
