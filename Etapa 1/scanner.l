@@ -1,4 +1,6 @@
 %option yylineno
+%option nounput
+%option noinput
 
 %{
 #include "tokens.h"
