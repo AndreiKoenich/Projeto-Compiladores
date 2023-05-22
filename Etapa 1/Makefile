@@ -11,8 +11,8 @@ TARGET = scanner
 
 all: $(TARGET)
 
-$(TARGET): $(TARGET).c
-	flex $(TARGET).l
+$(TARGET): main.c
+	flex scanner.l
 	$(CC) main.c lex.yy.c $(CFLAGS) -o etapa1 -lfl
 
 clean:
