@@ -1,7 +1,7 @@
 /* PROJETO DE COMPILADORES - ETAPA 1  */
 
 /* Andrei Pochmann Koenich - Matrícula 00308680 */
-/* Izaias Saturnino de Lima Neto - Matrícula */
+/* Izaias Saturnino de Lima Neto - Matrícula 00326872 */
 
 %option yylineno
 %option nounput
