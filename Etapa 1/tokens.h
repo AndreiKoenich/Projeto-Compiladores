@@ -1,3 +1,8 @@
+/* PROJETO DE COMPILADORES - ETAPA 1 */
+
+/* Andrei Pochmann Koenich - Matrícula 00308680 */
+/* Izaias Saturnino de Lima Neto - Matrícula */
+
 /*
 Lista dos tokens, com valores constantes associados. Os valores das
 constantes são arbitrários, mas evite alterá-los.  Cada valor

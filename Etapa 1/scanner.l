@@ -1,3 +1,8 @@
+/* PROJETO DE COMPILADORES - ETAPA 1  */
+
+/* Andrei Pochmann Koenich - Matrícula 00308680 */
+/* Izaias Saturnino de Lima Neto - Matrícula */
+
 %option yylineno
 %option nounput
 %option noinput
@@ -11,7 +16,7 @@
 
 [ \t\r\n\v]
 "//"((.|\t|\r|\v)*)\n?
-"/*"((.|\t|\r|\n|\v)*)"*/"
+"/*"([^*]|"*"+[^*/])*"*"+"/"
 
 "int" {return TK_PR_INT;}
 "float" {return TK_PR_FLOAT;}
@@ -34,10 +39,10 @@
 "false" {return TK_LIT_FALSE;}
 "true" {return TK_LIT_TRUE;}
 
-["a-z""_"]+ {return TK_IDENTIFICADOR;}
+[a-z_]+ {return TK_IDENTIFICADOR;}
 
-["0-9"]+ {return TK_LIT_INT;}
-["0-9"]*"."["0-9"]+ {return TK_LIT_FLOAT;}
+[0-9]+ {return TK_LIT_INT;}
+[0-9]*.[0-9]+ {return TK_LIT_FLOAT;}
 
 . {return TK_ERRO;}
 
