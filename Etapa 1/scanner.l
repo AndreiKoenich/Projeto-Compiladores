@@ -42,7 +42,7 @@
 [a-z_]+ {return TK_IDENTIFICADOR;}
 
 [0-9]+ {return TK_LIT_INT;}
-[0-9]*.[0-9]+ {return TK_LIT_FLOAT;}
+[0-9]*"."[0-9]+ {return TK_LIT_FLOAT;}
 
 . {return TK_ERRO;}
 
