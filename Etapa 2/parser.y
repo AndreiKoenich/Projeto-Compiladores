@@ -36,19 +36,23 @@ void yyerror (char const *s);
 
 %%
 
-comando_simples:		declaracao | atribuicao | chamada_funcao | retorno | expressao | condicional | iterativo | bloco_comandos;
-
-bloco_comandos:			'{' lista_comandos '}';
 lista_comandos:			comando_simples ';' lista_comandos | ;
+
+comando_simples:		declaracao | definicao_funcao | chamada_funcao | atribuicao | retorno | expressao | condicional | iterativo | bloco_comandos;
 
 declaracao: 			tipo TK_IDENTIFICADOR lista_identificadores | tipo TK_IDENTIFICADOR TK_OC_LE literal lista_identificadores;	
 tipo: 				TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
 lista_identificadores:		',' TK_IDENTIFICADOR lista_identificadores | ',' TK_IDENTIFICADOR TK_OC_LE literal lista_identificadores | ;
 
+definicao_funcao: 		TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo | TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo;
+lista_parametros:		tipo TK_IDENTIFICADOR | lista_parametros ',' tipo TK_IDENTIFICADOR;
+
+bloco_comandos:			'{' lista_comandos '}';
+
 atribuicao: 			TK_IDENTIFICADOR '=' expressao;
 
-chamada_funcao: 		TK_IDENTIFICADOR '(' expressao lista_expressoes ')';
-lista_expressoes:		',' expressao lista_expressoes | ;
+chamada_funcao: 		TK_IDENTIFICADOR '(' lista_expressoes ')' | TK_IDENTIFICADOR '(' ')';
+lista_expressoes: 		expressao | lista_expressoes ',' expressao;
 
 retorno: 			TK_PR_RETURN expressao; 
 
@@ -73,4 +77,3 @@ void yyerror(char const *s)
 {
 	printf("%s\n",s);
 }
-
