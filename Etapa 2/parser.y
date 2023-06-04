@@ -54,7 +54,7 @@ retorno: 			TK_PR_RETURN expressao;
 
 condicional:			TK_PR_IF '(' expressao ')' bloco_comandos | TK_PR_IF '(' expressao ')' bloco_comandos TK_PR_ELSE bloco_comandos;
 
-iterativo:			TK_PR_WHILE '(' expressao ')' bloco_comandos
+iterativo:			TK_PR_WHILE '(' expressao ')' bloco_comandos;
 
 expressao: 			expressao2 | expressao TK_OC_OR expressao2;
 expressao2: 			expressao3 | expressao2 TK_OC_AND expressao3;
