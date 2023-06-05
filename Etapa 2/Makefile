@@ -21,10 +21,9 @@ compile: parser scanner
 link: compile
 	gcc -o etapa2 main.c parser.tab.o lex.yy.o -lfl
 
+# Comando para limpar os arquivos gerados
+	rm -f lex.yy.c lex.yy.o parser.tab.c parser.tab.o parser.tab.h parser.output
+
 
 # Comando padrão do Makefile, executa o alvo "run" por padrão
 .DEFAULT_GOAL := link
-
-# Comando para limpar os arquivos gerados
-clean:
-	rm -f lex.yy.c lex.yy.o parser.tab.c parser.tab.o parser.tab.h parser.output
