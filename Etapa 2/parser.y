@@ -84,5 +84,5 @@ literal:			TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_FALSE | TK_LIT_TRUE;
 void yyerror(char const *s)
 {
 	extern int yylineno;
-	printf("ERROR - LINE %d - %s\n", yylineno, s);	
+	printf("ERRO - LINHA %d - %s\n", yylineno, s);	
 }
