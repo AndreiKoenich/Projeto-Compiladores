@@ -3,7 +3,6 @@
 /* Andrei Pochmann Koenich 	 - Matrícula 00308680 */
 /* Izaias Saturnino de Lima Neto - Matrícula 00326872 */
 
-
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,20 +32,28 @@ void yyerror (char const *s);
 %token TK_LIT_TRUE
 %token TK_ERRO
 
-%start lista_comandos;
+%start programa;
+%define parse.error detailed;
 
 %%
 
-lista_comandos:			comando_simples ';' lista_comandos | /* Vazio */;
+programa: 			lista | /* Vazio */;
+lista: 				lista elemento | elemento;
+elemento: 			definicao_funcao | declaracao_global;
 
-comando_simples:		declaracao | definicao_funcao | chamada_funcao | atribuicao | retorno | expressao | condicional | iterativo | bloco_comandos;
+definicao_funcao: 		TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo bloco_comandos | TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo bloco_comandos;
+lista_parametros:		tipo TK_IDENTIFICADOR | lista_parametros ',' tipo TK_IDENTIFICADOR;
 
-declaracao: 			tipo TK_IDENTIFICADOR lista_identificadores | tipo TK_IDENTIFICADOR TK_OC_LE literal lista_identificadores;	
+declaracao_global: 		tipo TK_IDENTIFICADOR lista_identificadores ';';
+
+lista_comandos:			comando_simples  lista_comandos | /* Vazio */;
+
+comando_simples:		declaracao_local ';' | definicao_funcao | chamada_funcao ';' | atribuicao ';' | retorno ';' 
+				| expressao ';' | condicional ';' | iterativo ';' | bloco_comandos ';';
+				
+declaracao_local: 		tipo TK_IDENTIFICADOR lista_identificadores | tipo TK_IDENTIFICADOR TK_OC_LE literal lista_identificadores;	
 tipo: 				TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
 lista_identificadores:		',' TK_IDENTIFICADOR lista_identificadores | ',' TK_IDENTIFICADOR TK_OC_LE literal lista_identificadores | /* Vazio */;
-
-definicao_funcao: 		TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo | TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo;
-lista_parametros:		tipo TK_IDENTIFICADOR | lista_parametros ',' tipo TK_IDENTIFICADOR;
 
 bloco_comandos:			'{' lista_comandos '}';
 
@@ -73,16 +80,8 @@ literal:			TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_FALSE | TK_LIT_TRUE;
 
 %%
 
-
 void yyerror(char const *s)
 {
 	extern int yylineno;
-	extern char *yytext;
-	
-	if (yytext[0] == '\0')
-		printf("ERRO - LINHA %d - Esperado ';' ao final do comando.\n", yylineno-1);
-	else
-		printf("ERRO - LINHA %d", yylineno-1);
-	
-	printf("%s\n",s);
+	printf("ERROR - LINE %d - %s\n", yylineno, s);	
 }
