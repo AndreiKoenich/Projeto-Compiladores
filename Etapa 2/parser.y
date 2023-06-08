@@ -48,7 +48,7 @@ declaracao_global: 		tipo TK_IDENTIFICADOR lista_identificadores ';';
 
 lista_comandos:			comando_simples  lista_comandos | /* Vazio */;
 
-comando_simples:		declaracao_local ';' | definicao_funcao | chamada_funcao ';' | atribuicao ';' | retorno ';' 
+comando_simples:		declaracao_local ';' | chamada_funcao ';' | atribuicao ';' | retorno ';' 
 				| condicional_if ';' condicional_else | iterativo ';' | bloco_comandos ';';
 				
 declaracao_local: 		tipo TK_IDENTIFICADOR lista_identificadores | tipo TK_IDENTIFICADOR TK_OC_LE literal lista_identificadores;	
