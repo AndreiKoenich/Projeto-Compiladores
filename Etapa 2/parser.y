@@ -49,7 +49,7 @@ declaracao_global: 		tipo TK_IDENTIFICADOR lista_identificadores ';';
 lista_comandos:			comando_simples  lista_comandos | /* Vazio */;
 
 comando_simples:		declaracao_local ';' | chamada_funcao ';' | atribuicao ';' | retorno ';' 
-				| condicional_if ';' condicional_else | iterativo ';' | bloco_comandos ';';
+				| condicional_if condicional_else ';' | iterativo ';' | bloco_comandos ';';
 				
 declaracao_local: 		tipo TK_IDENTIFICADOR lista_identificadores | tipo TK_IDENTIFICADOR TK_OC_LE literal lista_identificadores;	
 tipo: 				TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
@@ -65,7 +65,7 @@ lista_expressoes: 		expressao | lista_expressoes ',' expressao;
 retorno: 			TK_PR_RETURN expressao; 
 
 condicional_if: 		TK_PR_IF '(' expressao ')' bloco_comandos;
-condicional_else:		TK_PR_ELSE bloco_comandos ';' | /* Vazio */;
+condicional_else:		TK_PR_ELSE bloco_comandos | /* Vazio */;
 
 iterativo:			TK_PR_WHILE '(' expressao ')' bloco_comandos;
 
