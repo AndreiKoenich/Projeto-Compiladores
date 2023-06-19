@@ -1,14 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct
-{
-    int linha_token;
-    char *tipo_token;
-    char *valor_token;
-
-} valor_lexico;
-
 /* Estrutura para representar um nodo da árvore. */
 typedef struct
 {
