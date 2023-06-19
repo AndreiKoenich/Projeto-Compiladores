@@ -1,14 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-/* Estrutura para representar um nodo da árvore. */
-typedef struct
-{
-    int info;
-    struct Nodo** filho;
-    int numeroFilhos;
-
-} Nodo;
+#include "arvore.h"
 
 /* Função para criar um novo nó da árvore. */
 Nodo* criaNodo(int info)
@@ -49,9 +41,4 @@ void impressaoDFS(Nodo* raiz) {
 
     for (int i = 0; i < raiz->numeroFilhos; i++)
         impressaoDFS(raiz->filho[i]);
-}
-
-int main ()
-{
-    return 0;
 }

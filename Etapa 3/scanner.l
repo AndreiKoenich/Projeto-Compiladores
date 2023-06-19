@@ -9,6 +9,7 @@
 %option noyywrap
 
 %{
+#include "arvore.h"
 #include "parser.tab.h"
 %}
 

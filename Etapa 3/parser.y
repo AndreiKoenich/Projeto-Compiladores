@@ -7,9 +7,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "arvore.h"
 int yylex(void);
 void yyerror (char const *s);
 %}
+
+%union
+{
+	ValorLexico *valor_lexico;
+	Nodo *nodo;
+}
 
 %token TK_PR_INT
 %token TK_PR_FLOAT
