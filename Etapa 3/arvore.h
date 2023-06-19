@@ -12,14 +12,14 @@ typedef struct
 /* Estrutura para representar um nodo da árvore. */
 typedef struct
 {
-    int info;
+    struct ValorLexico *info;
     struct Nodo** filho;
     int numeroFilhos;
 
 } Nodo;
 
 /* Função para criar um novo nó da árvore. */
-Nodo* criaNodo(int info);
+Nodo* criaNodo(ValorLexico* info);
 
 /* Função para adicionar um filho a um nó. */
 void adicionaNodo(Nodo* pai, Nodo* filho);

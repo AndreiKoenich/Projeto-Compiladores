@@ -32,15 +32,18 @@ void yyerror (char const *s);
 %token TK_OC_AND
 %token TK_OC_OR
 %token TK_OC_MAP
-%token TK_IDENTIFICADOR
-%token TK_LIT_INT
-%token TK_LIT_FLOAT
-%token TK_LIT_FALSE
-%token TK_LIT_TRUE
+%token<ValorLexico> TK_IDENTIFICADOR
+%token<ValorLexico> TK_LIT_INT
+%token<ValorLexico> TK_LIT_FLOAT
+%token<ValorLexico> TK_LIT_FALSE
+%token<ValorLexico> TK_LIT_TRUE
 %token TK_ERRO
+
+//%type<Nodo> /* AQUI VÃO TODAS AS CABEÇAS QUE SAO DO TIPO NODO */
 
 %start programa;
 %define parse.error detailed;
+
 
 %%
 
