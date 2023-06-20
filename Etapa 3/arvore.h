@@ -16,7 +16,7 @@ struct Nodo{
     struct Nodo** filho;
     int numeroFilhos;
 
-} Nodo;
+};
 
 /* Função para criar um novo nó da árvore. */
 Nodo* criaNodo(ValorLexico* info);
