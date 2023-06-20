@@ -1,17 +1,17 @@
 #ifndef _ARVORE_H_
 #define _ARVORE_H_
 
-typedef struct
+typedef struct ValorLexico ValorLexico;
+struct ValorLexico
 {
 	int linha_token;
 	char *valor_token;
 	char *tipo_token;
-	
-} ValorLexico;
+};
 
 /* Estrutura para representar um nodo da árvore. */
-typedef struct
-{
+typedef struct Nodo Nodo;
+struct Nodo{
     struct ValorLexico *info;
     struct Nodo** filho;
     int numeroFilhos;
