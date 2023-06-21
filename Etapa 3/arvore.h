@@ -6,7 +6,7 @@ struct ValorLexico
 {
 	int linha_token;
 	char *valor_token;
-	char *tipo_token;
+	int tipo_token;
 };
 
 /* Estrutura para representar um nodo da árvore. */
