@@ -11,6 +11,8 @@
 %{
 #include "arvore.h"
 #include "parser.tab.h"
+#define LITERAL 0
+#define IDENTIFIER 1
 int get_line_number();
 %}
 
@@ -20,103 +22,58 @@ int get_line_number();
 "//"((.|\t|\r|\v)*)\n?
 "/*"([^*]|"*"+[^*/])*"*"+"/"
 
-"int" {yylval.valor_lexico->linha_token = get_line_number();
-       	yylval.valor_lexico->tipo_token = TK_PR_INT;
-       	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_PR_INT;}
+"int" {return TK_PR_INT;}
 	
-"float" {yylval.valor_lexico->linha_token = get_line_number();
-       	yylval.valor_lexico->tipo_token = TK_PR_FLOAT;
-       	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_PR_FLOAT;}
+"float" {return TK_PR_FLOAT;}
 
-"bool" {yylval.valor_lexico->linha_token = get_line_number();
-       	yylval.valor_lexico->tipo_token = TK_PR_BOOL;
-      	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_PR_BOOL;}
+"bool" {return TK_PR_BOOL;}
 
-"if" {yylval.valor_lexico->linha_token = get_line_number();
-       	yylval.valor_lexico->tipo_token = TK_PR_IF;
-       	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_PR_IF;}
+"if" {return TK_PR_IF;}
 
-"else" {yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = TK_PR_ELSE;
-       	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_PR_ELSE;}
+"else" {return TK_PR_ELSE;}
 
-"while" {yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = TK_PR_WHILE;
-	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_PR_WHILE;}
+"while" {return TK_PR_WHILE;}
 	
-"return" {yylval.valor_lexico->linha_token = get_line_number();
-        yylval.valor_lexico->tipo_token = TK_PR_RETURN;
-	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_PR_RETURN;}
+"return" {return TK_PR_RETURN;}
 
-[\-\!\*\%\/\+\<\>\{\}\(\)\=\,\;] 	{yylval.valor_lexico->linha_token = get_line_number();
-				  	yylval.valor_lexico->tipo_token = yytext[0];
-				 	yylval.valor_lexico->valor_token = strdup(yytext);
-					return yytext[0];}
+[\-\!\*\%\/\+\<\>\{\}\(\)\=\,\;] 	{return yytext[0];}
 
-"<=" 	{yylval.valor_lexico->linha_token = get_line_number();
-      	yylval.valor_lexico->tipo_token = TK_OC_LE;
-      	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_OC_LE;}
+"<=" 	{return TK_OC_LE;}
 
-">=" 	{yylval.valor_lexico->linha_token = get_line_number();
-      	yylval.valor_lexico->tipo_token = TK_OC_GE;
-      	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_OC_GE;}
+">=" 	{return TK_OC_GE;}
 	
-"==" 	{yylval.valor_lexico->linha_token = get_line_number();
-      	yylval.valor_lexico->tipo_token = TK_OC_EQ;
-      	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_OC_EQ;}	
+"==" 	{return TK_OC_EQ;}
 
-"!=" 	{yylval.valor_lexico->linha_token = get_line_number();
-      	yylval.valor_lexico->tipo_token = TK_OC_NE;
-      	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_OC_NE;}	
+"!=" 	{return TK_OC_NE;}
 
-"&" 	{yylval.valor_lexico->linha_token = get_line_number();
-      	yylval.valor_lexico->tipo_token = TK_OC_AND;
-      	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_OC_AND;}
+"&" 	{return TK_OC_AND;}
 		
-"|" 	{yylval.valor_lexico->linha_token = get_line_number();
-      	yylval.valor_lexico->tipo_token = TK_OC_OR;
-      	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_OC_OR;}
+"|" 	{return TK_OC_OR;}
 
-"->" 	{yylval.valor_lexico->linha_token = get_line_number();
-      	yylval.valor_lexico->tipo_token = TK_OC_MAP;
-      	yylval.valor_lexico->valor_token = strdup(yytext);
-	return TK_OC_MAP;}	
+"->" 	{return TK_OC_MAP;}
 
 "false" {yylval.valor_lexico->linha_token = get_line_number();
-	 yylval.valor_lexico->tipo_token = TK_LIT_FALSE;
+	 yylval.valor_lexico->tipo_token = LITERAL;
 	 yylval.valor_lexico->valor_token = strdup(yytext);
 	 return TK_LIT_FALSE;}
 	
 "true" {yylval.valor_lexico->linha_token = get_line_number();
-	 yylval.valor_lexico->tipo_token = TK_LIT_TRUE;
+	 yylval.valor_lexico->tipo_token = LITERAL;
 	 yylval.valor_lexico->valor_token = strdup(yytext);
 	 return TK_LIT_TRUE;}
 	 
 [a-z_]+ {yylval.valor_lexico->linha_token = get_line_number();
-	 yylval.valor_lexico->tipo_token = TK_IDENTIFICADOR;
+	 yylval.valor_lexico->tipo_token = IDENTIFIER;
 	 yylval.valor_lexico->valor_token = strdup(yytext);
 	 return TK_IDENTIFICADOR;}
 	 
 [0-9]+  {yylval.valor_lexico->linha_token = get_line_number();
-	 yylval.valor_lexico->tipo_token = TK_LIT_INT;
+	 yylval.valor_lexico->tipo_token = LITERAL;
 	 yylval.valor_lexico->valor_token = strdup(yytext);
 	 return TK_LIT_INT;}	 
 	 
 [0-9]*"."[0-9]+   {yylval.valor_lexico->linha_token = get_line_number();
-		 yylval.valor_lexico->tipo_token = TK_LIT_FLOAT;
+		 yylval.valor_lexico->tipo_token = LITERAL;
 		 yylval.valor_lexico->valor_token = strdup(yytext);
 		 return TK_LIT_FLOAT;}	 		 
 
