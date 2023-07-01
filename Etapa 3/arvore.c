@@ -2,17 +2,17 @@
 #include <stdlib.h>
 #include "arvore.h"
 
-/* Função para criar um novo nó da árvore. */
+/* Funï¿½ï¿½o para criar um novo nï¿½ da ï¿½rvore. */
 Nodo* criaNodo(ValorLexico *info)
 {
     Nodo* novoNodo = (Nodo*)malloc(sizeof(Nodo));
-    novoNodo->info = info;
+    novoNodo->info = info->valor_token;
     novoNodo->numeroFilhos = 0;
     novoNodo->filho = NULL;
     return novoNodo;
 }
 
-/* Função para adicionar um filho a um nó. */
+/* Funï¿½ï¿½o para adicionar um filho a um nï¿½. */
 void adicionaNodo(Nodo* pai, Nodo* filho)
 {
     pai->numeroFilhos++;
@@ -20,7 +20,7 @@ void adicionaNodo(Nodo* pai, Nodo* filho)
     pai->filho[pai->numeroFilhos - 1] = filho;
 }
 
-/* Função para remover um nó e todos os seus descendentes. */
+/* Funï¿½ï¿½o para remover um nï¿½ e todos os seus descendentes. */
 void removeNodo(Nodo* node) {
     if (node == NULL)
         return;
@@ -32,7 +32,7 @@ void removeNodo(Nodo* node) {
     free(node);
 }
 
-/* Função para imprimir a árvore usando um percurso em profundidade (DFS) */
+/* Funï¿½ï¿½o para imprimir a ï¿½rvore usando um percurso em profundidade (DFS) */
 void impressaoDFS(Nodo* raiz) {
     if (raiz == NULL)
         return;
