@@ -10,6 +10,7 @@
 #include "arvore.h"
 int yylex(void);
 void yyerror (char const *s);
+extern void *arvore;
 %}
 
 %union
@@ -84,7 +85,10 @@ void yyerror (char const *s);
 
 %%
 
-programa: lista { if($1 != NULL){$$ = $1;} };
+programa: lista {
+	if($1 != NULL){$$ = $1;}
+	arvore = $$;
+};
 programa: /* Vazio */ { $$ = NULL; };
 lista: lista elemento
 {
