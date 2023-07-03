@@ -12,6 +12,7 @@ int yylex(void);
 void yyerror (char const *s);
 %}
 
+%define api.value.type union-directive
 %union
 {
 	ValorLexico *valor_lexico;
@@ -44,7 +45,7 @@ void yyerror (char const *s);
 %type<Nodo> lista_comandos
 %type<Nodo> comando_simples
 %type<Nodo> declaracao_local
-%token<ValorLexico> tipo
+%type<ValorLexico> tipo
 %type<Nodo> lista_identificadores
 %type<Nodo> identificador_local
 %type<Nodo> bloco_comandos
@@ -66,17 +67,16 @@ void yyerror (char const *s);
 %token<ValorLexico> TK_LIT_FLOAT
 %token<ValorLexico> TK_LIT_FALSE
 %token<ValorLexico> TK_LIT_TRUE
-%token<ValorLexico> literal
+%type<ValorLexico> literal
 %token TK_ERRO
 
 %start programa;
 %define parse.error detailed;
 
-
 %%
 
 programa: lista { if($1 != NULL){$$ = $1;} };
-programa: /* Vazio */;
+programa: /* Vazio */ { $$ = NULL; };
 lista: lista elemento
 {
 	if($1 != NULL && $2 != NULL){
@@ -92,8 +92,8 @@ lista: lista elemento
 };
 lista: elemento {if($1 != NULL){$$ = $1;}};
 
-elemento: definicao_funcao { $$ = $1; };
-elemento: declaracao_global;
+elemento: definicao_funcao 	{ $$ = $1; };
+elemento: declaracao_global { $$ = NULL; };
 
 definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo bloco_comandos
 {
@@ -143,11 +143,11 @@ tipo: TK_PR_BOOL { $$ = $1 };
 lista_identificadores: identificador_local { if($1 != NULL){$$ = $1;} };
 lista_identificadores: lista_identificadores ',' identificador_local { $$ = $1; if($3 != NULL){adicionaNodo($$, $3);} };
 
-identificador_local: TK_IDENTIFICADOR;
+identificador_local: TK_IDENTIFICADOR { $$ = criaNodo($1); };
 identificador_local: TK_IDENTIFICADOR TK_OC_LE literal { $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 
-bloco_comandos:	'{' lista_comandos '}' { if($2 != NULL){ $$ = $1; } };
-bloco_comandos:	'{' '}';
+bloco_comandos:	'{' lista_comandos '}' { if($2 != NULL){ $$ = $2; } };
+bloco_comandos:	'{' '}' { $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3);};
 
