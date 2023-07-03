@@ -6,7 +6,7 @@
 Nodo* criaNodo(ValorLexico *info)
 {
     Nodo* novoNodo = (Nodo*)malloc(sizeof(Nodo));
-    novoNodo->info = info->valor_token;
+    novoNodo->info = info;
     novoNodo->numeroFilhos = 0;
     novoNodo->filho = NULL;
     return novoNodo;
