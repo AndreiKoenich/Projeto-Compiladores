@@ -12,62 +12,71 @@ int yylex(void);
 void yyerror (char const *s);
 %}
 
-%define api.value.type union-directive
 %union
 {
 	ValorLexico *valor_lexico;
 	Nodo *nodo;
 }
 
-%token<ValorLexico> TK_PR_INT
-%token<ValorLexico> TK_PR_FLOAT
-%token<ValorLexico> TK_PR_BOOL
-%token<ValorLexico> TK_PR_IF
-%token<ValorLexico> TK_PR_ELSE
-%token<ValorLexico> TK_PR_WHILE
-%token<ValorLexico> TK_PR_RETURN
-%token<ValorLexico> TK_OC_LE
-%token<ValorLexico> TK_OC_GE
-%token<ValorLexico> TK_OC_EQ
-%token<ValorLexico> TK_OC_NE
-%token<ValorLexico> TK_OC_AND
-%token<ValorLexico> TK_OC_OR
-%token<ValorLexico> TK_OC_MAP
+%token<valor_lexico> TK_PR_INT
+%token<valor_lexico> TK_PR_FLOAT
+%token<valor_lexico> TK_PR_BOOL
+%token<valor_lexico> TK_PR_IF
+%token<valor_lexico> TK_PR_ELSE
+%token<valor_lexico> TK_PR_WHILE
+%token<valor_lexico> TK_PR_RETURN
+%token<valor_lexico> TK_OC_LE
+%token<valor_lexico> TK_OC_GE
+%token<valor_lexico> TK_OC_EQ
+%token<valor_lexico> TK_OC_NE
+%token<valor_lexico> TK_OC_AND
+%token<valor_lexico> TK_OC_OR
+%token<valor_lexico> TK_OC_MAP
 
-%type<Nodo> programa
-%type<Nodo> lista
-%type<Nodo> elemento
-%type<Nodo> definicao_funcao
-%type<Nodo> lista_parametros
-%type<Nodo> tupla_tipo_identificador
-//%type<Nodo> declaracao_global
-//%type<Nodo> lista_identificadores_globais
-%type<Nodo> lista_comandos
-%type<Nodo> comando_simples
-%type<Nodo> declaracao_local
-%type<ValorLexico> tipo
-%type<Nodo> lista_identificadores
-%type<Nodo> identificador_local
-%type<Nodo> bloco_comandos
-%type<Nodo> atribuicao
-%type<Nodo> chamada_funcao
-%type<Nodo> lista_expressoes
-%type<Nodo> retorno
-%type<Nodo> clausula_if_com_else_opcional
-%type<Nodo> iterativo
-%type<Nodo> expressao
-%type<Nodo> expressao2
-%type<Nodo> expressao3
-%type<Nodo> expressao4
-%type<Nodo> expressao5
-%type<Nodo> expressao6
-%type<Nodo> expressao7
-%token<ValorLexico> TK_IDENTIFICADOR
-%token<ValorLexico> TK_LIT_INT
-%token<ValorLexico> TK_LIT_FLOAT
-%token<ValorLexico> TK_LIT_FALSE
-%token<ValorLexico> TK_LIT_TRUE
-%type<ValorLexico> literal
+%token<valor_lexico> '='
+%token<valor_lexico> '<'
+%token<valor_lexico> '>'
+%token<valor_lexico> '+'
+%token<valor_lexico> '*'
+%token<valor_lexico> '/'
+%token<valor_lexico> '%'
+%token<valor_lexico> '!'
+%token<valor_lexico> '-'
+
+%type<nodo> programa
+%type<nodo> lista
+%type<nodo> elemento
+%type<nodo> definicao_funcao
+%type<nodo> lista_parametros
+%type<nodo> tupla_tipo_identificador
+//%type<nodo> declaracao_global
+//%type<nodo> lista_identificadores_globais
+%type<nodo> lista_comandos
+%type<nodo> comando_simples
+%type<nodo> declaracao_local
+%type<valor_lexico> tipo
+%type<nodo> lista_identificadores
+%type<nodo> identificador_local
+%type<nodo> bloco_comandos
+%type<nodo> atribuicao
+%type<nodo> chamada_funcao
+%type<nodo> lista_expressoes
+%type<nodo> retorno
+%type<nodo> clausula_if_com_else_opcional
+%type<nodo> iterativo
+%type<nodo> expressao
+%type<nodo> expressao2
+%type<nodo> expressao3
+%type<nodo> expressao4
+%type<nodo> expressao5
+%type<nodo> expressao6
+%type<nodo> expressao7
+%token<valor_lexico> TK_IDENTIFICADOR
+%token<valor_lexico> TK_LIT_INT
+%token<valor_lexico> TK_LIT_FLOAT
+%token<valor_lexico> TK_LIT_FALSE
+%token<valor_lexico> TK_LIT_TRUE
+%type<valor_lexico> literal
 %token TK_ERRO
 
 %start programa;
@@ -136,9 +145,9 @@ comando_simples: bloco_comandos { if($1 != NULL){ $$ = $1; } };
 
 declaracao_local: tipo lista_identificadores {if($2 != NULL){$$ = criaNodo($1); adicionaNodo($$, $2);}};
 
-tipo: TK_PR_INT { $$ = $1 };
-tipo: TK_PR_FLOAT { $$ = $1 };
-tipo: TK_PR_BOOL { $$ = $1 };
+tipo: TK_PR_INT { $$ = $1; };
+tipo: TK_PR_FLOAT { $$ = $1; };
+tipo: TK_PR_BOOL { $$ = $1; };
 
 lista_identificadores: identificador_local { if($1 != NULL){$$ = $1;} };
 lista_identificadores: lista_identificadores ',' identificador_local { $$ = $1; if($3 != NULL){adicionaNodo($$, $3);} };
