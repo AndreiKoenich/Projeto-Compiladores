@@ -1,4 +1,4 @@
-# PROJETO DE COMPILADORES - ETAPA 2
+# PROJETO DE COMPILADORES - ETAPA 3
 
 # Andrei Pochmann Koenich 	 - Matrícula 00308680
 # Izaias Saturnino de Lima Neto  - Matrícula 00326872
