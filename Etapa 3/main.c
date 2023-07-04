@@ -9,7 +9,11 @@ void exporta (void *arvore){
   }
   else{
     Nodo* nodo = (Nodo*) arvore;
-    printf("%p [label=\"%s\"];\n", nodo, nodo->info);
+    if(nodo->info->tipo_token != 2){
+      printf("%p [label=\"%s\"];\n", nodo, nodo->info->valor_token);
+      printf("linha_token: %i\n", nodo->info->linha_token);
+      printf("tipo_token: %i\n", nodo->info->tipo_token);
+    }
     for (int i = 0; i < nodo->numeroFilhos; i++)
     {
       exporta(nodo->filho[i]);

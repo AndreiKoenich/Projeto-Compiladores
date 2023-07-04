@@ -12,7 +12,7 @@ struct ValorLexico
 /* Estrutura para representar um nodo da árvore. */
 typedef struct Nodo Nodo;
 struct Nodo{
-    char* info;
+    struct ValorLexico *info;
     struct Nodo** filho;
     int numeroFilhos;
 };
