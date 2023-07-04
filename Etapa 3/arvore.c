@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "arvore.h"
 
 /* Fun��o para criar um novo n� da �rvore. */
-Nodo* criaNodo(ValorLexico *info)
+Nodo* criaNodo(ValorLexico *vl)
 {
     Nodo* novoNodo = (Nodo*)malloc(sizeof(Nodo));
-    novoNodo->info = info;
+    novoNodo->info = strdup(vl->valor_token);
     novoNodo->numeroFilhos = 0;
     novoNodo->filho = NULL;
     return novoNodo;
