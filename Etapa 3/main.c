@@ -9,7 +9,7 @@ void exporta (void *arvore){
   }
   else{
     Nodo* nodo = (Nodo*) arvore;
-    printf("%p [label=\"%s\"]", nodo, nodo->info->valor_token);
+    printf("%p [label=\"%s\"];\n", nodo, nodo->info);
     for (int i = 0; i < nodo->numeroFilhos; i++)
     {
       exporta(nodo->filho[i]);
