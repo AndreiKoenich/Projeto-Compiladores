@@ -216,8 +216,17 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	adicionaNodo($$, $3);
 };
 
-chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')' 	{ $$ = criaNodo($1); adicionaNodo($$, $3); };
-chamada_funcao: TK_IDENTIFICADOR '(' ')' 					{ $$ = criaNodo($1); };
+chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
+{
+	$$ = criaNodo($1);
+	$$->info->valor_token = strcat("call ", $$->info->valor_token);
+	adicionaNodo($$, $3);
+};
+chamada_funcao: TK_IDENTIFICADOR '(' ')'
+{
+	$$ = criaNodo($1);
+	$$->info->valor_token = concat_call($$->info->valor_token);
+};
 
 lista_expressoes: expressao 						{ $$ = $1; };
 lista_expressoes: lista_expressoes ',' expressao 	{ $$ = $1; adicionaNodo($$, $3); };

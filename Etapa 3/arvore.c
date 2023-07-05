@@ -3,6 +3,15 @@
 #include <string.h>
 #include "arvore.h"
 
+char* concat_call(char* s1){
+    int s_size = strlen(s1);
+	char* s_copy = strdup(s1);
+	s1 = malloc(sizeof(char)*(s_size+5));
+	strcpy(s1, "call ");
+	strcpy(s1+5, s_copy);
+    return s1;
+}
+
 /* Fun��o para criar um novo n� da �rvore. */
 Nodo* criaNodo(ValorLexico *info)
 {

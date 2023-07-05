@@ -8,6 +8,9 @@
 #define TYPE 4
 #define SYNTAX_TOKEN 5
 
+#include <string.h>
+#include <stdlib.h>
+
 typedef struct ValorLexico ValorLexico;
 struct ValorLexico
 {
@@ -23,6 +26,8 @@ struct Nodo{
     struct Nodo** filho;
     int numeroFilhos;
 };
+
+char* concat_call(char* s1);
 
 /* Função para criar um novo nó da árvore. */
 Nodo* criaNodo(ValorLexico* info);
