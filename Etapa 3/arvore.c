@@ -38,7 +38,7 @@ void impressaoDFS(Nodo* raiz) {
     if (raiz == NULL)
         return;
 
-    printf("%s ", raiz->info);
+    printf("%s ", raiz->info->valor_token);
 
     for (int i = 0; i < raiz->numeroFilhos; i++)
         impressaoDFS(raiz->filho[i]);
