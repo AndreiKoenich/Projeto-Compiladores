@@ -3,19 +3,11 @@
 #include <string.h>
 #include "arvore.h"
 
-ValorLexico* vlcpy(ValorLexico *info){
-    ValorLexico* info_copy = (ValorLexico*) malloc(sizeof(ValorLexico));
-    info_copy->linha_token = info->linha_token;
-    info_copy->tipo_token = info->tipo_token;
-    info_copy->valor_token = strdup(info->valor_token);
-    return info_copy;
-}
-
 /* Fun��o para criar um novo n� da �rvore. */
 Nodo* criaNodo(ValorLexico *info)
 {
     Nodo* novoNodo = (Nodo*)malloc(sizeof(Nodo));
-    novoNodo->info = vlcpy(info);
+    novoNodo->info = info;
     novoNodo->numeroFilhos = 0;
     novoNodo->filho = NULL;
     return novoNodo;
