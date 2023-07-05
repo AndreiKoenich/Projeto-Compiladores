@@ -9,19 +9,15 @@ void exporta (void *arvore){
   }
   else{
     Nodo* nodo = (Nodo*) arvore;
-    if(nodo->info->tipo_token != SYNTAX_TOKEN && nodo->info->tipo_token != TYPE){
-      printf("%p [label=\"%s\"];\n", nodo, nodo->info->valor_token);
-      printf("linha_token: %d\n", nodo->info->linha_token);
-      printf("tipo_token: %d\n", nodo->info->tipo_token);
-      printf("numero_filhos: %d\n", nodo->numeroFilhos);
-    }
+    printf("%p [label=\"%s\"];\n", nodo, nodo->info->valor_token);
+    printf("linha_token: %d\n", nodo->info->linha_token);
+    printf("tipo_token: %d\n", nodo->info->tipo_token);
+    printf("numero_filhos: %d\n", nodo->numeroFilhos);
     for (int i = 0; i < nodo->numeroFilhos; i++)
     {
       exporta(nodo->filho[i]);
     }
-    if(nodo->info->tipo_token != SYNTAX_TOKEN && nodo->info->tipo_token != TYPE){
-      printf("%p\n", nodo);
-    }
+    printf("%p\n", nodo);
   }
 }
 int main (int argc, char **argv)
