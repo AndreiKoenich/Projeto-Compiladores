@@ -1,6 +1,13 @@
 #ifndef _ARVORE_H_
 #define _ARVORE_H_
 
+#define LITERAL 0
+#define IDENTIFIER 1
+#define OPERATOR 2
+#define CONTROL 3
+#define TYPE 4
+#define SYNTAX_TOKEN 5
+
 typedef struct ValorLexico ValorLexico;
 struct ValorLexico
 {
