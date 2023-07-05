@@ -11,9 +11,6 @@
 %{
 #include "arvore.h"
 #include "parser.tab.h"
-#define LITERAL 0
-#define IDENTIFIER 1
-#define OTHER_TOKEN 2
 int get_line_number();
 %}
 
@@ -26,105 +23,112 @@ int get_line_number();
 "int" {
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = TYPE;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_PR_INT;}
 	
 "float" {
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = TYPE;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_PR_FLOAT;}
 
 "bool" {
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = TYPE;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_PR_BOOL;}
 
 "if" {
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = CONTROL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_PR_IF;}
 
 "else" {
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = CONTROL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_PR_ELSE;}
 
 "while" {
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = CONTROL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_PR_WHILE;}
 	
 "return" {
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = CONTROL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_PR_RETURN;}
 
-[\-\!\*\%\/\+\<\>\{\}\(\)\=\,\;] 	{
+[\{\}\(\)\,\;] 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = SYNTAX_TOKEN;
+	yylval.valor_lexico->valor_token = strdup(yytext);
+	return yytext[0];}
+
+[\-\!\*\%\/\+\<\>\=] 	{
+	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
+	yylval.valor_lexico->linha_token = get_line_number();
+	yylval.valor_lexico->tipo_token = OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return yytext[0];}
 
 "<=" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_LE;}
 
 ">=" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_GE;}
 	
 "==" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_EQ;}
 
 "!=" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_NE;}
 
 "&" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_AND;}
 		
 "|" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_OR;}
 
 "->" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OTHER_TOKEN;
+	yylval.valor_lexico->tipo_token = OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_MAP;}
 
