@@ -13,14 +13,14 @@ void exporta (void *arvore){
       printf("%p [label=\"%s\"];\n", nodo, nodo->info->valor_token);
       printf("linha_token: %d\n", nodo->info->linha_token);
       printf("tipo_token: %d\n", nodo->info->tipo_token);
-      printf("numero_filhos: %d\n", nodo, nodo->numeroFilhos);
+      printf("numero_filhos: %d\n", nodo->numeroFilhos);
     }
     for (int i = 0; i < nodo->numeroFilhos; i++)
     {
       exporta(nodo->filho[i]);
     }
     if(nodo->info->tipo_token != 2){
-      printf("%p\n", nodo, nodo->info->valor_token);
+      printf("%p\n", nodo);
     }
   }
 }
