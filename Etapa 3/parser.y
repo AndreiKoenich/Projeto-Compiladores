@@ -106,9 +106,9 @@ lista: lista elemento
 		$$ = NULL;
 	}
 };
-lista: elemento {if($1 != NULL){$$ = $1;}};
+lista: elemento { $$ = $1; };
 
-elemento: definicao_funcao 	{ $$ = $1; printf("funcao\n");};
+elemento: definicao_funcao 	{ $$ = $1; };
 elemento: declaracao_global { $$ = NULL; };
 
 definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo bloco_comandos
