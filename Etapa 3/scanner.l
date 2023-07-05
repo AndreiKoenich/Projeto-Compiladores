@@ -49,10 +49,10 @@ int get_line_number();
 	return TK_PR_IF;}
 
 "else" {
-	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
+	/*yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = CONTROL;
-	yylval.valor_lexico->valor_token = strdup(yytext);
+	yylval.valor_lexico->tipo_token = SYNTAX_TOKEN;
+	yylval.valor_lexico->valor_token = strdup(yytext);*/
 	return TK_PR_ELSE;}
 
 "while" {
@@ -70,10 +70,10 @@ int get_line_number();
 	return TK_PR_RETURN;}
 
 [\{\}\(\)\,\;] 	{
-	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
+	/*yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
 	yylval.valor_lexico->tipo_token = SYNTAX_TOKEN;
-	yylval.valor_lexico->valor_token = strdup(yytext);
+	yylval.valor_lexico->valor_token = strdup(yytext);*/
 	return yytext[0];}
 
 [\-\!\*\%\/\+\<\>\=] 	{
