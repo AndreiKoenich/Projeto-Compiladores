@@ -49,7 +49,7 @@ extern void *arvore;
 %type<nodo> elemento
 %type<nodo> definicao_funcao
 %type<nodo> lista_parametros
-%type<nodo> tupla_tipo_identificador
+%type<nodo> tupla_tipo_parametro
 //%type<nodo> declaracao_global
 //%type<nodo> lista_identificadores_globais
 %type<nodo> lista_comandos
@@ -86,7 +86,7 @@ extern void *arvore;
 %%
 
 programa: lista {
-	if($1 != NULL){$$ = $1;}
+	$$ = $1;
 	arvore = $$;
 };
 programa: /* Vazio */ { $$ = NULL; };
@@ -102,10 +102,13 @@ lista: lista elemento
 	else if($2 != NULL){
 		$$ = $2;
 	}
+	else{
+		$$ = NULL;
+	}
 };
 lista: elemento {if($1 != NULL){$$ = $1;}};
 
-elemento: definicao_funcao 	{ $$ = $1; };
+elemento: definicao_funcao 	{ $$ = $1; printf("funcao\n");};
 elemento: declaracao_global { $$ = NULL; };
 
 definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo bloco_comandos
@@ -132,43 +135,86 @@ definicao_funcao: TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo bloco_comandos
 	}
 };
 
-lista_parametros: tupla_tipo_identificador { $$ = $1;};
-lista_parametros: lista_parametros ',' tupla_tipo_identificador { $$ = $1; adicionaNodo($$, $3); };
+lista_parametros: tupla_tipo_parametro { $$ = $1; };
+lista_parametros: lista_parametros ',' tupla_tipo_parametro { $$ = $1; adicionaNodo($$, $3); };
 
-tupla_tipo_identificador: tipo TK_IDENTIFICADOR { $$ = criaNodo($1); Nodo* novoNodo = criaNodo($2); adicionaNodo($$, novoNodo); }; //verificar se o tipo vai para a árvore
+tupla_tipo_parametro: tipo TK_IDENTIFICADOR { $$ = criaNodo($2); }; //verificar se o tipo vai para a árvore
 
 declaracao_global: tipo lista_identificadores_globais ';';
 
 lista_identificadores_globais: TK_IDENTIFICADOR;
 lista_identificadores_globais: lista_identificadores_globais ',' TK_IDENTIFICADOR;
 
-lista_comandos:	lista_comandos comando_simples ';' { $$ = $1; if($2 != NULL){ adicionaNodo($$, $2); } };
-lista_comandos:	comando_simples ';' { if($1 != NULL){ $$ = $1; } };
+lista_comandos:	lista_comandos comando_simples ';'
+{
+	if($1 != NULL && $2 != NULL){
+		$$ = $1;
+		adicionaNodo($$, $2);
+	}
+	else if($1 != NULL){
+		$$ = $1;
+	}
+	else if($2 != NULL){
+		$$ = $2;
+	}
+	else{
+		$$ = NULL;
+	}
+};
+lista_comandos:	comando_simples ';' { $$ = $1; };
 
-comando_simples: declaracao_local { if($1 != NULL){ $$ = $1; } };
-comando_simples: chamada_funcao { $$ = $1; };
-comando_simples: atribuicao { $$ = $1; };
-comando_simples: retorno { $$ = $1; };
-comando_simples: clausula_if_com_else_opcional { $$ = $1; };
-comando_simples: iterativo { $$ = $1; };
-comando_simples: bloco_comandos { if($1 != NULL){ $$ = $1; } };
+comando_simples: declaracao_local				{ $$ = $1; };
+comando_simples: chamada_funcao 				{ $$ = $1; };
+comando_simples: atribuicao 					{ $$ = $1; };
+comando_simples: retorno 						{ $$ = $1; };
+comando_simples: clausula_if_com_else_opcional 	{ $$ = $1; };
+comando_simples: iterativo 						{ $$ = $1; };
+comando_simples: bloco_comandos 				{ $$ = $1; };
 
-declaracao_local: tipo lista_identificadores {if($2 != NULL){$$ = criaNodo($1); adicionaNodo($$, $2);}}; //verificar se o tipo vai para a árvore
+declaracao_local: tipo lista_identificadores { $$ = $2; }; //verificar se o tipo vai para a árvore
 
 tipo: TK_PR_INT { $$ = $1; };
 tipo: TK_PR_FLOAT { $$ = $1; };
 tipo: TK_PR_BOOL { $$ = $1; };
 
-lista_identificadores: identificador_local { if($1 != NULL){$$ = $1;} };
-lista_identificadores: lista_identificadores ',' identificador_local { $$ = $1; if($3 != NULL){adicionaNodo($$, $3);} };
+lista_identificadores: identificador_local { $$ = $1; };
+lista_identificadores: lista_identificadores ',' identificador_local
+{
+	if($1 != NULL && $3 != NULL){
+		$$ = $1;
+		adicionaNodo($$, $3);
+	}
+	else if($1 != NULL){
+		$$ = $1;
+	}
+	else if($3 != NULL){
+		$$ = $3;
+	}
+	else{
+		$$ = NULL;
+	}
+};
 
-identificador_local: TK_IDENTIFICADOR { $$ = criaNodo($1); };
-identificador_local: TK_IDENTIFICADOR TK_OC_LE literal { $$ = criaNodo($2); Nodo* novoNodo = criaNodo($1); adicionaNodo($$, novoNodo); Nodo* novoNodo2 = criaNodo($3); adicionaNodo($$, novoNodo2); };
+identificador_local: TK_IDENTIFICADOR { $$ = NULL; };
+identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
+{
+	$$ = criaNodo($2);
+	Nodo* novoNodo = criaNodo($1);
+	adicionaNodo($$, novoNodo);
+	Nodo* novoNodo2 = criaNodo($3);
+	adicionaNodo($$, novoNodo2);
+};
 
-bloco_comandos:	'{' lista_comandos '}' { if($2 != NULL){ $$ = $2; } };
-bloco_comandos:	'{' '}' { $$ = NULL; };
+bloco_comandos:	'{' lista_comandos '}' 	{ $$ = $2; };
+bloco_comandos:	'{' '}' 				{ $$ = NULL; };
 
-atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = criaNodo($2); Nodo* novoNodo = criaNodo($1); adicionaNodo($$, novoNodo); adicionaNodo($$, $3);};
+atribuicao: TK_IDENTIFICADOR '=' expressao
+{
+	$$ = criaNodo($2);
+	Nodo* novoNodo = criaNodo($1);
+	adicionaNodo($$, novoNodo);
+	adicionaNodo($$, $3);
+};
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')' 	{ $$ = criaNodo($1); adicionaNodo($$, $3); };
 chamada_funcao: TK_IDENTIFICADOR '(' ')' 					{ $$ = criaNodo($1); };
@@ -193,7 +239,9 @@ clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos TK_PR_E
 	if($5 != NULL){
 		adicionaNodo($$, $5);
 	}
-	adicionaNodo($$, $7);
+	if($7 != NULL){
+		adicionaNodo($$, $7);
+	}
 };
 
 iterativo: TK_PR_WHILE '(' expressao ')' bloco_comandos
