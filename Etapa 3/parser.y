@@ -219,7 +219,7 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
 {
 	$$ = criaNodo($1);
-	$$->info->valor_token = strcat("call ", $$->info->valor_token);
+	$$->info->valor_token = concat_call($$->info->valor_token);
 	adicionaNodo($$, $3);
 };
 chamada_funcao: TK_IDENTIFICADOR '(' ')'
