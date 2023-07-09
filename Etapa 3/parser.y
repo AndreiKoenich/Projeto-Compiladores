@@ -162,6 +162,25 @@ lista_comandos:	lista_comandos comando_simples ';'
 	}
 };
 lista_comandos:	comando_simples ';' { $$ = $1; };
+lista_comandos:	lista_comandos '{' lista_comandos '}' ';'
+{
+	if($1 != NULL && $3 != NULL){
+		$$ = $1;
+		adicionaNodo($$, $3);
+	}
+	else if($1 != NULL){
+		$$ = $1;
+	}
+	else if($3 != NULL){
+		$$ = $3;
+	}
+	else{
+		$$ = NULL;
+	}
+};
+lista_comandos:	'{' lista_comandos '}' ';' { $$ = $2; };
+lista_comandos:	lista_comandos '{' '}' ';' { $$ = $1; };
+lista_comandos:	'{' '}' ';' { $$ = NULL; };
 
 comando_simples: declaracao_local				{ $$ = $1; };
 comando_simples: chamada_funcao 				{ $$ = $1; };
@@ -169,7 +188,6 @@ comando_simples: atribuicao 					{ $$ = $1; };
 comando_simples: retorno 						{ $$ = $1; };
 comando_simples: clausula_if_com_else_opcional 	{ $$ = $1; };
 comando_simples: iterativo 						{ $$ = $1; };
-comando_simples: bloco_comandos 				{ $$ = $1; };
 
 declaracao_local: tipo lista_identificadores { $$ = $2; }; //verificar se o tipo vai para a árvore
 
