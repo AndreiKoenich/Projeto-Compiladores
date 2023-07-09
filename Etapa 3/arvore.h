@@ -3,10 +3,11 @@
 
 #define LITERAL 0
 #define IDENTIFIER 1
-#define OPERATOR 2
-#define CONTROL 3
-#define TYPE 4
-#define SYNTAX_TOKEN 5
+#define EXPRESSION_OPERATOR 2
+#define LANGUAGE_OPERATOR 3
+#define CONTROL 4
+#define TYPE 5
+#define SYNTAX_TOKEN 6
 
 #include <string.h>
 #include <stdlib.h>
@@ -41,4 +42,5 @@ void removeNodo(Nodo* node);
 /* Função para imprimir a árvore usando um percurso em profundidade (DFS) */
 void impressaoDFS(Nodo* raiz);
 
+void concatenate_list(Nodo* list1, Nodo* list2);
 #endif 

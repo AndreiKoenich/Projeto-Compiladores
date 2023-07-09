@@ -52,3 +52,21 @@ void impressaoDFS(Nodo* raiz) {
     for (int i = 0; i < raiz->numeroFilhos; i++)
         impressaoDFS(raiz->filho[i]);
 }
+
+Nodo* get_last_valid_node_from_list(Nodo* list){
+    int last_child_pos = list->numeroFilhos-1;
+    int child_type = list->filho[last_child_pos]->info->tipo_token;
+    char* child_value = list->filho[last_child_pos]->info->valor_token;
+    while(child_type == LANGUAGE_OPERATOR || child_type == CONTROL){
+        list = list->filho[last_child_pos];
+        last_child_pos = list->numeroFilhos-1;
+        child_type = list->filho[last_child_pos]->info->tipo_token;
+        child_value = list->filho[last_child_pos]->info->valor_token;
+    }
+    return list;
+}
+
+void concatenate_list(Nodo* list1, Nodo* list2){
+    Nodo* last_node_from_list = get_last_valid_node_from_list(list1);
+    adicionaNodo(last_node_from_list, list2);
+}
