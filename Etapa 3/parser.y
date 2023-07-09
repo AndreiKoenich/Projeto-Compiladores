@@ -145,23 +145,40 @@ declaracao_global: tipo lista_identificadores_globais ';';
 lista_identificadores_globais: TK_IDENTIFICADOR;
 lista_identificadores_globais: lista_identificadores_globais ',' TK_IDENTIFICADOR;
 
-lista_comandos:	lista_comandos comando_simples ';'
+lista_comandos: comando_simples ';' lista_comandos
 {
-	if($1 != NULL && $2 != NULL){
+	if($1 != NULL && $3 != NULL){
 		$$ = $1;
-		adicionaNodo($$, $2);
+		adicionaNodo($$, $3);
 	}
 	else if($1 != NULL){
 		$$ = $1;
 	}
-	else if($2 != NULL){
-		$$ = $2;
+	else if($3 != NULL){
+		$$ = $3;
 	}
 	else{
 		$$ = NULL;
 	}
 };
 lista_comandos:	comando_simples ';' { $$ = $1; };
+lista_comandos: bloco_comandos ';' lista_comandos
+{
+	if($1 != NULL && $3 != NULL){
+		$$ = $1;
+		concatenate_list($$, $3);
+	}
+	else if($1 != NULL){
+		$$ = $1;
+	}
+	else if($3 != NULL){
+		$$ = $3;
+	}
+	else{
+		$$ = NULL;
+	}
+};
+lista_comandos:	bloco_comandos ';' { $$ = $1; };
 
 comando_simples: declaracao_local				{ $$ = $1; };
 comando_simples: chamada_funcao 				{ $$ = $1; };
@@ -169,7 +186,6 @@ comando_simples: atribuicao 					{ $$ = $1; };
 comando_simples: retorno 						{ $$ = $1; };
 comando_simples: clausula_if_com_else_opcional 	{ $$ = $1; };
 comando_simples: iterativo 						{ $$ = $1; };
-comando_simples: bloco_comandos 				{ $$ = $1; };
 
 declaracao_local: tipo lista_identificadores { $$ = $2; }; //verificar se o tipo vai para a árvore
 

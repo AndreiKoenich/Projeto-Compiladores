@@ -76,59 +76,66 @@ int get_line_number();
 	yylval.valor_lexico->valor_token = strdup(yytext);*/
 	return yytext[0];}
 
-[\-\!\*\%\/\+\<\>\=] 	{
+[\-\!\*\%\/\+\<\>] 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OPERATOR;
+	yylval.valor_lexico->tipo_token = EXPRESSION_OPERATOR;
+	yylval.valor_lexico->valor_token = strdup(yytext);
+	return yytext[0];}
+
+[\=] 	{
+	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
+	yylval.valor_lexico->linha_token = get_line_number();
+	yylval.valor_lexico->tipo_token = LANGUAGE_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return yytext[0];}
 
 "<=" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OPERATOR;
+	yylval.valor_lexico->tipo_token = LANGUAGE_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_LE;}
 
 ">=" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OPERATOR;
+	yylval.valor_lexico->tipo_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_GE;}
 	
 "==" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OPERATOR;
+	yylval.valor_lexico->tipo_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_EQ;}
 
 "!=" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OPERATOR;
+	yylval.valor_lexico->tipo_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_NE;}
 
 "&" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OPERATOR;
+	yylval.valor_lexico->tipo_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_AND;}
 		
 "|" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OPERATOR;
+	yylval.valor_lexico->tipo_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_OR;}
 
 "->" 	{
 	yylval.valor_lexico = (ValorLexico*) malloc(sizeof(ValorLexico));
 	yylval.valor_lexico->linha_token = get_line_number();
-	yylval.valor_lexico->tipo_token = OPERATOR;
+	yylval.valor_lexico->tipo_token = SYNTAX_TOKEN;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	return TK_OC_MAP;}
 
