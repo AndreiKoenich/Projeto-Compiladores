@@ -189,9 +189,9 @@ comando_simples: iterativo 						{ $$ = $1; };
 
 declaracao_local: tipo lista_identificadores { $$ = $2; }; //verificar se o tipo vai para a árvore
 
-tipo: TK_PR_INT { $$ = $1; };
-tipo: TK_PR_FLOAT { $$ = $1; };
-tipo: TK_PR_BOOL { $$ = $1; };
+tipo: TK_PR_INT 	{ $$ = $1; };
+tipo: TK_PR_FLOAT 	{ $$ = $1; };
+tipo: TK_PR_BOOL 	{ $$ = $1; };
 
 lista_identificadores: identificador_local { $$ = $1; };
 lista_identificadores: lista_identificadores ',' identificador_local
@@ -234,12 +234,14 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
 {
+	$1->tipo_token = 7;
 	$$ = criaNodo($1);
 	$$->info->valor_token = concat_call($$->info->valor_token);
 	adicionaNodo($$, $3);
 };
 chamada_funcao: TK_IDENTIFICADOR '(' ')'
 {
+	$1->tipo_token = 7;
 	$$ = criaNodo($1);
 	$$->info->valor_token = concat_call($$->info->valor_token);
 };
