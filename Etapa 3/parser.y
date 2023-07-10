@@ -309,6 +309,7 @@ expressao7: '(' expressao ')'				{ $$ = $2; };
 expressao7: '!' expressao7					{ $$ = criaNodo($1); adicionaNodo($$, $2); };
 expressao7: '-' expressao7					{ $$ = criaNodo($1); adicionaNodo($$, $2); };
 expressao7: TK_IDENTIFICADOR				{ $$ = criaNodo($1); };
+expressao7: chamada_funcao				{ $$ = $1; };
 expressao7: literal 						{ $$ = criaNodo($1); };
 
 literal: TK_LIT_INT  	{ $$ = $1; };
