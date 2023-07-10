@@ -90,7 +90,7 @@ programa: lista {
 	arvore = $$;
 };
 programa: /* Vazio */ { $$ = NULL; };
-lista: lista elemento
+lista: elemento lista
 {
 	if($1 != NULL && $2 != NULL){
 		$$ = $1;
@@ -114,7 +114,7 @@ elemento: declaracao_global { $$ = NULL; };
 definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo bloco_comandos
 {
 	$$ = criaNodo($1);
-	adicionaNodo($$, $3);
+	//adicionaNodo($$, $3);
 	/*
 	Nodo* novoNodo = criaNodo($6); // tipo
 	adicionaNodo($$, novoNodo);
@@ -136,14 +136,14 @@ definicao_funcao: TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo bloco_comandos
 };
 
 lista_parametros: tupla_tipo_parametro { $$ = $1; };
-lista_parametros: lista_parametros ',' tupla_tipo_parametro { $$ = $1; adicionaNodo($$, $3); };
+lista_parametros: tupla_tipo_parametro ',' lista_parametros { $$ = $1; adicionaNodo($$, $3); };
 
 tupla_tipo_parametro: tipo TK_IDENTIFICADOR { $$ = criaNodo($2); }; //verificar se o tipo vai para a árvore
 
 declaracao_global: tipo lista_identificadores_globais ';';
 
 lista_identificadores_globais: TK_IDENTIFICADOR;
-lista_identificadores_globais: lista_identificadores_globais ',' TK_IDENTIFICADOR;
+lista_identificadores_globais: TK_IDENTIFICADOR ',' lista_identificadores_globais;
 
 lista_comandos: comando_simples ';' lista_comandos
 {
@@ -180,21 +180,39 @@ lista_comandos: bloco_comandos ';' lista_comandos
 };
 lista_comandos:	bloco_comandos ';' { $$ = $1; };
 
-comando_simples: declaracao_local				{ $$ = $1; };
+lista_comandos: declaracao_local ';' lista_comandos
+{
+	if($1 != NULL && $3 != NULL){
+		$$ = $1;
+		concatenate_list($$, $3);
+	}
+	else if($1 != NULL){
+		$$ = $1;
+	}
+	else if($3 != NULL){
+		$$ = $3;
+	}
+	else{
+		$$ = NULL;
+	}
+};
+
+lista_comandos:	declaracao_local ';' { $$ = $1; };
+
 comando_simples: chamada_funcao 				{ $$ = $1; };
 comando_simples: atribuicao 					{ $$ = $1; };
 comando_simples: retorno 						{ $$ = $1; };
 comando_simples: clausula_if_com_else_opcional 	{ $$ = $1; };
 comando_simples: iterativo 						{ $$ = $1; };
 
-declaracao_local: tipo lista_identificadores { $$ = $2; }; //verificar se o tipo vai para a árvore
+declaracao_local: tipo lista_identificadores { $$ = $2; }; 
 
 tipo: TK_PR_INT 	{ $$ = $1; };
 tipo: TK_PR_FLOAT 	{ $$ = $1; };
 tipo: TK_PR_BOOL 	{ $$ = $1; };
 
 lista_identificadores: identificador_local { $$ = $1; };
-lista_identificadores: lista_identificadores ',' identificador_local
+lista_identificadores: identificador_local ',' lista_identificadores 
 {
 	if($1 != NULL && $3 != NULL){
 		$$ = $1;
@@ -247,7 +265,7 @@ chamada_funcao: TK_IDENTIFICADOR '(' ')'
 };
 
 lista_expressoes: expressao 						{ $$ = $1; };
-lista_expressoes: lista_expressoes ',' expressao 	{ $$ = $1; adicionaNodo($$, $3); };
+lista_expressoes: expressao ',' lista_expressoes	{ $$ = $1; adicionaNodo($$, $3); };
 
 retorno: TK_PR_RETURN expressao { $$ = criaNodo($1); adicionaNodo($$, $2); };
 
