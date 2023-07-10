@@ -8,6 +8,7 @@
 #define CONTROL 4
 #define TYPE 5
 #define SYNTAX_TOKEN 6
+#define FUNCTION_CALL 7
 
 #include <string.h>
 #include <stdlib.h>

@@ -54,12 +54,20 @@ void impressaoDFS(Nodo* raiz) {
 }
 
 Nodo* get_last_valid_node_from_list(Nodo* list){
-    int last_child_pos = list->numeroFilhos-1;
+    int last_child_pos = list->numeroFilhos;
+    last_child_pos = last_child_pos-1;
+    if(list->numeroFilhos == 0){
+        return list;
+    }
     int child_type = list->filho[last_child_pos]->info->tipo_token;
     char* child_value = list->filho[last_child_pos]->info->valor_token;
-    while(child_type == LANGUAGE_OPERATOR || child_type == CONTROL){
+    while(child_type == LANGUAGE_OPERATOR || child_type == CONTROL || child_type == FUNCTION_CALL){
         list = list->filho[last_child_pos];
-        last_child_pos = list->numeroFilhos-1;
+        last_child_pos = list->numeroFilhos;
+        last_child_pos = last_child_pos-1;
+        if(list->numeroFilhos == 0){
+            break;
+        }
         child_type = list->filho[last_child_pos]->info->tipo_token;
         child_value = list->filho[last_child_pos]->info->valor_token;
     }
