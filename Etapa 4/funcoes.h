@@ -17,33 +17,37 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef struct ValorLexico ValorLexico;
-struct ValorLexico
+typedef struct
 {
-	int linha_token;
+	char *chave_simbolo;
 	char *valor_token;
+	
+	int linha_token;
 	int natureza_token;
-};
+	int tipo_token;
+	
+} ValorLexico;
 
-typedef struct Nodo Nodo;
-struct Nodo{
-    struct ValorLexico *info;
-    struct Nodo** filho;
-    int numeroFilhos;
-};
+typedef struct nodo 
+{
+	ValorLexico *info;
+	struct nodo** filho;
+	int numeroFilhos;
+    
+} Nodo;
 
 typedef struct tabela
 {
-    ValorLexico *info;
-    struct tabela *proximo;
+	ValorLexico *info;
+	struct tabela *proximo;
 
 } Tabela;
 
 typedef struct lista_tabelas
 {
-    struct lista_tabelas *proximo;
-    struct lista_tabelas *anterior;
-    Tabela *tabela_simbolos;
+	struct lista_tabelas *proximo;
+	struct lista_tabelas *anterior;
+	Tabela *tabela_simbolos;
 
 } Lista_tabelas;
 
