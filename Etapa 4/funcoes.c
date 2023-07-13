@@ -127,6 +127,58 @@ void popTabela(Lista_tabelas **lista)
     free(atual);
 }
 
+void destroiTabela(Tabela** tabela) 
+{
+    Tabela* atual = *tabela;
+    Tabela* proximo;
+
+    while (atual != NULL) 
+    {
+        proximo = atual->proximo;
+        free(atual->info->valor_token);
+        free(atual->info->tipo_token);
+        free(atual->info);
+        free(atual);
+        atual = proximo;
+    }
+
+    *tabela = NULL;
+}
+
+void destroiListaTabelas(Lista_tabelas** lista_tabelas) 
+{
+    Lista_tabelas* atual = *lista_tabelas;
+    Lista_tabelas* proximo;
+
+    while (atual != NULL) 
+    {
+        proximo = atual->proximo;
+        destroiTabela(&(atual->tabela_simbolos));
+        free(atual);
+        atual = proximo;
+    }
+
+    *lista_tabelas = NULL;
+}
+
+
+void imprimeTabela(Tabela *tabela)
+{
+	Tabela* atual = tabela;
+
+	while (atual != NULL) 
+	{
+		printf("VALOR: %s\n", atual->info->valor_token);
+		printf("TIPO: %s\n", atual->info->tipo_token);
+		printf("NATUREZA: %d\n", atual->info->natureza_token);
+		printf("LINHA: %d\n", atual->info->linha_token);
+		atual = atual->proximo;
+		printf("\n\n");
+	}
+
+	printf("\n");
+}
+
 void concatenate_list(Nodo* list1, Nodo* list2)
 {
     Nodo* last_node_from_list = get_last_valid_node_from_list(list1);

@@ -158,6 +158,7 @@ int get_line_number();
 	yylval.valor_lexico->linha_token = get_line_number();
 	yylval.valor_lexico->natureza_token = IDENTIFIER;
 	yylval.valor_lexico->valor_token = strdup(yytext);
+	yylval.valor_lexico->tipo_token = malloc(QUANTIDADE_CARACTERES_TIPO*sizeof(char));
 	return TK_IDENTIFICADOR;}
 	 
 [0-9]+  {

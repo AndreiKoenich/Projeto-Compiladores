@@ -10,21 +10,18 @@
 #define SYNTAX_TOKEN 6
 #define FUNCTION_CALL 7
 
-#define INT 0
-#define FLOAT 1
-#define BOOL 2
+#define QUANTIDADE_CARACTERES_TIPO 6 /* A palavra "float" é a maior entre os nomes dos tipos, e possui 5 caracteres. */
 
 #include <string.h>
 #include <stdlib.h>
 
 typedef struct
 {
-	char *chave_simbolo;
 	char *valor_token;
 	
 	int linha_token;
 	int natureza_token;
-	int tipo_token;
+	char *tipo_token;
 	
 } ValorLexico;
 
@@ -67,10 +64,12 @@ void impressaoDFS(Nodo* raiz);
 
 void concatenate_list(Nodo* list1, Nodo* list2);
 
-
 void* inicializa_lista ();
 void insereEntradaTabela (Tabela** tabela, ValorLexico *valor_lexico);
 void popTabela(Lista_tabelas **lista);
 void pushTabela(Lista_tabelas** lista, Tabela *nova_tabela);
+void destroiTabela(Tabela** tabela);
+void destroiListaTabelas(Lista_tabelas** lista_tabelas);
+void imprimeTabela(Tabela *tabela);
 
 #endif
