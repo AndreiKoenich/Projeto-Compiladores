@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "arvore.h"
+#include "funcoes.h"
 
 extern int yyparse(void);
 extern int yylex_destroy(void);

@@ -9,7 +9,7 @@
 %option noyywrap
 
 %{
-#include "arvore.h"
+#include "funcoes.h"
 #include "parser.tab.h"
 int get_line_number();
 %}
