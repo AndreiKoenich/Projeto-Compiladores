@@ -17,36 +17,32 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef struct
+typedef struct ValorLexico ValorLexico;
+struct ValorLexico
 {
 	int linha_token;
 	char *valor_token;
 	int natureza_token;
-	int tipo_token;
-	char *chave_simbolo;
+};
 
-} ValorLexico;
-
-/* Estrutura para representar um nodo da árvore. */
-typedef struct
-{
-    ValorLexico *info;
+typedef struct Nodo Nodo;
+struct Nodo{
+    struct ValorLexico *info;
     struct Nodo** filho;
     int numeroFilhos;
+};
 
-} Nodo;
-
-typedef struct
+typedef struct tabela
 {
     ValorLexico *info;
-    Tabela *proximo;
+    struct tabela *proximo;
 
 } Tabela;
 
-typedef struct
+typedef struct lista_tabelas
 {
-    struct Lista_tabela *proximo;
-    struct Lista_tabela *anterior;
+    struct lista_tabelas *proximo;
+    struct lista_tabelas *anterior;
     Tabela *tabela_simbolos;
 
 } Lista_tabelas;
@@ -67,8 +63,10 @@ void impressaoDFS(Nodo* raiz);
 
 void concatenate_list(Nodo* list1, Nodo* list2);
 
+
 void* inicializa_lista ();
-void popTabela(Lista_tabelas lista);
+void insereEntradaTabela (Tabela** tabela, ValorLexico *valor_lexico);
+void popTabela(Lista_tabelas **lista);
 void pushTabela(Lista_tabelas** lista, Tabela *nova_tabela);
 
 #endif

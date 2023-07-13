@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "arvore.h"
+#include "funcoes.h"
 int yylex(void);
 void yyerror (char const *s);
 extern void *arvore;
@@ -252,14 +252,14 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
 {
-	$1->tipo_token = 7;
+	$1->natureza_token = 7;
 	$$ = criaNodo($1);
 	$$->info->valor_token = concat_call($$->info->valor_token);
 	adicionaNodo($$, $3);
 };
 chamada_funcao: TK_IDENTIFICADOR '(' ')'
 {
-	$1->tipo_token = 7;
+	$1->natureza_token = 7;
 	$$ = criaNodo($1);
 	$$->info->valor_token = concat_call($$->info->valor_token);
 };

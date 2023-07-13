@@ -107,7 +107,7 @@ void pushTabela(Lista_tabelas **lista, Tabela *nova_tabela)
     }
 }
 
-void popTabela(Lista_tabelas **lista);
+void popTabela(Lista_tabelas **lista)
 {
     if (*lista == NULL)
         return;
