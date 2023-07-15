@@ -10,7 +10,10 @@
 #define SYNTAX_TOKEN 6
 #define FUNCTION_CALL 7
 
-#define QUANTIDADE_CARACTERES_TIPO 6 /* A palavra "float" é a maior entre os nomes dos tipos, e possui 5 caracteres. */
+#define QUANTIDADE_CARACTERES_TIPO 100 /* A palavra "float" é a maior entre os nomes dos tipos, e possui 5 caracteres. */
+#define MAXIMO_CARACTERES_NOME 100
+#define MAXIMO_CARACTERES_INT 100
+#define MAXIMO_CARACTERES_FLOAT 100
 
 #include <string.h>
 #include <stdlib.h>
@@ -62,14 +65,19 @@ void removeNodo(Nodo* node);
 /* Função para imprimir a árvore usando um percurso em profundidade (DFS) */
 void impressaoDFS(Nodo* raiz);
 
-void concatenate_list(Nodo* list1, Nodo* list2);
-
 void* inicializa_lista ();
 void insereEntradaTabela (Tabela** tabela, ValorLexico *valor_lexico);
+void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico);
 void popTabela(Lista_tabelas **lista);
 void pushTabela(Lista_tabelas** lista, Tabela *nova_tabela);
 void destroiTabela(Tabela** tabela);
 void destroiListaTabelas(Lista_tabelas** lista_tabelas);
 void imprimeTabela(Tabela *tabela);
+char* infereTipo(ValorLexico *operando1, ValorLexico *operando2);
+
+void concatenate_list(Nodo* list1, Nodo* list2);
+
+
+
 
 #endif

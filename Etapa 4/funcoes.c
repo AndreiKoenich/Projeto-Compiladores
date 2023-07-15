@@ -85,8 +85,25 @@ void insereEntradaTabela (Tabela** tabela, ValorLexico *valor_lexico)
     }
 }
 
+void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico) {
+    if (*lista_tabelas == NULL || valor_lexico == NULL) {
+        return;
+    }
+    
+    Lista_tabelas* atual = *lista_tabelas;
+    
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    
+    insereEntradaTabela(&(atual->tabela_simbolos), valor_lexico);
+}
+
+
 void pushTabela(Lista_tabelas **lista, Tabela *nova_tabela)
 {
+    //printf("EMPILHOU\n");
+    
     Lista_tabelas* novo = (Lista_tabelas*)malloc(sizeof(Lista_tabelas));
     novo->tabela_simbolos = nova_tabela;
     novo->proximo = NULL;
@@ -107,25 +124,28 @@ void pushTabela(Lista_tabelas **lista, Tabela *nova_tabela)
     }
 }
 
-void popTabela(Lista_tabelas **lista)
+void popTabela(Lista_tabelas **lista_tabelas)
 {
-    if (*lista == NULL)
+    //printf("DESEMPILHOU\n");
+    
+    if (*lista_tabelas == NULL) 
         return;
-
-    else if ((*lista)->proximo == NULL)
-    {
-        free(*lista);
-        *lista = NULL;
-        return;
-    }
-
-    Lista_tabelas* atual = *lista;
+    
+    Lista_tabelas* atual = *lista_tabelas;
+    
     while (atual->proximo != NULL)
         atual = atual->proximo;
-
-    atual->anterior->proximo = NULL;
+    
+    if (atual->anterior == NULL) 
+        *lista_tabelas = NULL;
+        
+    else 
+        atual->anterior->proximo = NULL;
+    
+    destroiTabela(&(atual->tabela_simbolos));
     free(atual);
 }
+
 
 void destroiTabela(Tabela** tabela) 
 {
@@ -177,6 +197,38 @@ void imprimeTabela(Tabela *tabela)
 	}
 
 	printf("\n");
+}
+
+char* infereTipo(ValorLexico *operando1, ValorLexico *operando2)
+{
+	//printf("TESTOU\n");
+	
+	if (strcmp(operando1->tipo_token,"float") == 0 || strcmp(operando2->tipo_token,"float") == 0)
+	{
+		char *tipo_inferido = calloc(6,sizeof(char));
+		strcpy(tipo_inferido,"float");
+		//printf("TESTOU FLOAT\n");
+		return tipo_inferido;
+		
+	}
+	
+	else if (strcmp(operando1->tipo_token,"int") == 0 || strcmp(operando2->tipo_token,"int") == 0)
+	{
+		char *tipo_inferido = calloc(4,sizeof(char));
+		strcpy(tipo_inferido,"int");
+		//printf("TESTOU INT\n");
+		return tipo_inferido;
+	}
+
+	else
+	{
+		char *tipo_inferido = calloc(5,sizeof(char));
+		strcpy(tipo_inferido,"bool");
+		//printf("TESTOU BOOL\n");
+		return tipo_inferido;
+	}
+	
+	
 }
 
 void concatenate_list(Nodo* list1, Nodo* list2)
