@@ -144,6 +144,7 @@ int get_line_number();
 	yylval.valor_lexico->linha_token = get_line_number();
 	yylval.valor_lexico->natureza_token = LITERAL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
+	yylval.valor_lexico->tipo_token = malloc(100*sizeof(char));
 	return TK_LIT_FALSE;}
 	
 "true" {
@@ -151,6 +152,7 @@ int get_line_number();
 	yylval.valor_lexico->linha_token = get_line_number();
 	yylval.valor_lexico->natureza_token = LITERAL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
+	yylval.valor_lexico->tipo_token = malloc(100*sizeof(char));
 	return TK_LIT_TRUE;}
 	 
 [a-z_]+ {
@@ -158,7 +160,7 @@ int get_line_number();
 	yylval.valor_lexico->linha_token = get_line_number();
 	yylval.valor_lexico->natureza_token = IDENTIFIER;
 	yylval.valor_lexico->valor_token = strdup(yytext);
-	yylval.valor_lexico->tipo_token = malloc(QUANTIDADE_CARACTERES_TIPO*sizeof(char));
+	yylval.valor_lexico->tipo_token = malloc(MAXIMO_CARACTERES_NOME*sizeof(char));
 	return TK_IDENTIFICADOR;}
 	 
 [0-9]+  {
@@ -166,6 +168,7 @@ int get_line_number();
 	yylval.valor_lexico->linha_token = get_line_number();
 	yylval.valor_lexico->natureza_token = LITERAL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
+	yylval.valor_lexico->tipo_token = malloc(MAXIMO_CARACTERES_INT*sizeof(char));
 	return TK_LIT_INT;}	 
 	 
 [0-9]*"."[0-9]+   {
@@ -173,6 +176,7 @@ int get_line_number();
 	yylval.valor_lexico->linha_token = get_line_number();
 	yylval.valor_lexico->natureza_token = LITERAL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
+	yylval.valor_lexico->tipo_token = malloc(MAXIMO_CARACTERES_FLOAT*sizeof(char));
 	return TK_LIT_FLOAT;}	 		 
 
 . {return TK_ERRO;}
