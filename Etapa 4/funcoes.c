@@ -185,6 +185,8 @@ void verificaERR_UNDECLARED_FUNCTION_TYPE(Lista_tabelas *lista_tabelas, ValorLex
 {
     Lista_tabelas *lista_atual = lista_tabelas;
     int achou_funcao = 0;
+    int achou_variavel = 0;
+    int tipo_recente = 1;
 
     while (lista_atual != NULL)
     {
@@ -199,15 +201,8 @@ void verificaERR_UNDECLARED_FUNCTION_TYPE(Lista_tabelas *lista_tabelas, ValorLex
             	
             	else if (tabela_atual->info->natureza_token == VARIABLE)
             	{
-            		if (tabela_atual->info->tipo_token != tipo_atribuido)
-            		{
-            			printf("ERRO DE SEMANTICA - LINHA %d - TENTATIVA DE ATRIBUIR VALOR '%s' PARA VARIAVEL '%s' DO TIPO '%s'\n", 
-            			identificador->linha_token, obtemNomeTipo(tipo_atribuido), identificador->valor_token, obtemNomeTipo(tabela_atual->info->tipo_token));
-            			exit(ERR_TYPE);
-            		}
-            			
-            		else
-            			return;
+            		achou_variavel = 1;
+            		tipo_recente = tabela_atual->info->tipo_token;
             	}
             		
             }
@@ -218,7 +213,20 @@ void verificaERR_UNDECLARED_FUNCTION_TYPE(Lista_tabelas *lista_tabelas, ValorLex
         lista_atual = lista_atual->proximo;
     }
     
-    if (achou_funcao == 1)
+    if (achou_variavel == 1)
+    {
+    	if (tipo_recente != tipo_atribuido)
+    	{
+        	printf("ERRO DE SEMANTICA - LINHA %d - TENTATIVA DE ATRIBUIR VALOR '%s' PARA VARIAVEL '%s' DO TIPO '%s'\n", 
+		identificador->linha_token, obtemNomeTipo(tipo_atribuido), identificador->valor_token, obtemNomeTipo(tipo_recente));
+		exit(ERR_TYPE);  		
+    	}
+    	
+    	else
+    		return;
+    }
+    
+    else if (achou_funcao == 1)
     {
         printf("ERRO DE SEMANTICA - LINHA %d - FUNCAO '%s' SENDO USADA COMO VARIAVEL\n", identificador->linha_token, identificador->valor_token);
 	exit(ERR_FUNCTION);   
