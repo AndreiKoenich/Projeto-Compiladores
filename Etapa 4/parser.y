@@ -136,6 +136,7 @@ definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo
 	tipo_atual = verificaTipo($6->valor_token);
 	$1->tipo_token = tipo_atual;
 	$1->natureza_token = FUNCTION;
+	$1->tamanho_token = infereTamanho(tipo_atual);
 		
 	verificaERR_DECLARED(lista_tabelas,$1);
 	insereUltimaTabela(&lista_tabelas, $1);
@@ -152,6 +153,7 @@ definicao_funcao: TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo
 	tipo_atual = verificaTipo($5->valor_token);
 	$1->tipo_token = tipo_atual;
 	$1->natureza_token = FUNCTION;
+	$1->tamanho_token = infereTamanho(tipo_atual);
 		
 	verificaERR_DECLARED(lista_tabelas,$1);
 	insereUltimaTabela(&lista_tabelas, $1);
@@ -170,8 +172,8 @@ tupla_tipo_parametro: tipo TK_IDENTIFICADOR { $$ = criaNodo($2); };
 
 declaracao_global: tipo { tipo_atual = verificaTipo($1->valor_token); } lista_identificadores_globais ';'
 
-lista_identificadores_globais: TK_IDENTIFICADOR ',' lista_identificadores_globais 	{ $1->tipo_token = tipo_atual; insereUltimaTabela(&lista_tabelas, $1); };
-lista_identificadores_globais: TK_IDENTIFICADOR						{ $1->tipo_token = tipo_atual; insereUltimaTabela(&lista_tabelas, $1); };
+lista_identificadores_globais: TK_IDENTIFICADOR ',' lista_identificadores_globais 	{ $1->tipo_token = tipo_atual; $1->tamanho_token = infereTamanho(tipo_atual); insereUltimaTabela(&lista_tabelas, $1); };
+lista_identificadores_globais: TK_IDENTIFICADOR						{ $1->tipo_token = tipo_atual; $1->tamanho_token = infereTamanho(tipo_atual); insereUltimaTabela(&lista_tabelas, $1); };
 
 lista_comandos: comando_simples ';' lista_comandos
 {
@@ -283,13 +285,14 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	adicionaNodo($$, novoNodo2);
 	
 	$1->tipo_token = tipo_atual;
+	$2->tipo_token = $3->tipo_token;
 	
 	verificaERR_DECLARED(lista_tabelas, $1);
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
-bloco_comandos:	'{' { pushTabela(&lista_tabelas, tabela_escopo); } lista_comandos '}'  { popTabela(&lista_tabelas); $$ = $3; };
-bloco_comandos:	'{' { pushTabela(&lista_tabelas, tabela_escopo); } '}' { popTabela(&lista_tabelas);  $$ = NULL; };
+bloco_comandos:	'{' { pushTabela(&lista_tabelas, tabela_escopo); } lista_comandos '}'  { /*imprimeTabela(lista_tabelas->proximo->tabela_simbolos);*/ popTabela(&lista_tabelas); $$ = $3; };
+bloco_comandos:	'{' { pushTabela(&lista_tabelas, tabela_escopo); } '}' { /*imprimeTabela(lista_tabelas->proximo->tabela_simbolos);*/ popTabela(&lista_tabelas);  $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {
@@ -298,10 +301,10 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	adicionaNodo($$, novoNodo);
 	adicionaNodo($$, $3);
 	
-	int tipo_atribuido = infereTipoExpressao($$); 
+	$1->tipo_token = infereTipoExpressao($$); 
+	$1->tamanho_token = infereTamanho($1->tipo_token);
 	verificaERR_UNDECLARED_FUNCTION(lista_tabelas,$1);
-	$1->tipo_token = tipo_atribuido;
-	insereUltimaTabela(&lista_tabelas, $1);	
+	//insereUltimaTabela(&lista_tabelas, $1);	
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
@@ -399,6 +402,7 @@ expressao7: TK_IDENTIFICADOR
 	$$ = criaNodo($1); 
 	verificaERR_UNDECLARED_FUNCTION(lista_tabelas,$1);
 	$1->tipo_token = obtemTipo(lista_tabelas,$1);
+	$1->tamanho_token = infereTamanho($1->tipo_token);
 };
 
 literal: TK_LIT_INT  	

@@ -326,11 +326,11 @@ void imprimeTabela(Tabela *tabela)
 	while (atual != NULL) 
 	{
 		printf("VALOR: %s\n", atual->info->valor_token);
-		printf("TIPO: %d\n", atual->info->tipo_token);
+		printf("TIPO: %s\n", obtemNomeTipo(atual->info->tipo_token));
 		printf("NATUREZA: %d\n", atual->info->natureza_token);
 		printf("LINHA: %d\n", atual->info->linha_token);
+		printf("TAMANHO: %d\n\n", atual->info->tamanho_token);
 		atual = atual->proximo;
-		printf("\n\n");
 	}
 
 	printf("\n");
@@ -410,6 +410,18 @@ int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
     }
     
     return tipo_atual;	
+}
+
+int infereTamanho(int tipo_token)
+{
+	if (tipo_token == INT)
+		return TAMANHO_MEMORIA_INT;
+	else if (tipo_token == FLOAT)
+		return TAMANHO_MEMORIA_FLOAT;
+	else if (tipo_token == BOOL)
+		return TAMANHO_MEMORIA_BOOL;
+	else
+		return 0;
 }
 
 void concatenate_list(Nodo* list1, Nodo* list2)

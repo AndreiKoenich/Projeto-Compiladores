@@ -16,6 +16,10 @@
 #define MAXIMO_CARACTERES_INT 20
 #define MAXIMO_CARACTERES_FLOAT 100
 
+#define TAMANHO_MEMORIA_INT 8
+#define TAMANHO_MEMORIA_FLOAT 8
+#define TAMANHO_MEMORIA_BOOL 1
+
 #define ERR_UNDECLARED 10
 #define ERR_DECLARED 11
 #define ERR_VARIABLE 20 
@@ -36,6 +40,7 @@ typedef struct
 	int linha_token;
 	int natureza_token;
 	int tipo_token;
+	int tamanho_token;
 	
 } ValorLexico;
 
@@ -85,6 +90,7 @@ int infereTipo(int tipo1, int tipo2);
 int verificaTipo(char *tipo_token);
 int infereTipoExpressao(Nodo *raiz);
 int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
+int infereTamanho(int tipo_token);
 char* obtemNomeFuncao(char* nomeChamadaFuncao);
 
 #endif
