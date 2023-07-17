@@ -17,7 +17,7 @@ extern void *arvore;
 extern Lista_tabelas *lista_tabelas;
 extern Tabela *tabela_global;
 extern Tabela *tabela_escopo;
-extern char tipo_atual[QUANTIDADE_CARACTERES_TIPO];
+extern int tipo_atual;
 
 %}
 
@@ -134,8 +134,11 @@ elemento: declaracao_global 	{ $$ = NULL; };
 
 definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo bloco_comandos
 {
-	strcpy(tipo_atual,$6->valor_token); 
-	strcpy($1->tipo_token,tipo_atual); 
+	tipo_atual = verificaTipo($6->valor_token);
+	$1->tipo_token = tipo_atual;
+	$1->natureza_token = FUNCTION;
+	
+	verificaERR_DECLARED(lista_tabelas,$1);
 	insereUltimaTabela(&lista_tabelas, $1);
 	
 	$$ = criaNodo($1);
@@ -145,8 +148,11 @@ definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo bloco
 
 definicao_funcao: TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo bloco_comandos
 {
-	strcpy(tipo_atual,$5->valor_token);
-	strcpy($1->tipo_token,tipo_atual); 
+	tipo_atual = verificaTipo($5->valor_token);
+	$1->tipo_token = tipo_atual;
+	$1->natureza_token = FUNCTION;
+	
+	verificaERR_DECLARED(lista_tabelas,$1);
 	insereUltimaTabela(&lista_tabelas, $1);
 	
 	$$ = criaNodo($1);
@@ -159,10 +165,10 @@ lista_parametros: tupla_tipo_parametro ',' lista_parametros { $$ = $1; adicionaN
 
 tupla_tipo_parametro: tipo TK_IDENTIFICADOR { $$ = criaNodo($2); };
 
-declaracao_global: tipo { strcpy(tipo_atual,$1->valor_token); } lista_identificadores_globais ';'
+declaracao_global: tipo { tipo_atual = verificaTipo($1->valor_token); } lista_identificadores_globais ';'
 
-lista_identificadores_globais: TK_IDENTIFICADOR ',' lista_identificadores_globais 	{ strcpy($1->tipo_token,tipo_atual); insereUltimaTabela(&lista_tabelas, $1); };
-lista_identificadores_globais: TK_IDENTIFICADOR						{ strcpy($1->tipo_token,tipo_atual); insereUltimaTabela(&lista_tabelas, $1); };
+lista_identificadores_globais: TK_IDENTIFICADOR ',' lista_identificadores_globais 	{ $1->tipo_token = tipo_atual; insereUltimaTabela(&lista_tabelas, $1); };
+lista_identificadores_globais: TK_IDENTIFICADOR						{ $1->tipo_token = tipo_atual; insereUltimaTabela(&lista_tabelas, $1); };
 
 lista_comandos: comando_simples ';' lista_comandos
 {
@@ -231,7 +237,7 @@ comando_simples: iterativo 				{ $$ = $1; };
 
 declaracao_local: tipo_local lista_identificadores { $$ = $2; }; 
 
-tipo_local: tipo { strcpy(tipo_atual,$1->valor_token); } 
+tipo_local: tipo { tipo_atual = verificaTipo($1->valor_token);} 
 
 tipo: TK_PR_INT 	{ $$ = $1; };
 tipo: TK_PR_FLOAT 	{ $$ = $1; };
@@ -246,10 +252,13 @@ lista_identificadores: identificador_local ',' lista_identificadores
 		$$ = $1;
 		adicionaNodo($$, $3);
 	}
+	
 	else if($1 != NULL)
 		$$ = $1;
+		
 	else if($3 != NULL)
 		$$ = $3;
+		
 	else
 		$$ = NULL;
 };
@@ -257,8 +266,8 @@ lista_identificadores: identificador_local ',' lista_identificadores
 identificador_local: TK_IDENTIFICADOR
 { 
 	$$ = NULL; 
-	
-	strcpy($1->tipo_token,tipo_atual); 
+	$1->tipo_token = tipo_atual;
+	verificaERR_DECLARED(lista_tabelas, $1);
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
@@ -270,11 +279,13 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	Nodo* novoNodo2 = criaNodo($3);
 	adicionaNodo($$, novoNodo2);
 	
-	strcpy($1->tipo_token,tipo_atual); 
+	$1->tipo_token = tipo_atual;
+	
+	verificaERR_DECLARED(lista_tabelas, $1);
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
-bloco_comandos:	'{' push_tabela_escopo lista_comandos '}'  	{ imprimeTabela(lista_tabelas->proximo->tabela_simbolos); popTabela(&lista_tabelas);  $$ = $3; };
+bloco_comandos:	'{' push_tabela_escopo lista_comandos '}'  	{ popTabela(&lista_tabelas); $$ = $3; };
 bloco_comandos:	'{' push_tabela_escopo '}' 			{ popTabela(&lista_tabelas);  $$ = NULL; };
 
 push_tabela_escopo: /* Vazio */ { pushTabela(&lista_tabelas, tabela_escopo); };
@@ -286,8 +297,10 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	adicionaNodo($$, novoNodo);
 	adicionaNodo($$, $3);
 	
-	strcpy($1->tipo_token,tipo_atual);
-	insereUltimaTabela(&lista_tabelas, $1);
+	int tipo_atribuido = infereTipoExpressao($$); 
+	verificaERR_UNDECLARED_FUNCTION_TYPE(lista_tabelas,$1,tipo_atribuido);
+	$1->tipo_token = tipo_atribuido;
+	insereUltimaTabela(&lista_tabelas, $1);	
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
@@ -296,6 +309,8 @@ chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
 	$$ = criaNodo($1);
 	$$->info->valor_token = concat_call($$->info->valor_token);
 	adicionaNodo($$, $3);
+	
+	verificaERR_VARIABLE_UNDECLARED_chamadafuncao(lista_tabelas, obtemNomeFuncao($1->valor_token), $1->linha_token);
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' ')'
@@ -303,6 +318,8 @@ chamada_funcao: TK_IDENTIFICADOR '(' ')'
 	$1->natureza_token = FUNCTION_CALL;
 	$$ = criaNodo($1);
 	$$->info->valor_token = concat_call($$->info->valor_token);
+	
+	verificaERR_VARIABLE_UNDECLARED_chamadafuncao(lista_tabelas, obtemNomeFuncao($1->valor_token), $1->linha_token);
 };
 
 lista_expressoes: expressao 				{ $$ = $1; };
@@ -337,30 +354,27 @@ iterativo: TK_PR_WHILE '(' expressao ')' bloco_comandos
 		adicionaNodo($$, $5);
 };
 
-expressao:  expressao2 					{ $$ = $1; strcpy(tipo_atual,$1->info->tipo_token);};
+expressao:  expressao2 					{ $$ = $1; };
 
 expressao:  expressao  TK_OC_OR expressao2 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 
-expressao2: expressao3 					{ $$ = $1; strcpy(tipo_atual,$1->info->tipo_token);};
+expressao2: expressao3 					{ $$ = $1; };
 
 expressao2: expressao2 TK_OC_AND expressao3 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 
-expressao3: expressao4 					{ $$ = $1; strcpy(tipo_atual,$1->info->tipo_token);};
+expressao3: expressao4 					{ $$ = $1; };
 expressao3: expressao3 TK_OC_EQ expressao4 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 expressao3: expressao3 TK_OC_NE expressao4 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 	
-expressao4: expressao5 					{ $$ = $1; strcpy(tipo_atual,$1->info->tipo_token);};
+expressao4: expressao5 					{ $$ = $1; };
 expressao4: expressao4 '<' expressao5 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 expressao4: expressao4 '>' expressao5 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 expressao4: expressao4 TK_OC_LE expressao5 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 expressao4: expressao4 TK_OC_GE expressao5 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 
-expressao5: expressao6 					{ $$ = $1; strcpy(tipo_atual,$1->info->tipo_token);};
+expressao5: expressao6 					{ $$ = $1;};
 
-expressao5: expressao5 '+' expressao6 			
-{ 
-	$$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); 
-};
+expressao5: expressao5 '+' expressao6 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 
 
 expressao5: expressao5 '-' expressao6 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
@@ -379,39 +393,36 @@ expressao7: literal 					{ $$ = criaNodo($1); };
 expressao7: TK_IDENTIFICADOR				
 { 
 	$$ = criaNodo($1); 
-	strcpy($1->tipo_token,tipo_atual);
+	verificaERR_UNDECLARED_FUNCTION(lista_tabelas,$1);
+	$1->tipo_token = obtemTipo(lista_tabelas,$1);
 	insereUltimaTabela(&lista_tabelas, $1);
 };
 
 literal: TK_LIT_INT  	
 { 
 	$$ = $1;
-	strcpy(tipo_atual,"int"); 
-	strcpy($1->tipo_token,tipo_atual); 
+	$1->tipo_token = INT;
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
 literal: TK_LIT_FLOAT 	
 { 
 	$$ = $1;
-	strcpy(tipo_atual,"float"); 
-	strcpy($1->tipo_token,tipo_atual); 
+	$1->tipo_token = FLOAT;
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
 literal: TK_LIT_FALSE 
 { 
 	$$ = $1;
-	strcpy(tipo_atual,"bool"); 
-	strcpy($1->tipo_token,tipo_atual); 
+	$1->tipo_token = BOOL;
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
 literal: TK_LIT_TRUE
 { 
 	$$ = $1;
-	strcpy(tipo_atual,"bool"); 
-	strcpy($1->tipo_token,tipo_atual); 
+	$1->tipo_token = BOOL;
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
@@ -420,5 +431,5 @@ literal: TK_LIT_TRUE
 void yyerror(char const *s)
 {
 	extern int yylineno;
-	printf("ERRO - LINHA %d - %s\n", yylineno, s);	
+	printf("ERRO DE SINTAXE - LINHA %d - %s\n", yylineno, s);	
 }

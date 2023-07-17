@@ -2,18 +2,29 @@
 #define _FUNCOES_H_
 
 #define LITERAL 0
-#define IDENTIFIER 1
+#define VARIABLE 1
 #define EXPRESSION_OPERATOR 2
 #define LANGUAGE_OPERATOR 3
 #define CONTROL 4
 #define TYPE 5
 #define SYNTAX_TOKEN 6
 #define FUNCTION_CALL 7
+#define FUNCTION 8
 
-#define QUANTIDADE_CARACTERES_TIPO 100 /* A palavra "float" é a maior entre os nomes dos tipos, e possui 5 caracteres. */
-#define MAXIMO_CARACTERES_NOME 100
-#define MAXIMO_CARACTERES_INT 100
+#define MAXIMO_CARACTERES_TIPO 6 /* A palavra "float" é a maior entre os nomes dos tipos, e possui 5 caracteres. */
+#define MAXIMO_CARACTERES_NOME 50
+#define MAXIMO_CARACTERES_INT 20
 #define MAXIMO_CARACTERES_FLOAT 100
+
+#define ERR_UNDECLARED 10
+#define ERR_DECLARED 11
+#define ERR_VARIABLE 20 
+#define ERR_FUNCTION 21
+#define ERR_TYPE 22
+
+#define INT 0
+#define FLOAT 1
+#define BOOL 2
 
 #include <string.h>
 #include <stdlib.h>
@@ -24,7 +35,7 @@ typedef struct
 	
 	int linha_token;
 	int natureza_token;
-	char *tipo_token;
+	int tipo_token;
 	
 } ValorLexico;
 
@@ -73,11 +84,16 @@ void pushTabela(Lista_tabelas** lista, Tabela *nova_tabela);
 void destroiTabela(Tabela** tabela);
 void destroiListaTabelas(Lista_tabelas** lista_tabelas);
 void imprimeTabela(Tabela *tabela);
-char* infereTipo(ValorLexico *operando1, ValorLexico *operando2);
-
+int infereTipo(int tipo1, int tipo2);
+int verificaTipo(char *tipo_token);
+int infereTipoExpressao(Nodo *raiz);
+void verificaERR_UNDECLARED_FUNCTION(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
+void verificaERR_UNDECLARED_FUNCTION_TYPE(Lista_tabelas *lista_tabelas, ValorLexico* identificador, int tipo_atribuido);
+void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
+void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas, char *valor_token, int linha_token);
 void concatenate_list(Nodo* list1, Nodo* list2);
-
-
-
+int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
+char* obtemNomeFuncao(char* nomeChamadaFuncao);
+char* obtemNomeTipo (int valor_tipo);
 
 #endif

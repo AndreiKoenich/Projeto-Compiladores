@@ -7,7 +7,7 @@ void *arvore = NULL;
 Lista_tabelas *lista_tabelas = NULL;
 Tabela *tabela_global = NULL;
 Tabela *tabela_escopo = NULL;
-char tipo_atual[QUANTIDADE_CARACTERES_TIPO];
+int tipo_atual = -1;
 
 void exporta (void *arvore)
 {

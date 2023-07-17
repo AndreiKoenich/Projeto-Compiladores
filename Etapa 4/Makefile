@@ -1,4 +1,4 @@
-# PROJETO DE COMPILADORES - ETAPA 3
+# PROJETO DE COMPILADORES - ETAPA 4
 
 # Andrei Pochmann Koenich 	 - Matrícula 00308680
 # Izaias Saturnino de Lima Neto  - Matrícula 00326872
@@ -15,11 +15,11 @@ scanner: scanner.l
 
 # Comando para compilar os arquivos gerados pelo Bison e pelo Flex
 compile: parser scanner
-	gcc -c lex.yy.c parser.tab.c funcoes.c
+	gcc -g -c lex.yy.c parser.tab.c funcoes.c
 
 # Comando para linkar os arquivos compilados e gerar o executável
 link: compile
-	gcc -o etapa3 main.c parser.tab.o lex.yy.o funcoes.o -lfl -Wall
+	gcc -g -o etapa4 main.c parser.tab.o lex.yy.o funcoes.o -lfl -Wall
 
 # Comando para limpar os arquivos gerados
 	rm -f lex.yy.c lex.yy.o parser.tab.c parser.tab.o parser.tab.h parser.output funcoes.o
