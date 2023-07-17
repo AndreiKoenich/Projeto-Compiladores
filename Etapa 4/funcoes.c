@@ -88,6 +88,7 @@ void insereEntradaTabela (Tabela** tabela, ValorLexico *valor_lexico)
 }
 
 void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico) {
+    
     if (*lista_tabelas == NULL || valor_lexico == NULL) {
         return;
     }
@@ -181,64 +182,6 @@ void destroiListaTabelas(Lista_tabelas** lista_tabelas)
     *lista_tabelas = NULL;
 }
 
-void verificaERR_UNDECLARED_FUNCTION_TYPE(Lista_tabelas *lista_tabelas, ValorLexico* identificador, int tipo_atribuido)
-{
-    Lista_tabelas *lista_atual = lista_tabelas;
-    int achou_funcao = 0;
-    int achou_variavel = 0;
-    int tipo_recente = 1;
-
-    while (lista_atual != NULL)
-    {
-        Tabela *tabela_atual = lista_atual->tabela_simbolos;
-
-        while (tabela_atual != NULL)
-        {
-            if (strcmp(identificador->valor_token, tabela_atual->info->valor_token) == 0)
-            {
-            	if (tabela_atual->info->natureza_token == FUNCTION)
-			achou_funcao = 1;
-            	
-            	else if (tabela_atual->info->natureza_token == VARIABLE)
-            	{
-            		achou_variavel = 1;
-            		tipo_recente = tabela_atual->info->tipo_token;
-            	}
-            		
-            }
-                
-            tabela_atual = tabela_atual->proximo;
-        }
-
-        lista_atual = lista_atual->proximo;
-    }
-    
-    if (achou_variavel == 1)
-    {
-    	if (tipo_recente != tipo_atribuido)
-    	{
-        	printf("ERRO DE SEMANTICA - LINHA %d - TENTATIVA DE ATRIBUIR VALOR '%s' PARA VARIAVEL '%s' DO TIPO '%s'\n", 
-		identificador->linha_token, obtemNomeTipo(tipo_atribuido), identificador->valor_token, obtemNomeTipo(tipo_recente));
-		exit(ERR_TYPE);  		
-    	}
-    	
-    	else
-    		return;
-    }
-    
-    else if (achou_funcao == 1)
-    {
-        printf("ERRO DE SEMANTICA - LINHA %d - FUNCAO '%s' SENDO USADA COMO VARIAVEL\n", identificador->linha_token, identificador->valor_token);
-	exit(ERR_FUNCTION);   
-    }
-    
-    else
-    {
-	printf("ERRO DE SEMANTICA - LINHA %d - IDENTIFICADOR '%s' NAO DECLARADO\n", identificador->linha_token, identificador->valor_token);
-	exit(ERR_UNDECLARED);   
-    }
-}
-
 void verificaERR_UNDECLARED_FUNCTION(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
 {
     Lista_tabelas *lista_atual = lista_tabelas;
@@ -310,6 +253,35 @@ void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas,
     exit(ERR_UNDECLARED);	
 }
 
+
+void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
+{
+    Lista_tabelas *lista_atual = lista_tabelas;
+
+    while (lista_atual != NULL && lista_atual->proximo != NULL)
+    {
+        lista_atual = lista_atual->proximo;
+    }
+
+    if (lista_atual != NULL && lista_atual->tabela_simbolos != NULL)
+    {
+        Tabela *tabela_atual = lista_atual->tabela_simbolos;
+
+        while (tabela_atual != NULL)
+        {
+            if (strcmp(identificador->valor_token, tabela_atual->info->valor_token) == 0)
+            {
+		printf("ERRO DE SEMANTICA - LINHA %d - REDECLARACAO DO IDENTIFICADOR '%s'\n", identificador->linha_token, identificador->valor_token);
+		exit(ERR_DECLARED);
+            }
+
+            tabela_atual = tabela_atual->proximo;
+        }
+     }
+     
+     return;
+}
+
 char* obtemNomeTipo (int valor_tipo)
 {
 	char* nome_tipo = calloc(MAXIMO_CARACTERES_TIPO, sizeof(char));
@@ -322,37 +294,6 @@ char* obtemNomeTipo (int valor_tipo)
 	return nome_tipo;
 }
 
-void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
-{
-    Lista_tabelas *lista_atual = lista_tabelas;
-
-    // Percorre a lista de tabelas até chegar na última
-    while (lista_atual != NULL && lista_atual->proximo != NULL)
-    {
-        lista_atual = lista_atual->proximo;
-    }
-
-    // Verifica se a última tabela é válida
-    if (lista_atual != NULL && lista_atual->tabela_simbolos != NULL)
-    {
-        Tabela *tabela_atual = lista_atual->tabela_simbolos;
-
-        // Percorre os elementos da última tabela
-        while (tabela_atual != NULL)
-        {
-            if (strcmp(identificador->valor_token, tabela_atual->info->valor_token) == 0)
-            {
-                // O identificador foi encontrado na última tabela
-		printf("ERRO DE SEMANTICA - LINHA %d - REDECLARACAO DO IDENTIFICADOR '%s'\n", identificador->linha_token, identificador->valor_token);
-		exit(ERR_DECLARED);
-            }
-
-            tabela_atual = tabela_atual->proximo;
-        }
-     }
-     
-     return;
-}
 
 
 char* obtemNomeFuncao(char* nomeChamadaFuncao)
@@ -421,25 +362,6 @@ int infereTipoExpressao(Nodo *raiz)
     return tipo_encontrado;
 }
 
-int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
-{
-    Lista_tabelas *lista_atual = lista_tabelas;
-
-    while (lista_atual != NULL)
-    {
-        Tabela *tabela_atual = lista_atual->tabela_simbolos;
-
-        while (tabela_atual != NULL)
-        {
-            if (strcmp(identificador->valor_token, tabela_atual->info->valor_token) == 0)
-		return tabela_atual->info->tipo_token; 
-            tabela_atual = tabela_atual->proximo;
-        }
-
-        lista_atual = lista_atual->proximo;
-    }	
-}
-
 int verificaTipo(char *tipo_token)
 {
 	if (strcmp(tipo_token,"int") == 0)
@@ -450,6 +372,28 @@ int verificaTipo(char *tipo_token)
 		return BOOL;
 	else
 		return -1;
+}
+
+int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
+{
+    Lista_tabelas *lista_atual = lista_tabelas;
+    int tipo_atual = -1;
+
+    while (lista_atual != NULL)
+    {
+        Tabela *tabela_atual = lista_atual->tabela_simbolos;
+
+        while (tabela_atual != NULL)
+        {
+            if (strcmp(identificador->valor_token, tabela_atual->info->valor_token) == 0)
+		tipo_atual = tabela_atual->info->tipo_token; 
+            tabela_atual = tabela_atual->proximo;
+        }
+
+        lista_atual = lista_atual->proximo;
+    }
+    
+    return tipo_atual;	
 }
 
 void concatenate_list(Nodo* list1, Nodo* list2)

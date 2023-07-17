@@ -93,8 +93,7 @@ extern int tipo_atual;
 
 %%
 
-inicio_programa: push_tabela_global programa
-push_tabela_global: /* Vazio */ { pushTabela(&lista_tabelas, tabela_global); }
+inicio_programa: { pushTabela(&lista_tabelas, tabela_global); } programa
 
 programa: lista 
 {
@@ -132,33 +131,37 @@ lista: elemento { $$ = $1; };
 elemento: definicao_funcao 	{ $$ = $1; };
 elemento: declaracao_global 	{ $$ = NULL; };
 
-definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo bloco_comandos
+definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo
 {
 	tipo_atual = verificaTipo($6->valor_token);
 	$1->tipo_token = tipo_atual;
 	$1->natureza_token = FUNCTION;
-	
+		
 	verificaERR_DECLARED(lista_tabelas,$1);
 	insereUltimaTabela(&lista_tabelas, $1);
-	
+}
+bloco_comandos
+{
 	$$ = criaNodo($1);
-	if($7 != NULL)
-		adicionaNodo($$, $7);
-};
+	if($8 != NULL)
+		adicionaNodo($$, $8);
+}
 
-definicao_funcao: TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo bloco_comandos
+definicao_funcao: TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo
 {
 	tipo_atual = verificaTipo($5->valor_token);
 	$1->tipo_token = tipo_atual;
 	$1->natureza_token = FUNCTION;
-	
+		
 	verificaERR_DECLARED(lista_tabelas,$1);
 	insereUltimaTabela(&lista_tabelas, $1);
-	
+}
+bloco_comandos
+{
 	$$ = criaNodo($1);
-	if($6 != NULL)
-		adicionaNodo($$, $6);
-};
+	if($7 != NULL)
+		adicionaNodo($$, $7);
+}
 
 lista_parametros: tupla_tipo_parametro { $$ = $1; };
 lista_parametros: tupla_tipo_parametro ',' lista_parametros { $$ = $1; adicionaNodo($$, $3); };
@@ -285,10 +288,8 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
-bloco_comandos:	'{' push_tabela_escopo lista_comandos '}'  	{ popTabela(&lista_tabelas); $$ = $3; };
-bloco_comandos:	'{' push_tabela_escopo '}' 			{ popTabela(&lista_tabelas);  $$ = NULL; };
-
-push_tabela_escopo: /* Vazio */ { pushTabela(&lista_tabelas, tabela_escopo); };
+bloco_comandos:	'{' { pushTabela(&lista_tabelas, tabela_escopo); } lista_comandos '}'  { popTabela(&lista_tabelas); $$ = $3; };
+bloco_comandos:	'{' { pushTabela(&lista_tabelas, tabela_escopo); } '}' { popTabela(&lista_tabelas);  $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {
@@ -298,7 +299,7 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	adicionaNodo($$, $3);
 	
 	int tipo_atribuido = infereTipoExpressao($$); 
-	verificaERR_UNDECLARED_FUNCTION_TYPE(lista_tabelas,$1,tipo_atribuido);
+	verificaERR_UNDECLARED_FUNCTION(lista_tabelas,$1);
 	$1->tipo_token = tipo_atribuido;
 	insereUltimaTabela(&lista_tabelas, $1);	
 };
@@ -325,10 +326,11 @@ chamada_funcao: TK_IDENTIFICADOR '(' ')'
 lista_expressoes: expressao 				{ $$ = $1; };
 lista_expressoes: expressao ',' lista_expressoes	{ $$ = $1; adicionaNodo($$, $3); };
 
-retorno: TK_PR_RETURN expressao { $$ = criaNodo($1); adicionaNodo($$, $2); };
+retorno: TK_PR_RETURN expressao { $1->tipo_token = infereTipoExpressao($2); $$ = criaNodo($1); adicionaNodo($$, $2); };
 
 clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos
 {
+	$1->tipo_token = infereTipoExpressao($3);
 	$$ = criaNodo($1);
 	adicionaNodo($$, $3);
 	
@@ -337,6 +339,7 @@ clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos
 };
 clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos TK_PR_ELSE bloco_comandos
 {
+	$1->tipo_token = infereTipoExpressao($3);
 	$$ = criaNodo($1);
 	adicionaNodo($$, $3);
 	
@@ -348,6 +351,7 @@ clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos TK_PR_E
 
 iterativo: TK_PR_WHILE '(' expressao ')' bloco_comandos
 {
+	$1->tipo_token = infereTipoExpressao($3);
 	$$ = criaNodo($1);
 	adicionaNodo($$, $3);
 	if($5 != NULL)
@@ -395,7 +399,6 @@ expressao7: TK_IDENTIFICADOR
 	$$ = criaNodo($1); 
 	verificaERR_UNDECLARED_FUNCTION(lista_tabelas,$1);
 	$1->tipo_token = obtemTipo(lista_tabelas,$1);
-	insereUltimaTabela(&lista_tabelas, $1);
 };
 
 literal: TK_LIT_INT  	

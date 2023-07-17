@@ -62,21 +62,15 @@ typedef struct lista_tabelas
 
 } Lista_tabelas;
 
-char* concat_call(char* s1);
 
-/* Função para criar um novo nó da árvore. */
 Nodo* criaNodo(ValorLexico* info);
-
-/* Função para adicionar um filho a um nó. */
 void adicionaNodo(Nodo* pai, Nodo* filho);
-
-/* Função para remover um nó e todos os seus descendentes. */
 void removeNodo(Nodo* node);
 
-/* Função para imprimir a árvore usando um percurso em profundidade (DFS) */
-void impressaoDFS(Nodo* raiz);
 
-void* inicializa_lista ();
+char* concat_call(char* s1);
+void concatenate_list(Nodo* list1, Nodo* list2);
+
 void insereEntradaTabela (Tabela** tabela, ValorLexico *valor_lexico);
 void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico);
 void popTabela(Lista_tabelas **lista);
@@ -84,16 +78,13 @@ void pushTabela(Lista_tabelas** lista, Tabela *nova_tabela);
 void destroiTabela(Tabela** tabela);
 void destroiListaTabelas(Lista_tabelas** lista_tabelas);
 void imprimeTabela(Tabela *tabela);
+void verificaERR_UNDECLARED_FUNCTION(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
+void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
+void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas, char *valor_token, int linha_token);
 int infereTipo(int tipo1, int tipo2);
 int verificaTipo(char *tipo_token);
 int infereTipoExpressao(Nodo *raiz);
-void verificaERR_UNDECLARED_FUNCTION(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
-void verificaERR_UNDECLARED_FUNCTION_TYPE(Lista_tabelas *lista_tabelas, ValorLexico* identificador, int tipo_atribuido);
-void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
-void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas, char *valor_token, int linha_token);
-void concatenate_list(Nodo* list1, Nodo* list2);
 int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
 char* obtemNomeFuncao(char* nomeChamadaFuncao);
-char* obtemNomeTipo (int valor_tipo);
 
 #endif
