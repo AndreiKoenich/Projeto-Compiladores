@@ -26,6 +26,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = TYPE;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_PR_INT;}
 	
 "float" {
@@ -34,6 +35,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = TYPE;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_PR_FLOAT;}
 
 "bool" {
@@ -42,6 +44,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = TYPE;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_PR_BOOL;}
 
 "if" {
@@ -50,6 +53,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = CONTROL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_PR_IF;}
 
 "else" {
@@ -65,6 +69,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = CONTROL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_PR_WHILE;}
 	
 "return" {
@@ -72,6 +77,8 @@ int get_line_number();
 	yylval.valor_lexico->linha_token = get_line_number();
 	yylval.valor_lexico->natureza_token = CONTROL;
 	yylval.valor_lexico->valor_token = strdup(yytext);
+	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_PR_RETURN;}
 
 [\{\}\(\)\,\;] 	{
@@ -87,6 +94,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return yytext[0];}
 
 [\=] 	{
@@ -95,6 +103,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = LANGUAGE_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return yytext[0];}
 
 "<=" 	{
@@ -103,6 +112,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = LANGUAGE_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_OC_LE;}
 
 ">=" 	{
@@ -111,6 +121,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_OC_GE;}
 	
 "==" 	{
@@ -119,6 +130,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_OC_EQ;}
 
 "!=" 	{
@@ -127,6 +139,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_OC_NE;}
 
 "&" 	{
@@ -135,6 +148,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_OC_AND;}
 		
 "|" 	{
@@ -143,6 +157,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = EXPRESSION_OPERATOR;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_OC_OR;}
 
 "->" 	{
@@ -151,6 +166,7 @@ int get_line_number();
 	yylval.valor_lexico->natureza_token = SYNTAX_TOKEN;
 	yylval.valor_lexico->valor_token = strdup(yytext);
 	yylval.valor_lexico->tipo_token = -1;
+	yylval.valor_lexico->tamanho_token = 0;
 	return TK_OC_MAP;}
 
 "false" {
