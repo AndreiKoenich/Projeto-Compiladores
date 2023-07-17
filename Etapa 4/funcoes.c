@@ -257,18 +257,34 @@ void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas,
 void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
 {
     Lista_tabelas *lista_atual = lista_tabelas;
+    Tabela *tabela_atual;
 
     while (lista_atual != NULL && lista_atual->proximo != NULL)
     {
+        tabela_atual = lista_atual->tabela_simbolos;
+        
+        while (tabela_atual != NULL)
+        {
+            if (strcmp(identificador->valor_token, tabela_atual->info->valor_token) == 0 && tabela_atual->info->natureza_token == FUNCTION)
+            {
+		printf("ERRO DE SEMANTICA - LINHA %d - REDECLARACAO DO IDENTIFICADOR '%s'\n", identificador->linha_token, identificador->valor_token);
+		exit(ERR_DECLARED);
+            }
+                
+            tabela_atual = tabela_atual->proximo;
+        }
+        
         lista_atual = lista_atual->proximo;
     }
 
     if (lista_atual != NULL && lista_atual->tabela_simbolos != NULL)
     {
-        Tabela *tabela_atual = lista_atual->tabela_simbolos;
-
+        tabela_atual = lista_atual->tabela_simbolos;
+        
         while (tabela_atual != NULL)
         {
+            
+            
             if (strcmp(identificador->valor_token, tabela_atual->info->valor_token) == 0)
             {
 		printf("ERRO DE SEMANTICA - LINHA %d - REDECLARACAO DO IDENTIFICADOR '%s'\n", identificador->linha_token, identificador->valor_token);
