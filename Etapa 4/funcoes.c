@@ -72,16 +72,20 @@ Nodo* get_last_valid_node_from_list(Nodo* list)
     return list;
 }
 
-void insereEntradaTabela (Tabela** tabela, ValorLexico *valor_lexico)
+void insereEntradaTabela(Tabela** tabela, ValorLexico* valor_lexico)
 {
     Tabela* novo = (Tabela*)malloc(sizeof(Tabela));
-    novo->info = valor_lexico;
+    novo->info = (ValorLexico*)malloc(sizeof(ValorLexico));
+
+    novo->info->valor_token = strdup(valor_lexico->valor_token);
+    novo->info->linha_token = valor_lexico->linha_token;
+    novo->info->natureza_token = valor_lexico->natureza_token;
+    novo->info->tipo_token = valor_lexico->tipo_token;
+
     novo->proximo = NULL;
-    
 
     if (*tabela == NULL)
         *tabela = novo;
-
     else
     {
         Tabela* atual = *tabela;
@@ -89,8 +93,8 @@ void insereEntradaTabela (Tabela** tabela, ValorLexico *valor_lexico)
             atual = atual->proximo;
         atual->proximo = novo;
     }
-    
 }
+
 
 void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico) {
     
