@@ -272,6 +272,7 @@ identificador_local: TK_IDENTIFICADOR
 { 
 	$$ = NULL; 
 	$1->tipo_token = tipo_atual;
+	$1->tamanho_token = infereTamanho(tipo_atual);
 	verificaERR_DECLARED(lista_tabelas, $1);
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
@@ -285,6 +286,7 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	adicionaNodo($$, novoNodo2);
 	
 	$1->tipo_token = tipo_atual;
+	$1->tamanho_token = infereTamanho(tipo_atual);
 	$2->tipo_token = $3->tipo_token;
 	
 	verificaERR_DECLARED(lista_tabelas, $1);
@@ -304,7 +306,6 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	$1->tipo_token = infereTipoExpressao($$); 
 	$1->tamanho_token = infereTamanho($1->tipo_token);
 	verificaERR_UNDECLARED_FUNCTION(lista_tabelas,$1);
-	//insereUltimaTabela(&lista_tabelas, $1);	
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
