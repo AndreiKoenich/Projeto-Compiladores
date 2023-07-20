@@ -342,8 +342,6 @@ void imprimeTabela(Tabela *tabela)
 		printf("TAMANHO: %d\n\n", atual->info->tamanho_token);
 		atual = atual->proximo;
 	}
-
-	printf("\n");
 }
 
 int infereTipo(int tipo1, int tipo2)
