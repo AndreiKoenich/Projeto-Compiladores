@@ -65,6 +65,7 @@ extern int tipo_atual;
 %type<nodo> lista_identificadores
 %type<nodo> identificador_local
 %type<nodo> bloco_comandos
+%type<nodo> bloco_comandos_if_while
 %type<nodo> atribuicao
 %type<nodo> chamada_funcao
 %type<nodo> lista_expressoes
@@ -304,8 +305,10 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
-bloco_comandos:	'{' lista_comandos '}'  { imprimeTabela(lista_tabelas->proximo->tabela_simbolos); popTabela(&lista_tabelas); $$ = $2; };
-bloco_comandos:	'{' '}' 		{ imprimeTabela(lista_tabelas->proximo->tabela_simbolos); popTabela(&lista_tabelas);  $$ = NULL; };
+bloco_comandos:	'{' lista_comandos '}'  { imprimeUltimaTabela(lista_tabelas); popTabela(&lista_tabelas); $$ = $2;   };
+bloco_comandos:	'{' '}' 		{ imprimeUltimaTabela(lista_tabelas); popTabela(&lista_tabelas); $$ = NULL; };
+bloco_comandos_if_while:	'{' lista_comandos '}'  {  $$ = $2;   };
+bloco_comandos_if_while:	'{' '}' 		{  $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {
@@ -343,7 +346,7 @@ lista_expressoes: expressao ',' lista_expressoes	{ $$ = $1; adicionaNodo($$, $3)
 
 retorno: TK_PR_RETURN expressao { $1->tipo_token = infereTipoExpressao($2); $$ = criaNodo($1); adicionaNodo($$, $2); };
 
-clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos
+clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos_if_while
 {
 	$1->tipo_token = infereTipoExpressao($3);
 	$$ = criaNodo($1);
@@ -352,7 +355,7 @@ clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos
 	if($5 != NULL)
 		adicionaNodo($$, $5);
 };
-clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos TK_PR_ELSE bloco_comandos
+clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos_if_while TK_PR_ELSE bloco_comandos_if_while
 {
 	$1->tipo_token = infereTipoExpressao($3);
 	$$ = criaNodo($1);
@@ -364,7 +367,7 @@ clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos TK_PR_E
 		adicionaNodo($$, $7);
 };
 
-iterativo: TK_PR_WHILE '(' expressao ')' bloco_comandos
+iterativo: TK_PR_WHILE '(' expressao ')' bloco_comandos_if_while
 {
 	$1->tipo_token = infereTipoExpressao($3);
 	$$ = criaNodo($1);

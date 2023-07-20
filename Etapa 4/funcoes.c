@@ -344,6 +344,16 @@ void imprimeTabela(Tabela *tabela)
 	}
 }
 
+void imprimeUltimaTabela(Lista_tabelas *lista_tabelas)
+{
+	Lista_tabelas *atual = lista_tabelas;
+    	while (atual->proximo != NULL)
+        	atual = atual->proximo;
+	printf("TABELA LOCAL:\n\n");
+        imprimeTabela(atual->tabela_simbolos);
+	printf("------------------\n");
+}
+
 int infereTipo(int tipo1, int tipo2)
 {
 	if (tipo1 == FLOAT || tipo2 == FLOAT)
