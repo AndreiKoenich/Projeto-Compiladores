@@ -131,7 +131,24 @@ lista: elemento { $$ = $1; };
 elemento: definicao_funcao 	{ $$ = $1; };
 elemento: declaracao_global 	{ $$ = NULL; };
 
-definicao_funcao: TK_IDENTIFICADOR '(' lista_parametros ')' TK_OC_MAP tipo
+definicao_funcao: TK_IDENTIFICADOR '(' push_tabela_escopo lista_parametros ')' TK_OC_MAP tipo
+{
+	tipo_atual = verificaTipo($7->valor_token);
+	$1->tipo_token = tipo_atual;
+	$1->natureza_token = FUNCTION;
+	$1->tamanho_token = infereTamanho(tipo_atual);
+		
+	verificaERR_DECLARED(lista_tabelas,$1);
+	insereUltimaTabela(&lista_tabelas, $1);
+}
+bloco_comandos
+{
+	$$ = criaNodo($1);
+	if($9 != NULL)
+		adicionaNodo($$, $9);
+}
+
+definicao_funcao: TK_IDENTIFICADOR '(' push_tabela_escopo ')' TK_OC_MAP tipo
 {
 	tipo_atual = verificaTipo($6->valor_token);
 	$1->tipo_token = tipo_atual;
@@ -148,27 +165,19 @@ bloco_comandos
 		adicionaNodo($$, $8);
 }
 
-definicao_funcao: TK_IDENTIFICADOR '(' ')' TK_OC_MAP tipo
-{
-	tipo_atual = verificaTipo($5->valor_token);
-	$1->tipo_token = tipo_atual;
-	$1->natureza_token = FUNCTION;
-	$1->tamanho_token = infereTamanho(tipo_atual);
-		
-	verificaERR_DECLARED(lista_tabelas,$1);
-	insereUltimaTabela(&lista_tabelas, $1);
-}
-bloco_comandos
-{
-	$$ = criaNodo($1);
-	if($7 != NULL)
-		adicionaNodo($$, $7);
-}
-
 lista_parametros: tupla_tipo_parametro { $$ = $1; };
 lista_parametros: tupla_tipo_parametro ',' lista_parametros { $$ = $1; adicionaNodo($$, $3); };
 
-tupla_tipo_parametro: tipo TK_IDENTIFICADOR { $$ = criaNodo($2); };
+tupla_tipo_parametro: tipo TK_IDENTIFICADOR 
+{ 
+	$$ = criaNodo($2); 
+	tipo_atual = verificaTipo($1->valor_token);
+	$2->tipo_token = tipo_atual;
+	$2->natureza_token = VARIABLE;
+	$2->tamanho_token = infereTamanho(tipo_atual);	
+	verificaERR_DECLARED(lista_tabelas,$2);
+	insereUltimaTabela(&lista_tabelas, $2);
+};
 
 declaracao_global: tipo { tipo_atual = verificaTipo($1->valor_token); } lista_identificadores_globais ';'
 
@@ -194,25 +203,27 @@ lista_comandos: comando_simples ';' lista_comandos
 };
 
 lista_comandos:	comando_simples ';' { $$ = $1; };
-lista_comandos: bloco_comandos ';' lista_comandos
+lista_comandos: push_tabela_escopo  bloco_comandos ';' lista_comandos
 {
-	if($1 != NULL && $3 != NULL)
+	if($2 != NULL && $4 != NULL)
 	{
-		$$ = $1;
-		concatenate_list($$, $3);
+		$$ = $2;
+		concatenate_list($$, $4);
 	}
 	
-	else if($1 != NULL)
-		$$ = $1;
+	else if($2 != NULL)
+		$$ = $2;
 	
-	else if($3 != NULL)
-		$$ = $3;
+	else if($4 != NULL)
+		$$ = $4;
 
 	else
 		$$ = NULL;
 };
 
-lista_comandos:	bloco_comandos ';' { $$ = $1; };
+lista_comandos:	push_tabela_escopo bloco_comandos ';' { $$ = $2; };
+
+push_tabela_escopo: /* Vazio */ { pushTabela(&lista_tabelas, tabela_escopo); }
 
 lista_comandos: declaracao_local ';' lista_comandos
 {
@@ -293,8 +304,8 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
-bloco_comandos:	'{' { pushTabela(&lista_tabelas, tabela_escopo); } lista_comandos '}'  { /*imprimeTabela(lista_tabelas->proximo->tabela_simbolos);*/ popTabela(&lista_tabelas); $$ = $3; };
-bloco_comandos:	'{' { pushTabela(&lista_tabelas, tabela_escopo); } '}' { /*imprimeTabela(lista_tabelas->proximo->tabela_simbolos);*/ popTabela(&lista_tabelas);  $$ = NULL; };
+bloco_comandos:	'{' lista_comandos '}'  { /*imprimeTabela(lista_tabelas->proximo->tabela_simbolos);*/ popTabela(&lista_tabelas); $$ = $2; };
+bloco_comandos:	'{' '}' 		{ /*imprimeTabela(lista_tabelas->proximo->tabela_simbolos);*/ popTabela(&lista_tabelas);  $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {
