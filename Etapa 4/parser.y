@@ -101,9 +101,9 @@ programa: lista
 	arvore = $$;
 	
 	//popTabela(&lista_tabelas);
-	//printf("TABELA GLOBAL:\n\n");
-	//imprimeTabela(lista_tabelas->tabela_simbolos);
-	//printf("\n\n------------------\n\n");
+	printf("TABELA GLOBAL:\n\n");
+	imprimeTabela(lista_tabelas->tabela_simbolos);
+	printf("------------------\n");
 };
 
 programa: /* Vazio */ { $$ = NULL; };
@@ -139,7 +139,7 @@ definicao_funcao: TK_IDENTIFICADOR '(' push_tabela_escopo lista_parametros ')' T
 	$1->tamanho_token = infereTamanho(tipo_atual);
 		
 	verificaERR_DECLARED(lista_tabelas,$1);
-	insereEntradaTabela(&lista_tabelas, $1);
+	insereEntradaTabela(&(lista_tabelas->tabela_simbolos), $1);
 }
 bloco_comandos
 {
@@ -156,7 +156,7 @@ definicao_funcao: TK_IDENTIFICADOR '(' push_tabela_escopo ')' TK_OC_MAP tipo
 	$1->tamanho_token = infereTamanho(tipo_atual);
 		
 	verificaERR_DECLARED(lista_tabelas,$1);
-	insereEntradaTabela(&lista_tabelas, $1);
+	insereEntradaTabela(&(lista_tabelas->tabela_simbolos), $1);
 }
 bloco_comandos
 {
@@ -304,8 +304,8 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
-bloco_comandos:	'{' lista_comandos '}'  { /*imprimeTabela(lista_tabelas->proximo->tabela_simbolos);*/ popTabela(&lista_tabelas); $$ = $2; };
-bloco_comandos:	'{' '}' 		{ /*imprimeTabela(lista_tabelas->proximo->tabela_simbolos);*/ popTabela(&lista_tabelas);  $$ = NULL; };
+bloco_comandos:	'{' lista_comandos '}'  { imprimeTabela(lista_tabelas->proximo->tabela_simbolos); popTabela(&lista_tabelas); $$ = $2; };
+bloco_comandos:	'{' '}' 		{ imprimeTabela(lista_tabelas->proximo->tabela_simbolos); popTabela(&lista_tabelas);  $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {
