@@ -139,7 +139,7 @@ definicao_funcao: TK_IDENTIFICADOR '(' push_tabela_escopo lista_parametros ')' T
 	$1->tamanho_token = infereTamanho(tipo_atual);
 		
 	verificaERR_DECLARED(lista_tabelas,$1);
-	insereUltimaTabela(&lista_tabelas, $1);
+	insereEntradaTabela(&lista_tabelas, $1);
 }
 bloco_comandos
 {
@@ -156,7 +156,7 @@ definicao_funcao: TK_IDENTIFICADOR '(' push_tabela_escopo ')' TK_OC_MAP tipo
 	$1->tamanho_token = infereTamanho(tipo_atual);
 		
 	verificaERR_DECLARED(lista_tabelas,$1);
-	insereUltimaTabela(&lista_tabelas, $1);
+	insereEntradaTabela(&lista_tabelas, $1);
 }
 bloco_comandos
 {
