@@ -81,6 +81,7 @@ void insereEntradaTabela(Tabela** tabela, ValorLexico* valor_lexico)
     novo->info->linha_token = valor_lexico->linha_token;
     novo->info->natureza_token = valor_lexico->natureza_token;
     novo->info->tipo_token = valor_lexico->tipo_token;
+    novo->info->tamanho_token = valor_lexico->tamanho_token;
 
     novo->proximo = NULL;
 
