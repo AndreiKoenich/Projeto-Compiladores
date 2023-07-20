@@ -88,6 +88,7 @@ void pushTabela(Lista_tabelas** lista, Tabela *nova_tabela);
 void destroiTabela(Tabela** tabela);
 void destroiListaTabelas(Lista_tabelas** lista_tabelas);
 void imprimeTabela(Tabela *tabela);
+void imprimeUltimaTabela(Lista_tabelas* lista_tabelas);
 void verificaERR_UNDECLARED_FUNCTION(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
 void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
 void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas, char *valor_token, int linha_token);
