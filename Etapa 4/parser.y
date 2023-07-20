@@ -65,7 +65,6 @@ extern int tipo_atual;
 %type<nodo> lista_identificadores
 %type<nodo> identificador_local
 %type<nodo> bloco_comandos
-%type<nodo> bloco_comandos_if_while
 %type<nodo> atribuicao
 %type<nodo> chamada_funcao
 %type<nodo> lista_expressoes
@@ -307,8 +306,6 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 
 bloco_comandos:	'{' lista_comandos '}'  { imprimeUltimaTabela(lista_tabelas); popTabela(&lista_tabelas); $$ = $2;   };
 bloco_comandos:	'{' '}' 		{ imprimeUltimaTabela(lista_tabelas); popTabela(&lista_tabelas); $$ = NULL; };
-bloco_comandos_if_while:	'{' lista_comandos '}'  {  $$ = $2;   };
-bloco_comandos_if_while:	'{' '}' 		{  $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {
@@ -346,34 +343,34 @@ lista_expressoes: expressao ',' lista_expressoes	{ $$ = $1; adicionaNodo($$, $3)
 
 retorno: TK_PR_RETURN expressao { $1->tipo_token = infereTipoExpressao($2); $$ = criaNodo($1); adicionaNodo($$, $2); };
 
-clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos_if_while
+clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' push_tabela_escopo bloco_comandos
 {
 	$1->tipo_token = infereTipoExpressao($3);
 	$$ = criaNodo($1);
 	adicionaNodo($$, $3);
 	
-	if($5 != NULL)
-		adicionaNodo($$, $5);
+	if($6 != NULL)
+		adicionaNodo($$, $6);
 };
-clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' bloco_comandos_if_while TK_PR_ELSE bloco_comandos_if_while
+clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' push_tabela_escopo bloco_comandos TK_PR_ELSE push_tabela_escopo bloco_comandos
 {
 	$1->tipo_token = infereTipoExpressao($3);
 	$$ = criaNodo($1);
 	adicionaNodo($$, $3);
 	
-	if($5 != NULL)
-		adicionaNodo($$, $5);
-	if($7 != NULL)
-		adicionaNodo($$, $7);
+	if($6 != NULL)
+		adicionaNodo($$, $6);
+	if($9 != NULL)
+		adicionaNodo($$, $9);
 };
 
-iterativo: TK_PR_WHILE '(' expressao ')' bloco_comandos_if_while
+iterativo: TK_PR_WHILE '(' expressao ')' push_tabela_escopo bloco_comandos
 {
 	$1->tipo_token = infereTipoExpressao($3);
 	$$ = criaNodo($1);
 	adicionaNodo($$, $3);
-	if($5 != NULL)
-		adicionaNodo($$, $5);
+	if($6 != NULL)
+		adicionaNodo($$, $6);
 };
 
 expressao:  expressao2 					{ $$ = $1; };
