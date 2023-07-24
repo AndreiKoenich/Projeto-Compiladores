@@ -100,10 +100,10 @@ programa: lista
 	$$ = $1;
 	arvore = $$;
 	
-	//popTabela(&lista_tabelas);
 	printf("TABELA GLOBAL:\n\n");
 	imprimeTabela(lista_tabelas->tabela_simbolos);
 	printf("------------------\n");
+	popTabela(&lista_tabelas);
 };
 
 programa: /* Vazio */ { $$ = NULL; };
