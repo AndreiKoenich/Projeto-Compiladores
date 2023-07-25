@@ -100,9 +100,9 @@ programa: lista
 	$$ = $1;
 	arvore = $$;
 	
-	printf("TABELA GLOBAL:\n\n");
-	imprimeTabela(lista_tabelas->tabela_simbolos);
-	printf("------------------\n");
+	//printf("TABELA GLOBAL:\n\n");
+	//imprimeTabela(lista_tabelas->tabela_simbolos);
+	//printf("------------------\n");
 	popTabela(&lista_tabelas);
 };
 
@@ -304,8 +304,8 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	insereUltimaTabela(&lista_tabelas, $1); 
 };
 
-bloco_comandos:	'{' lista_comandos '}'  { imprimeUltimaTabela(lista_tabelas); popTabela(&lista_tabelas); $$ = $2;   };
-bloco_comandos:	'{' '}' 		{ imprimeUltimaTabela(lista_tabelas); popTabela(&lista_tabelas); $$ = NULL; };
+bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas)*/; popTabela(&lista_tabelas); $$ = $2;   };
+bloco_comandos:	'{' '}' 		{ /*imprimeUltimaTabela(lista_tabelas)*/; popTabela(&lista_tabelas); $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {
