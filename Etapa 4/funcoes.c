@@ -8,7 +8,8 @@
 #include <string.h>
 #include "funcoes.h"
 
-char* concat_call(char* s1)
+/* Adiciona a string "call" ao inicio de uma outra string. */
+char* concat_call(char* s1) 
 {
     int s_size = strlen(s1);
 	char* s_copy = strdup(s1);
@@ -18,7 +19,8 @@ char* concat_call(char* s1)
     return s1;
 }
 
-Nodo* criaNodo(ValorLexico *info)
+/* Recebe informacoes a respeito de um novo nodo a ser inserido na arvore, instancia e retorna o nodo. */
+Nodo* criaNodo(ValorLexico *info) 
 {
     Nodo* novoNodo = (Nodo*)malloc(sizeof(Nodo));
     novoNodo->info = info;
@@ -27,6 +29,7 @@ Nodo* criaNodo(ValorLexico *info)
     return novoNodo;
 }
 
+/* Adiciona um novo nodo na arvore AST. */
 void adicionaNodo(Nodo* pai, Nodo* filho)
 {
     pai->numeroFilhos++;
@@ -34,6 +37,7 @@ void adicionaNodo(Nodo* pai, Nodo* filho)
     pai->filho[pai->numeroFilhos - 1] = filho;
 }
 
+/* Remove um nodo da arvore AST. */
 void removeNodo(Nodo* node)
 {
     if (node == NULL)
@@ -45,6 +49,7 @@ void removeNodo(Nodo* node)
     free(node->filho);
     free(node);
 }
+
 
 Nodo* get_last_valid_node_from_list(Nodo* list)
 {
@@ -72,6 +77,7 @@ Nodo* get_last_valid_node_from_list(Nodo* list)
     return list;
 }
 
+/* Recebe uma tabela de simbolos e uma entrada, e insere as informacoes da entrada na tabela. */
 void insereEntradaTabela(Tabela** tabela, ValorLexico* valor_lexico)
 {
     Tabela* novo = (Tabela*)malloc(sizeof(Tabela));
@@ -96,9 +102,9 @@ void insereEntradaTabela(Tabela** tabela, ValorLexico* valor_lexico)
     }
 }
 
-
-void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico) {
-    
+/* Recebe uma lista de tabela de simbolos e uma entrada, e insere a entrada na ultima tabela de simbolos da lista. */
+void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico) 
+{   
     if (*lista_tabelas == NULL || valor_lexico == NULL) {
         return;
     }
@@ -112,6 +118,7 @@ void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico
    insereEntradaTabela(&(atual->tabela_simbolos), valor_lexico);
 }
 
+/* Insere uma nova tabela de simbolos na lista de tabela de simbolos. */
 void pushTabela(Lista_tabelas **lista, Tabela *nova_tabela)
 {
     //printf("EMPILHOU\n");
@@ -136,6 +143,7 @@ void pushTabela(Lista_tabelas **lista, Tabela *nova_tabela)
     }
 }
 
+/* Remove a ultima tabela de simbolos que foi adicionada na lista de tabela de simbolos. */
 void popTabela(Lista_tabelas **lista_tabelas)
 {
     //printf("DESEMPILHOU\n");
@@ -158,7 +166,7 @@ void popTabela(Lista_tabelas **lista_tabelas)
     free(atual);
 }
 
-
+/* Destroi uma tabela de simbolos, liberando o espaco de memoria referente a ela. */
 void destroiTabela(Tabela** tabela) 
 {
     Tabela* atual = *tabela;
@@ -176,6 +184,7 @@ void destroiTabela(Tabela** tabela)
     *tabela = NULL;
 }
 
+/* Destroi todas as tabelas de simbolos de uma lista de tabelas de simbolos. */
 void destroiListaTabelas(Lista_tabelas** lista_tabelas) 
 {
     Lista_tabelas* atual = *lista_tabelas;
@@ -192,6 +201,9 @@ void destroiListaTabelas(Lista_tabelas** lista_tabelas)
     *lista_tabelas = NULL;
 }
 
+/* Verifica os seguintes erros de semantica:
+ERR_UNDECLARED - Caso o identificador não tenha sido declarado no seu uso;
+ERR_FUNCTION   - Caso o identificador dito como funcao esteja sendo usado como variavel. */
 void verificaERR_UNDECLARED_FUNCTION(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
 {
     Lista_tabelas *lista_atual = lista_tabelas;
@@ -231,6 +243,9 @@ void verificaERR_UNDECLARED_FUNCTION(Lista_tabelas *lista_tabelas, ValorLexico* 
     }
 }
 
+/* Verifica os seguintes erros de semantica, nos casos de uma chama de funcao no codigo sendo analisado:
+ERR_VARIABLE   - Caso o identificador dito como variavel esteja sendo usado como funcao.
+ERR_UNDECLARED - Caso o identificador não tenha sido declarado no seu uso; */
 void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas, char *valor_token, int linha_token)
 {
 	Lista_tabelas *lista_atual = lista_tabelas;
@@ -260,7 +275,8 @@ void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas,
 	exit(ERR_UNDECLARED);	
 }
 
-
+/* Verifica o seguinte erro de semantica:
+ERR_DECLARED - Nos casos em que um identificador ja declarado esteja sendo redeclarado. */
 void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
 {
 	Lista_tabelas *lista_atual = lista_tabelas;
@@ -287,6 +303,7 @@ void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificad
 	return;
 }
 
+/* Recebe um valor inteiro referente a um tipo, e retorna uma string indicando o tipo. */
 char* obtemNomeTipo (int valor_tipo)
 {
 	char* nome_tipo = calloc(MAXIMO_CARACTERES_TIPO, sizeof(char));
@@ -299,8 +316,7 @@ char* obtemNomeTipo (int valor_tipo)
 	return nome_tipo;
 }
 
-
-
+/* Recebe uma string qualificando uma chamada de funcao com "call " concatenado, e obtem o nome da funcao sendo chamada. */
 char* obtemNomeFuncao(char* nomeChamadaFuncao)
 {
 	char *nomeFuncao = calloc(MAXIMO_CARACTERES_NOME,sizeof(char));
@@ -308,6 +324,7 @@ char* obtemNomeFuncao(char* nomeChamadaFuncao)
 	return nomeFuncao;
 }
 
+/* Recebe uma tabela de simbolos, e imprime cada simbolo com suas caracteristicas. */
 void imprimeTabela(Tabela *tabela)
 {
 	Tabela* atual = tabela;
@@ -323,6 +340,7 @@ void imprimeTabela(Tabela *tabela)
 	}
 }
 
+/* Recebe uma lista de tabelas de simbolos, e imprime a ultima tabela inserida na lista. */
 void imprimeUltimaTabela(Lista_tabelas *lista_tabelas)
 {
 	Lista_tabelas *atual = lista_tabelas;
@@ -333,6 +351,8 @@ void imprimeUltimaTabela(Lista_tabelas *lista_tabelas)
 	printf("------------------\n");
 }
 
+/* Recebe dois inteiros representando um tipo de duas variaveis envolvidas em uma operacao,
+e infere qual sera o tipo do resultado da operacao. */
 int infereTipo(int tipo1, int tipo2)
 {
 	if (tipo1 == FLOAT || tipo2 == FLOAT)
@@ -357,6 +377,8 @@ int infereTipo(int tipo1, int tipo2)
 		return -1;	
 }
 
+/* Recebe um nodo raiz de uma expressao, e decide qual sera o tipo do nodo, a partir
+da inferencia de tipos aplicada na expressao. */
 int infereTipoExpressao(Nodo *raiz) 
 {
     int tipo_encontrado = -1;
@@ -375,6 +397,8 @@ int infereTipoExpressao(Nodo *raiz)
     return tipo_encontrado;
 }
 
+/* Recebe uma string representando um tipo, e retorna o valor inteiro que
+corresponde a esse tipo. */
 int verificaTipo(char *tipo_token)
 {
 	if (strcmp(tipo_token,"int") == 0)
@@ -387,6 +411,7 @@ int verificaTipo(char *tipo_token)
 		return -1;
 }
 
+/* Recebe um identificador, e obtem seu tipo, que esta informado na ultima tabela de simbolos inserida. */
 int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
 {
     Lista_tabelas *lista_atual = lista_tabelas;
@@ -409,6 +434,7 @@ int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador)
     return tipo_atual;	
 }
 
+/* Recebe um inteiro que caracteriza um tipo, e retorna o tamanho em memoria ocupado por esse tipo. */
 int infereTamanho(int tipo_token)
 {
 	if (tipo_token == INT)
@@ -421,6 +447,7 @@ int infereTamanho(int tipo_token)
 		return 0;
 }
 
+/* Recebe duas listas de nos da AST, e concatena as duas. */
 void concatenate_list(Nodo* list1, Nodo* list2)
 {
     Nodo* last_node_from_list = get_last_valid_node_from_list(list1);
