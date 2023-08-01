@@ -181,8 +181,8 @@ tupla_tipo_parametro: tipo TK_IDENTIFICADOR
 
 declaracao_global: tipo { tipo_atual = verificaTipo($1->valor_token); } lista_identificadores_globais ';'
 
-lista_identificadores_globais: TK_IDENTIFICADOR ',' lista_identificadores_globais 	{ $1->tipo_token = tipo_atual; $1->tamanho_token = infereTamanho(tipo_atual); insereUltimaTabela(&lista_tabelas, $1); };
-lista_identificadores_globais: TK_IDENTIFICADOR						{ $1->tipo_token = tipo_atual; $1->tamanho_token = infereTamanho(tipo_atual); insereUltimaTabela(&lista_tabelas, $1); };
+lista_identificadores_globais: TK_IDENTIFICADOR ',' lista_identificadores_globais 	{ $1->tipo_token = tipo_atual; $1->tamanho_token = infereTamanho(tipo_atual); verificaERR_DECLARED(lista_tabelas,$1); insereUltimaTabela(&lista_tabelas, $1); };
+lista_identificadores_globais: TK_IDENTIFICADOR						{ $1->tipo_token = tipo_atual; $1->tamanho_token = infereTamanho(tipo_atual); verificaERR_DECLARED(lista_tabelas,$1); insereUltimaTabela(&lista_tabelas, $1); };
 
 lista_comandos: comando_simples ';' lista_comandos
 {
