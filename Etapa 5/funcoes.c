@@ -453,3 +453,31 @@ void concatenate_list(Nodo* list1, Nodo* list2)
     Nodo* last_node_from_list = get_last_valid_node_from_list(list1);
     adicionaNodo(last_node_from_list, list2);
 }
+
+Instrucao* criaInstrucao (char *operando1, char *operando2, char *operando3, char *operacao)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operando1, operando1);
+    strcpy(instrucao->operando2, operando2);
+    strcpy(instrucao->operando3, operando3);
+    strcpy(instrucao->operacao, operacao);
+    return instrucao;
+}
+
+void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao)
+{
+    Codigo *nova_instrucao = (Codigo*)malloc(sizeof(Codigo));
+    if (nova_instrucao == NULL)
+        return;
+    nova_instrucao->instrucao = instrucao;
+    nova_instrucao->proxima_instrucao = NULL;
+    if (*inicio_codigo == NULL)
+        *inicio_codigo = nova_instrucao;
+    else
+    {
+        Codigo *ultimo = *inicio_codigo;
+        while (ultimo->proxima_instrucao != NULL)
+            ultimo = ultimo->proxima_instrucao;
+        ultimo->proxima_instrucao = nova_instrucao;
+    }
+}

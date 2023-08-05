@@ -40,8 +40,27 @@
 #define FLOAT 1
 #define BOOL 2
 
+#define TAMANHO_NOME_OPERANDO 3
+#define TAMANHO_NOME_INSTRUCAO 8
+
 #include <string.h>
 #include <stdlib.h>
+
+typedef struct 
+{
+	char operando1[TAMANHO_NOME_OPERANDO];
+	char operando2[TAMANHO_NOME_OPERANDO];
+	char operando3[TAMANHO_NOME_OPERANDO];
+	char operacao[TAMANHO_NOME_INSTRUCAO];
+	
+} Instrucao;
+
+typedef struct codigo
+{
+	Instrucao *instrucao;
+	struct codigo *proxima_instrucao;
+
+} Codigo;
 
 /* Estrutura contendo as informacoes de cada nodo da AST. */
 typedef struct 
@@ -61,6 +80,7 @@ typedef struct nodo
 	ValorLexico *info;
 	struct nodo** filho;
 	int numeroFilhos;
+	Codigo codigo;
     
 } Nodo;
 
@@ -114,5 +134,8 @@ int infereTipoExpressao(Nodo *raiz);
 int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
 int infereTamanho(int tipo_token);
 char* obtemNomeFuncao(char* nomeChamadaFuncao);
+
+Instrucao* criaInstrucao (char *operando1, char *operando2, char *operando3, char *operacao);
+void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao);
 
 #endif
