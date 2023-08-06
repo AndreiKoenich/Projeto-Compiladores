@@ -1,0 +1,6 @@
+main ()-> int
+{
+ int a;
+ float b;
+ bool c;
+}
