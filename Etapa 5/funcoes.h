@@ -25,7 +25,7 @@
 
 /* Constantes para determinar o tamanho de memoria (em bytes) ocupado por cada tipo de dado. */
 #define TAMANHO_MEMORIA_INT 4
-#define TAMANHO_MEMORIA_FLOAT 4
+#define TAMANHO_MEMORIA_FLOAT 8
 #define TAMANHO_MEMORIA_BOOL 1
 
 /* Constantes para associar um valor inteiro a cada tipo de erro semantico. */
@@ -42,6 +42,9 @@
 
 #define TAMANHO_NOME_OPERANDO 3
 #define TAMANHO_NOME_INSTRUCAO 8
+
+#define NOME_REGISTRADOR_GLOBAL "rbss"
+#define NOME_REGISTRADOR_LOCAL "rfp"
 
 #include <string.h>
 #include <stdlib.h>
@@ -71,6 +74,7 @@ typedef struct
 	int natureza_token;
 	int tipo_token;
 	int tamanho_token;
+	int deslocamento_memoria;
 	
 } ValorLexico;
 
@@ -80,8 +84,8 @@ typedef struct nodo
 	ValorLexico *info;
 	struct nodo** filho;
 	int numeroFilhos;
-	Codigo codigo;
-    
+	Codigo *codigo;
+  
 } Nodo;
 
 /* Estrutura representando cada entrada de uma tabela, implementada como uma lista simplesmente encadeada. */
@@ -98,21 +102,22 @@ typedef struct lista_tabelas
 	struct lista_tabelas *proximo;
 	struct lista_tabelas *anterior;
 	Tabela *tabela_simbolos;
+	int endereco_atual;
 
 } Lista_tabelas;
 
-/* FUNCOES PARA MANIPULACOES DA ARVORE DE SINTAXE ABSTRATA */
+/* Funcoes para manipulacoes da arvore de sintaxe abstrata. */
 
 Nodo* criaNodo(ValorLexico* info);
 void adicionaNodo(Nodo* pai, Nodo* filho);
 void removeNodo(Nodo* node);
 
-/* FUNCOES PARA MANIPULACOES DE LISTAS ENCADEADAS */
+/* Funcoes para manipulacoes de listas encadeadas. */
 
 char* concat_call(char* s1);
 void concatenate_list(Nodo* list1, Nodo* list2);
 
-/* FUNCOES PARA MANIPULACOES DAS TABELAS DE SIMBOLOS */
+/* Funcoes para manipulacoes da tabela de simbolos. */
 
 void insereEntradaTabela (Tabela** tabela, ValorLexico *valor_lexico);
 void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico);
@@ -123,7 +128,7 @@ void destroiListaTabelas(Lista_tabelas** lista_tabelas);
 void imprimeTabela(Tabela *tabela);
 void imprimeUltimaTabela(Lista_tabelas* lista_tabelas);
 
-/* FUNCOES PARA ANALISES SEMANTICAS E VERIFICACOES DE ERROS */
+/* Funcoes para analises semanticas e verificacao de erros. */
 
 void verificaERR_UNDECLARED_FUNCTION(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
 void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
@@ -135,7 +140,12 @@ int obtemTipo(Lista_tabelas *lista_tabelas, ValorLexico* identificador);
 int infereTamanho(int tipo_token);
 char* obtemNomeFuncao(char* nomeChamadaFuncao);
 
+/* Funcoes para criacao de instrucoes ILOC (linguagem intermediaria). */
+
 Instrucao* criaInstrucao (char *operando1, char *operando2, char *operando3, char *operacao);
 void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao);
+void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador);
+void imprimeInstrucao(Instrucao *instrucao);
+void concatenaCodigo (Codigo *codigo1, Codigo *codigo2);
 
 #endif
