@@ -14,12 +14,20 @@ int yylex(void);
 void yyerror (char const *s);
 
 extern void *arvore;
+
 extern Lista_tabelas *lista_tabelas;
+
 extern Tabela *tabela_global;
 extern Tabela *tabela_escopo;
+
 extern int tipo_atual;
+extern int temp_atual;
+extern int rotulo_atual;
+
 extern Codigo *codigo;
+
 extern Instrucao *instrucao_atual;
+
 
 %}
 

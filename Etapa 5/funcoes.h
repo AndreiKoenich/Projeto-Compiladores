@@ -76,6 +76,8 @@ typedef struct
 	int tamanho_token;
 	int deslocamento_memoria;
 	
+	Codigo *codigo;
+	
 } ValorLexico;
 
 /* Estrutura responsavel por representar um nodo da AST, com suas informacoes e seus filhos. */
@@ -84,7 +86,6 @@ typedef struct nodo
 	ValorLexico *info;
 	struct nodo** filho;
 	int numeroFilhos;
-	Codigo *codigo;
   
 } Nodo;
 

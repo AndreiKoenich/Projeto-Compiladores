@@ -15,6 +15,8 @@ Tabela *tabela_escopo = NULL;
 Codigo *codigo = NULL;
 Instrucao *instrucao_atual = NULL;
 int tipo_atual = -1;
+int temp_atual = 0;
+int rotulo_atual = 0;
 
 void exporta (void *arvore)
 {
