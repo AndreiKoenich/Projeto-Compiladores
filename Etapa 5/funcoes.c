@@ -33,7 +33,7 @@ Nodo* criaNodo(ValorLexico *info)
 void adicionaNodo(Nodo* pai, Nodo* filho)
 {
     pai->numeroFilhos++;
-    pai->filho = (Nodo**)realloc(pai->filho, pai->numeroFilhos * sizeof(Nodo*));
+    pai->filho = (Nodo**)realloc(pai->filho, pai->numeroFilhos*sizeof(Nodo*));
     pai->filho[pai->numeroFilhos - 1] = filho;
 }
 
@@ -88,6 +88,7 @@ void insereEntradaTabela(Tabela** tabela, ValorLexico* valor_lexico)
     novo->info->natureza_token = valor_lexico->natureza_token;
     novo->info->tipo_token = valor_lexico->tipo_token;
     novo->info->tamanho_token = valor_lexico->tamanho_token;
+    novo->info->deslocamento_memoria = valor_lexico->deslocamento_memoria;
 
     novo->proximo = NULL;
 
@@ -105,17 +106,17 @@ void insereEntradaTabela(Tabela** tabela, ValorLexico* valor_lexico)
 /* Recebe uma lista de tabela de simbolos e uma entrada, e insere a entrada na ultima tabela de simbolos da lista. */
 void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico) 
 {   
-    if (*lista_tabelas == NULL || valor_lexico == NULL) {
+    if (*lista_tabelas == NULL || valor_lexico == NULL) 
         return;
-    }
     
     Lista_tabelas* atual = *lista_tabelas;
     
-    while (atual->proximo != NULL) {
+    while (atual->proximo != NULL) 
         atual = atual->proximo;
-    }
     
+   valor_lexico->deslocamento_memoria = atual->endereco_atual; /* Obtem o endereco atual da variavel (que pode ser local ou global), e armazena na estrutura. */
    insereEntradaTabela(&(atual->tabela_simbolos), valor_lexico);
+   atual->endereco_atual += infereTamanho(valor_lexico->tipo_token); /* Atualiza o espaco de memoria ocupado. */
 }
 
 /* Insere uma nova tabela de simbolos na lista de tabela de simbolos. */
@@ -126,6 +127,7 @@ void pushTabela(Lista_tabelas **lista, Tabela *nova_tabela)
     Lista_tabelas* novo = (Lista_tabelas*)malloc(sizeof(Lista_tabelas));
     novo->tabela_simbolos = nova_tabela;
     novo->proximo = NULL;
+    novo->endereco_atual = 0; /* Inicializa o endereco atual como sendo zero, sem nenhum deslocamento. */
 
     if (*lista == NULL)
     {
@@ -335,7 +337,8 @@ void imprimeTabela(Tabela *tabela)
 		printf("TIPO: %s\n", obtemNomeTipo(atual->info->tipo_token));
 		printf("NATUREZA: %d\n", atual->info->natureza_token);
 		printf("LINHA: %d\n", atual->info->linha_token);
-		printf("TAMANHO: %d\n\n", atual->info->tamanho_token);
+		printf("TAMANHO: %d\n", atual->info->tamanho_token);
+		printf("DESLOCAMENTO: %d\n\n", atual->info->deslocamento_memoria);
 		atual = atual->proximo;
 	}
 }
@@ -481,3 +484,28 @@ void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao)
         ultimo->proxima_instrucao = nova_instrucao;
     }
 }
+
+void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador)
+{
+	if (lista_tabelas->proximo == NULL)
+		strcpy(registrador,NOME_REGISTRADOR_GLOBAL);
+	else
+		strcpy(registrador,NOME_REGISTRADOR_LOCAL);
+}
+
+void imprimeInstrucao(Instrucao *instrucao)
+{
+	printf("%s\t%s, %s  =>  %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao -> operando3);
+}
+
+void concatenaCodigo (Codigo *codigo1, Codigo *codigo2)
+{
+    if (codigo1 == NULL || codigo2 == NULL)
+        return;
+
+    Codigo *ultimo = codigo1;
+    while (ultimo->proxima_instrucao != NULL)
+        ultimo = ultimo->proxima_instrucao;
+    ultimo->proxima_instrucao = codigo2;
+}
+
