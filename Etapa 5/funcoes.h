@@ -40,8 +40,8 @@
 #define FLOAT 1
 #define BOOL 2
 
-#define TAMANHO_NOME_OPERANDO 3
-#define TAMANHO_NOME_INSTRUCAO 8
+#define TAMANHO_NOME_OPERANDO 10
+#define TAMANHO_NOME_INSTRUCAO 10
 
 #define NOME_REGISTRADOR_GLOBAL "rbss"
 #define NOME_REGISTRADOR_LOCAL "rfp"
@@ -74,7 +74,9 @@ typedef struct
 	int natureza_token;
 	int tipo_token;
 	int tamanho_token;
-	int deslocamento_memoria;
+	
+	int deslocamento;
+	int temporario;
 	
 	Codigo *codigo;
 	
@@ -143,11 +145,17 @@ char* obtemNomeFuncao(char* nomeChamadaFuncao);
 
 /* Funcoes para criacao de instrucoes ILOC (linguagem intermediaria). */
 
-Instrucao* criaInstrucao (char *operando1, char *operando2, char *operando3, char *operacao);
+Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int operando2, int operando3);
+Instrucao* criaInstrucao_loadI (char *operando1, int operando2);
+Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3);
+Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3);
 void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao);
 void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador);
-void imprimeInstrucao(Instrucao *instrucao);
+void imprimeLoadStore(Instrucao *instrucao);
+void imprimeAritmetica(Instrucao *instrucao);
 void concatenaCodigo (Codigo *codigo1, Codigo *codigo2);
 int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token);
+void atualizaRegistradorGeral(char *str, int N);
+void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador);
 
 #endif
