@@ -148,5 +148,6 @@ void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao);
 void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador);
 void imprimeInstrucao(Instrucao *instrucao);
 void concatenaCodigo (Codigo *codigo1, Codigo *codigo2);
+int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token);
 
 #endif

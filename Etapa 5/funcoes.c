@@ -509,3 +509,24 @@ void concatenaCodigo (Codigo *codigo1, Codigo *codigo2)
     ultimo->proxima_instrucao = codigo2;
 }
 
+int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token)
+{
+	Lista_tabelas *lista_atual = lista_tabelas;
+    	while (lista_atual->proximo != NULL)
+       		lista_atual = lista_atual->proximo;
+
+	while (lista_atual != NULL)
+	{
+        	Tabela *tabela_atual = lista_atual->tabela_simbolos;
+
+		while (tabela_atual != NULL)
+		{
+		    if (strcmp(valor_token, tabela_atual->info->valor_token) == 0)
+			return tabela_atual->info->deslocamento_memoria;	
+		    tabela_atual = tabela_atual->proximo;
+		}
+
+        	lista_atual = lista_atual->anterior;
+    	}
+}
+
