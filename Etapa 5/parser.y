@@ -21,12 +21,15 @@ extern Tabela *tabela_global;
 extern Tabela *tabela_escopo;
 
 extern int tipo_atual;
-extern int temp_atual;
-extern int rotulo_atual;
+
+extern int temporario_atual;
+extern int deslocamento_atual;
 
 extern Codigo *codigo;
 
 extern Instrucao *instrucao_atual;
+
+extern char registrador_escopo[TAMANHO_NOME_OPERANDO];
 
 
 %}
@@ -110,9 +113,9 @@ programa: lista
 	$$ = $1;
 	arvore = $$;
 	
-	printf("TABELA GLOBAL:\n\n");
+	/*printf("TABELA GLOBAL:\n\n");
 	imprimeTabela(lista_tabelas->tabela_simbolos);
-	printf("------------------\n");
+	printf("------------------\n");*/
 	popTabela(&lista_tabelas);
 };
 
@@ -192,9 +195,20 @@ tupla_tipo_parametro: tipo TK_IDENTIFICADOR
 declaracao_global: tipo { tipo_atual = verificaTipo($1->valor_token); } lista_identificadores_globais ';'
 
 lista_identificadores_globais: TK_IDENTIFICADOR ',' lista_identificadores_globais 	
-{ $1->tipo_token = tipo_atual; $1->tamanho_token = infereTamanho(tipo_atual); verificaERR_DECLARED(lista_tabelas,$1); insereUltimaTabela(&lista_tabelas, $1); };
+{ 
+	$1->tipo_token = tipo_atual; 
+	$1->tamanho_token = infereTamanho(tipo_atual); 
+	verificaERR_DECLARED(lista_tabelas,$1); 
+	insereUltimaTabela(&lista_tabelas, $1); 
+};
+
 lista_identificadores_globais: TK_IDENTIFICADOR						
-{ $1->tipo_token = tipo_atual; $1->tamanho_token = infereTamanho(tipo_atual); verificaERR_DECLARED(lista_tabelas,$1); insereUltimaTabela(&lista_tabelas, $1); };
+{ 
+	$1->tipo_token = tipo_atual; 
+	$1->tamanho_token = infereTamanho(tipo_atual); 
+	verificaERR_DECLARED(lista_tabelas,$1); 
+	insereUltimaTabela(&lista_tabelas, $1);
+};
 
 lista_comandos: comando_simples ';' lista_comandos
 {
@@ -314,10 +328,14 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	
 	verificaERR_DECLARED(lista_tabelas, $1);
 	insereUltimaTabela(&lista_tabelas, $1); 
+	
+	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo);
+	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
+	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->temporario,registrador_escopo,deslocamento_atual));
 };
 
-bloco_comandos:	'{' lista_comandos '}'  { imprimeUltimaTabela(lista_tabelas); popTabela(&lista_tabelas); $$ = $2;   };
-bloco_comandos:	'{' '}' 		{ imprimeUltimaTabela(lista_tabelas); popTabela(&lista_tabelas); $$ = NULL; };
+bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = $2;   };
+bloco_comandos:	'{' '}' 		{ /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {
@@ -329,6 +347,10 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	$1->tipo_token = infereTipoExpressao($$); 
 	$1->tamanho_token = infereTamanho($1->tipo_token);
 	verificaERR_UNDECLARED_FUNCTION(lista_tabelas,$1);
+	
+	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo);
+	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
+	insereInstrucao(&($1->codigo), criaInstrucao_storeAI($3->info->temporario,registrador_escopo,deslocamento_atual));
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
@@ -385,34 +407,160 @@ iterativo: TK_PR_WHILE '(' expressao ')' push_tabela_escopo bloco_comandos
 		adicionaNodo($$, $6);
 };
 
-expressao:  expressao2 					{ $$ = $1; };
+expressao:  expressao2	{ $$ = $1; };
 
-expressao:  expressao  TK_OC_OR expressao2 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
+expressao:  expressao  TK_OC_OR expressao2
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("or",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};
 
-expressao2: expressao3 					{ $$ = $1; };
+expressao2: expressao3 { $$ = $1; };
 
-expressao2: expressao2 TK_OC_AND expressao3 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
+expressao2: expressao2 TK_OC_AND expressao3
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("and",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+}; 		
 
-expressao3: expressao4 					{ $$ = $1; };
-expressao3: expressao3 TK_OC_EQ expressao4 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
-expressao3: expressao3 TK_OC_NE expressao4 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
+expressao3: expressao4 { $$ = $1; };
+expressao3: expressao3 TK_OC_EQ expressao4
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_EQ",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+}; 		
+ 	
+expressao3: expressao3 TK_OC_NE expressao4
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_NE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};		
 	
-expressao4: expressao5 					{ $$ = $1; };
-expressao4: expressao4 '<' expressao5 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
-expressao4: expressao4 '>' expressao5 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
-expressao4: expressao4 TK_OC_LE expressao5 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
-expressao4: expressao4 TK_OC_GE expressao5 		{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
+expressao4: expressao5 	{ $$ = $1; };
+expressao4: expressao4 '<' expressao5 	
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_LT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};
+			
+expressao4: expressao4 '>' expressao5
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_GT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};
+			
+expressao4: expressao4 TK_OC_LE expressao5
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_LE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};
 
-expressao5: expressao6 					{ $$ = $1;};
+expressao4: expressao4 TK_OC_GE expressao5
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_GE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};
 
-expressao5: expressao5 '+' expressao6 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
+expressao5: expressao6 	{ $$ = $1;};
 
+expressao5: expressao5 '+' expressao6 			
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("add",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};
 
-expressao5: expressao5 '-' expressao6 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
+expressao5: expressao5 '-' expressao6 		
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("sub",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};
 
-expressao6: expressao7 					{ $$ = $1; };
-expressao6: expressao6 '*' expressao7 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
-expressao6: expressao6 '/' expressao7 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
+expressao6: expressao7 	{ $$ = $1; };
+
+expressao6: expressao6 '*' expressao7
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("mult",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};
+
+expressao6: expressao6 '/' expressao7 
+{ 
+	$$ = criaNodo($2); 
+  	adicionaNodo($$, $1); 
+  	adicionaNodo($$, $3); 
+  	
+  	$$->info->temporario = temporario_atual;
+  	temporario_atual++;
+  	
+  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("div",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+};	
+		
 expressao6: expressao6 '%' expressao7 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
 
 expressao7: '(' expressao ')'				{ $$ = $2; };
@@ -427,6 +575,13 @@ expressao7: TK_IDENTIFICADOR
 	verificaERR_UNDECLARED_FUNCTION(lista_tabelas,$1);
 	$1->tipo_token = obtemTipo(lista_tabelas,$1);
 	$1->tamanho_token = infereTamanho($1->tipo_token);
+	
+	$1->temporario = temporario_atual;
+	temporario_atual++;
+	
+	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo);
+	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
+	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->temporario,registrador_escopo,deslocamento_atual));
 };
 
 literal: TK_LIT_INT  	
@@ -434,6 +589,10 @@ literal: TK_LIT_INT
 	$$ = $1;
 	$1->tipo_token = INT;
 	insereUltimaTabela(&lista_tabelas, $1); 
+	
+	$1->temporario = temporario_atual;
+	temporario_atual++;
+	insereInstrucao(&($$->codigo), criaInstrucao_loadI($1->valor_token,$1->temporario));
 };
 
 literal: TK_LIT_FLOAT 	

@@ -15,8 +15,10 @@ Tabela *tabela_escopo = NULL;
 Codigo *codigo = NULL;
 Instrucao *instrucao_atual = NULL;
 int tipo_atual = -1;
-int temp_atual = 0;
-int rotulo_atual = 0;
+int temporario_atual = 1;
+int deslocamento_atual = 0;
+
+char registrador_escopo[TAMANHO_NOME_OPERANDO];
 
 void exporta (void *arvore)
 {

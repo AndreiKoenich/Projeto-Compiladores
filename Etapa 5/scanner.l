@@ -192,6 +192,7 @@ int get_line_number();
 	yylval.valor_lexico->tipo_token = -1;
 	yylval.valor_lexico->tamanho_token = TAMANHO_MEMORIA_BOOL;
 	yylval.valor_lexico->codigo = NULL;
+	yylval.valor_lexico->temporario = -1;
 	return TK_LIT_FALSE;}
 	
 "true" {
@@ -202,6 +203,7 @@ int get_line_number();
 	yylval.valor_lexico->tipo_token = -1;
 	yylval.valor_lexico->tamanho_token = TAMANHO_MEMORIA_BOOL;
 	yylval.valor_lexico->codigo = NULL;
+	yylval.valor_lexico->temporario = -1;
 	return TK_LIT_TRUE;}
 	 
 [a-z_]+ {
@@ -212,6 +214,7 @@ int get_line_number();
 	yylval.valor_lexico->tipo_token = -1;
 	yylval.valor_lexico->tamanho_token = 0;
 	yylval.valor_lexico->codigo = NULL;
+	yylval.valor_lexico->temporario = -1;
 	return TK_IDENTIFICADOR;}
 	 
 [0-9]+  {
@@ -222,6 +225,7 @@ int get_line_number();
 	yylval.valor_lexico->tipo_token = -1;
 	yylval.valor_lexico->tamanho_token = TAMANHO_MEMORIA_INT;
 	yylval.valor_lexico->codigo = NULL;
+	yylval.valor_lexico->temporario = -1;
 	return TK_LIT_INT;}	 
 	 
 [0-9]*"."[0-9]+   {
@@ -232,6 +236,7 @@ int get_line_number();
 	yylval.valor_lexico->tipo_token = -1;
 	yylval.valor_lexico->tamanho_token = TAMANHO_MEMORIA_FLOAT;
 	yylval.valor_lexico->codigo = NULL;
+	yylval.valor_lexico->temporario = -1;
 	return TK_LIT_FLOAT;}	 		 
 
 . {return TK_ERRO;}

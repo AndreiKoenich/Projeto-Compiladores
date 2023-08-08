@@ -88,7 +88,7 @@ void insereEntradaTabela(Tabela** tabela, ValorLexico* valor_lexico)
     novo->info->natureza_token = valor_lexico->natureza_token;
     novo->info->tipo_token = valor_lexico->tipo_token;
     novo->info->tamanho_token = valor_lexico->tamanho_token;
-    novo->info->deslocamento_memoria = valor_lexico->deslocamento_memoria;
+    novo->info->deslocamento = valor_lexico->deslocamento;
 
     novo->proximo = NULL;
 
@@ -114,7 +114,7 @@ void insereUltimaTabela(Lista_tabelas** lista_tabelas, ValorLexico* valor_lexico
     while (atual->proximo != NULL) 
         atual = atual->proximo;
     
-   valor_lexico->deslocamento_memoria = atual->endereco_atual; /* Obtem o endereco atual da variavel (que pode ser local ou global), e armazena na estrutura. */
+   valor_lexico->deslocamento = atual->endereco_atual; /* Obtem o endereco atual da variavel (que pode ser local ou global), e armazena na estrutura. */
    insereEntradaTabela(&(atual->tabela_simbolos), valor_lexico);
    atual->endereco_atual += infereTamanho(valor_lexico->tipo_token); /* Atualiza o espaco de memoria ocupado. */
 }
@@ -338,7 +338,7 @@ void imprimeTabela(Tabela *tabela)
 		printf("NATUREZA: %d\n", atual->info->natureza_token);
 		printf("LINHA: %d\n", atual->info->linha_token);
 		printf("TAMANHO: %d\n", atual->info->tamanho_token);
-		printf("DESLOCAMENTO: %d\n\n", atual->info->deslocamento_memoria);
+		printf("DESLOCAMENTO: %d\n\n", atual->info->deslocamento);
 		atual = atual->proximo;
 	}
 }
@@ -457,13 +457,47 @@ void concatenate_list(Nodo* list1, Nodo* list2)
     adicionaNodo(last_node_from_list, list2);
 }
 
-Instrucao* criaInstrucao (char *operando1, char *operando2, char *operando3, char *operacao)
+Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    strcpy(instrucao->operando1, operando1);
-    strcpy(instrucao->operando2, operando2);
-    strcpy(instrucao->operando3, operando3);
     strcpy(instrucao->operacao, operacao);
+    sprintf(instrucao->operando1, "r%d", operando1);
+    sprintf(instrucao->operando2, "r%d", operando2);
+    sprintf(instrucao->operando3, "r%d", operando3);
+    imprimeAritmetica(instrucao);
+    return instrucao;
+}
+
+Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "loadI");
+    strcpy(instrucao->operando1, operando1);
+    sprintf(instrucao->operando2, "r%d", operando2);
+    strcpy(instrucao->operando3, "");
+    imprimeLoadStore(instrucao);
+    return instrucao;
+}
+
+Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "loadAI");
+    sprintf(instrucao->operando1, "r%d", operando1);
+    strcpy(instrucao->operando2, operando2);
+    sprintf(instrucao->operando3, "%d", operando3);
+    imprimeLoadStore(instrucao);
+    return instrucao;
+}
+
+Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "storeAI");
+    sprintf(instrucao->operando1, "r%d", operando1);
+    strcpy(instrucao->operando2, operando2);
+    sprintf(instrucao->operando3, "%d", operando3);
+    imprimeLoadStore(instrucao);
     return instrucao;
 }
 
@@ -493,9 +527,17 @@ void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador)
 		strcpy(registrador,NOME_REGISTRADOR_LOCAL);
 }
 
-void imprimeInstrucao(Instrucao *instrucao)
+void imprimeLoadStore(Instrucao *instrucao)
 {
-	printf("%s\t%s, %s  =>  %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao -> operando3);
+	printf("%s\t%s => %s", instrucao->operacao, instrucao->operando1, instrucao->operando2);
+	if (strlen (instrucao->operando3) != 0)
+		printf(", %s", instrucao -> operando3);
+	printf("\n");
+}
+
+void imprimeAritmetica(Instrucao *instrucao)
+{
+	printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
 }
 
 void concatenaCodigo (Codigo *codigo1, Codigo *codigo2)
@@ -522,11 +564,45 @@ int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token)
 		while (tabela_atual != NULL)
 		{
 		    if (strcmp(valor_token, tabela_atual->info->valor_token) == 0)
-			return tabela_atual->info->deslocamento_memoria;	
+			return tabela_atual->info->deslocamento;	
 		    tabela_atual = tabela_atual->proximo;
 		}
 
         	lista_atual = lista_atual->anterior;
     	}
+}
+
+int achaTemporario(Lista_tabelas *lista_tabelas, char *valor_token)
+{
+	Lista_tabelas *lista_atual = lista_tabelas;
+    	while (lista_atual->proximo != NULL)
+       		lista_atual = lista_atual->proximo;
+
+	while (lista_atual != NULL)
+	{
+        	Tabela *tabela_atual = lista_atual->tabela_simbolos;
+
+		while (tabela_atual != NULL)
+		{
+		    if (strcmp(valor_token, tabela_atual->info->valor_token) == 0)
+			return tabela_atual->info->temporario;	
+		    tabela_atual = tabela_atual->proximo;
+		}
+
+        	lista_atual = lista_atual->anterior;
+    	}
+}
+
+void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_escopo)
+{
+	if (lista_tabelas->proximo == NULL)
+		strcpy(registrador_escopo,NOME_REGISTRADOR_GLOBAL);
+	else
+		strcpy(registrador_escopo,NOME_REGISTRADOR_LOCAL);
+}
+
+void atualizaRegistradorGeral(char *str, int N) 
+{
+    sprintf(str, "r%d", N);
 }
 
