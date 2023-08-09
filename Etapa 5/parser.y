@@ -116,7 +116,15 @@ programa: lista
 	/*printf("TABELA GLOBAL:\n\n");
 	imprimeTabela(lista_tabelas->tabela_simbolos);
 	printf("------------------\n");*/
+	
+	/*
+	printf("LISTA DE INSTRUCOES DA RAIZ:\n\n");
+	imprimeInstrucoesNodo($$);
+	printf("------------------\n");
+	*/
+	
 	popTabela(&lista_tabelas);
+	
 };
 
 programa: /* Vazio */ { $$ = NULL; };
@@ -226,6 +234,8 @@ lista_comandos: comando_simples ';' lista_comandos
 		
 	else
 		$$ = NULL;
+		
+		
 };
 
 lista_comandos:	comando_simples ';' { $$ = $1; };
@@ -235,6 +245,7 @@ lista_comandos: push_tabela_escopo  bloco_comandos ';' lista_comandos
 	{
 		$$ = $2;
 		concatenate_list($$, $4);
+		$$->info->codigo = concatenaCodigo($2->info->codigo, $4->info->codigo);
 	}
 	
 	else if($2 != NULL)
@@ -331,10 +342,11 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	
 	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo);
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
+	
 	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->temporario,registrador_escopo,deslocamento_atual));
 };
 
-bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = $2;   };
+bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = $2; };
 bloco_comandos:	'{' '}' 		{ /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
@@ -350,7 +362,10 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	
 	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo);
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
-	insereInstrucao(&($1->codigo), criaInstrucao_storeAI($3->info->temporario,registrador_escopo,deslocamento_atual));
+	
+	$$->info->codigo = $3->info->codigo;
+	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->info->temporario,registrador_escopo,deslocamento_atual));
+	imprimeInstrucoesNodo($$);
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
@@ -418,6 +433,7 @@ expressao:  expressao  TK_OC_OR expressao2
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("or",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 
@@ -432,6 +448,7 @@ expressao2: expressao2 TK_OC_AND expressao3
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("and",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 }; 		
 
@@ -445,6 +462,7 @@ expressao3: expressao3 TK_OC_EQ expressao4
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_EQ",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 }; 		
  	
@@ -457,6 +475,7 @@ expressao3: expressao3 TK_OC_NE expressao4
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_NE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };		
 	
@@ -470,6 +489,7 @@ expressao4: expressao4 '<' expressao5
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_LT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 			
@@ -482,6 +502,7 @@ expressao4: expressao4 '>' expressao5
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_GT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 			
@@ -494,6 +515,7 @@ expressao4: expressao4 TK_OC_LE expressao5
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_LE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 
@@ -506,6 +528,7 @@ expressao4: expressao4 TK_OC_GE expressao5
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_GE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 
@@ -520,6 +543,7 @@ expressao5: expressao5 '+' expressao6
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("add",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 
@@ -532,6 +556,7 @@ expressao5: expressao5 '-' expressao6
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("sub",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 
@@ -546,6 +571,7 @@ expressao6: expressao6 '*' expressao7
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("mult",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 
@@ -558,7 +584,9 @@ expressao6: expressao6 '/' expressao7
   	$$->info->temporario = temporario_atual;
   	temporario_atual++;
   	
+  	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("div",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+  	
 };	
 		
 expressao6: expressao6 '%' expressao7 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
@@ -578,7 +606,6 @@ expressao7: TK_IDENTIFICADOR
 	
 	$1->temporario = temporario_atual;
 	temporario_atual++;
-	
 	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo);
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
 	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->temporario,registrador_escopo,deslocamento_atual));

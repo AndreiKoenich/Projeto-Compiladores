@@ -464,7 +464,7 @@ Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int ope
     sprintf(instrucao->operando1, "r%d", operando1);
     sprintf(instrucao->operando2, "r%d", operando2);
     sprintf(instrucao->operando3, "r%d", operando3);
-    imprimeAritmetica(instrucao);
+    //imprimeAritmeticaLogica(instrucao);
     return instrucao;
 }
 
@@ -475,7 +475,7 @@ Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
     strcpy(instrucao->operando1, operando1);
     sprintf(instrucao->operando2, "r%d", operando2);
     strcpy(instrucao->operando3, "");
-    imprimeLoadStore(instrucao);
+    //imprimeLoadStore(instrucao);
     return instrucao;
 }
 
@@ -486,7 +486,7 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
     sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
     sprintf(instrucao->operando3, "%d", operando3);
-    imprimeLoadStore(instrucao);
+    //imprimeLoadStore(instrucao);
     return instrucao;
 }
 
@@ -497,7 +497,7 @@ Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
     sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
     sprintf(instrucao->operando3, "%d", operando3);
-    imprimeLoadStore(instrucao);
+    //imprimeLoadStore(instrucao);
     return instrucao;
 }
 
@@ -535,20 +535,38 @@ void imprimeLoadStore(Instrucao *instrucao)
 	printf("\n");
 }
 
-void imprimeAritmetica(Instrucao *instrucao)
+void imprimeInstrucaoPadrao (Instrucao *instrucao)
+{
+	printf("%s\t%s\t%s\t%s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
+}
+
+void imprimeInstrucoesNodo(Nodo *nodo)
+{
+	Codigo *atual = nodo->info->codigo;
+	while(atual != NULL)
+	{
+		imprimeInstrucaoPadrao (atual->instrucao);
+		atual = atual->proxima_instrucao;
+	}
+}
+
+void imprimeAritmeticaLogica(Instrucao *instrucao)
 {
 	printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
 }
 
-void concatenaCodigo (Codigo *codigo1, Codigo *codigo2)
+Codigo* concatenaCodigo (Codigo *codigo1, Codigo *codigo2)
 {
-    if (codigo1 == NULL || codigo2 == NULL)
-        return;
+    if (codigo1 == NULL)
+        return codigo2;
+    else if (codigo2 == NULL)
+    	return codigo1;
 
     Codigo *ultimo = codigo1;
     while (ultimo->proxima_instrucao != NULL)
         ultimo = ultimo->proxima_instrucao;
     ultimo->proxima_instrucao = codigo2;
+    return codigo1;
 }
 
 int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token)

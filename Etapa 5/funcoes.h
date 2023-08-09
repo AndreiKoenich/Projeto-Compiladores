@@ -151,11 +151,13 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3);
 Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3);
 void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao);
 void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador);
+void imprimeInstrucaoPadrao (Instrucao *instrucao);
+void imprimeInstrucoesNodo (Nodo *nodo);
 void imprimeLoadStore(Instrucao *instrucao);
-void imprimeAritmetica(Instrucao *instrucao);
-void concatenaCodigo (Codigo *codigo1, Codigo *codigo2);
-int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token);
+void imprimeAritmeticaLogica(Instrucao *instrucao);
+Codigo* concatenaCodigo (Codigo *codigo1, Codigo *codigo2);
 void atualizaRegistradorGeral(char *str, int N);
 void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador);
+int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token);
 
 #endif
