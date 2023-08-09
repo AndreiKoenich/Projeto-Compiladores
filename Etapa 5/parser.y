@@ -365,7 +365,7 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	
 	$$->info->codigo = $3->info->codigo;
 	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->info->temporario,registrador_escopo,deslocamento_atual));
-	imprimeInstrucoesNodo($$);
+	//imprimeInstrucoesNodo($$);
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'

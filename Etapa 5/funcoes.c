@@ -464,7 +464,7 @@ Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int ope
     sprintf(instrucao->operando1, "r%d", operando1);
     sprintf(instrucao->operando2, "r%d", operando2);
     sprintf(instrucao->operando3, "r%d", operando3);
-    //imprimeAritmeticaLogica(instrucao);
+    imprimeAritmeticaLogica(instrucao);
     return instrucao;
 }
 
@@ -475,7 +475,7 @@ Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
     strcpy(instrucao->operando1, operando1);
     sprintf(instrucao->operando2, "r%d", operando2);
     strcpy(instrucao->operando3, "");
-    //imprimeLoadStore(instrucao);
+    imprimeLoadStore(instrucao);
     return instrucao;
 }
 
@@ -486,7 +486,7 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
     sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
     sprintf(instrucao->operando3, "%d", operando3);
-    //imprimeLoadStore(instrucao);
+    imprimeLoadStore(instrucao);
     return instrucao;
 }
 
@@ -497,7 +497,7 @@ Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
     sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
     sprintf(instrucao->operando3, "%d", operando3);
-    //imprimeLoadStore(instrucao);
+    imprimeLoadStore(instrucao);
     return instrucao;
 }
 
