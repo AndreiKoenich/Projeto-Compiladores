@@ -542,6 +542,11 @@ void imprimeInstrucaoPadrao (Instrucao *instrucao)
 
 void imprimeInstrucoesNodo(Nodo *nodo)
 {
+	if (nodo == NULL)
+	{
+		printf("LISTA DE INSTRUCOES VAZIA!\n");
+		return;
+	}
 	Codigo *atual = nodo->info->codigo;
 	while(atual != NULL)
 	{
