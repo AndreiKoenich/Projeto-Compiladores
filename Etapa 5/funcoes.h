@@ -156,8 +156,6 @@ void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao);
 void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador);
 void imprimeInstrucaoPadrao (Instrucao *instrucao);
 void imprimeInstrucoesNodo (Nodo *nodo);
-void imprimeLoadStore(Instrucao *instrucao);
-void imprimeAritmeticaLogica(Instrucao *instrucao);
 Codigo* concatenaCodigo (Codigo *codigo1, Codigo *codigo2);
 void atualizaRegistradorGeral(char *str, int N);
 void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_escopo, char *valor_token);

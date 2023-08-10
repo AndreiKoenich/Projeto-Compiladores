@@ -464,7 +464,7 @@ Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int ope
     sprintf(instrucao->operando1, "r%d", operando1);
     sprintf(instrucao->operando2, "r%d", operando2);
     sprintf(instrucao->operando3, "r%d", operando3);
-    imprimeAritmeticaLogica(instrucao);
+    printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
     return instrucao;
 }
 
@@ -475,7 +475,7 @@ Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
     strcpy(instrucao->operando1, operando1);
     sprintf(instrucao->operando2, "r%d", operando2);
     strcpy(instrucao->operando3, "");
-    imprimeLoadStore(instrucao);
+    printf("%s\t%s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2);
     return instrucao;
 }
 
@@ -486,7 +486,7 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
     sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
     sprintf(instrucao->operando3, "%d", operando3);
-    imprimeLoadStore(instrucao);
+    printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando2, instrucao->operando3, instrucao->operando1);
     return instrucao;
 }
 
@@ -497,7 +497,7 @@ Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
     sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
     sprintf(instrucao->operando3, "%d", operando3);
-    imprimeLoadStore(instrucao);
+    printf("%s\t%s => %s, %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
     return instrucao;
 }
 
@@ -527,14 +527,6 @@ void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador)
 		strcpy(registrador,NOME_REGISTRADOR_LOCAL);
 }
 
-void imprimeLoadStore(Instrucao *instrucao)
-{
-	printf("%s\t%s => %s", instrucao->operacao, instrucao->operando1, instrucao->operando2);
-	if (strlen (instrucao->operando3) != 0)
-		printf(", %s", instrucao -> operando3);
-	printf("\n");
-}
-
 void imprimeInstrucaoPadrao (Instrucao *instrucao)
 {
 	printf("%s\t%s\t%s\t%s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
@@ -553,11 +545,6 @@ void imprimeInstrucoesNodo(Nodo *nodo)
 		imprimeInstrucaoPadrao (atual->instrucao);
 		atual = atual->proxima_instrucao;
 	}
-}
-
-void imprimeAritmeticaLogica(Instrucao *instrucao)
-{
-	printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
 }
 
 Codigo* concatenaCodigo (Codigo *codigo1, Codigo *codigo2)
