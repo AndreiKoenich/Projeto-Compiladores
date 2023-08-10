@@ -25,10 +25,6 @@ extern int tipo_atual;
 extern int temporario_atual;
 extern int deslocamento_atual;
 
-extern Codigo *codigo;
-
-extern Instrucao *instrucao_atual;
-
 extern char registrador_escopo[TAMANHO_NOME_OPERANDO];
 
 
@@ -117,12 +113,9 @@ programa: lista
 	imprimeTabela(lista_tabelas->tabela_simbolos);
 	printf("------------------\n");*/
 	
-	/*
-	printf("LISTA DE INSTRUCOES DA RAIZ:\n\n");
-	imprimeInstrucoesNodo($$);
-	printf("------------------\n");
-	*/
 	
+	printf("\nLISTA DE INSTRUCOES DA RAIZ:\n\n");
+	imprimeInstrucoesNodo($$);
 	popTabela(&lista_tabelas);
 	
 };
@@ -167,6 +160,8 @@ bloco_comandos
 	$$ = criaNodo($1);
 	if($9 != NULL)
 		adicionaNodo($$, $9);
+	$$->info->codigo = $9->info->codigo;
+	//imprimeInstrucoesNodo($$);
 }
 
 definicao_funcao: TK_IDENTIFICADOR '(' push_tabela_escopo ')' TK_OC_MAP tipo
@@ -184,6 +179,8 @@ bloco_comandos
 	$$ = criaNodo($1);
 	if($8 != NULL)
 		adicionaNodo($$, $8);
+	$$->info->codigo = $8->info->codigo;
+	//imprimeInstrucoesNodo($$);
 }
 
 lista_parametros: tupla_tipo_parametro { $$ = $1; };
@@ -233,9 +230,7 @@ lista_comandos: comando_simples ';' lista_comandos
 		$$ = $3;
 		
 	else
-		$$ = NULL;
-		
-		
+		$$ = NULL;	
 };
 
 lista_comandos:	comando_simples ';' { $$ = $1; };
@@ -245,7 +240,6 @@ lista_comandos: push_tabela_escopo  bloco_comandos ';' lista_comandos
 	{
 		$$ = $2;
 		concatenate_list($$, $4);
-		$$->info->codigo = concatenaCodigo($2->info->codigo, $4->info->codigo);
 	}
 	
 	else if($2 != NULL)
@@ -278,6 +272,8 @@ lista_comandos: declaracao_local ';' lista_comandos
 		
 	else
 		$$ = NULL;
+		
+	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
 };
 
 lista_comandos:	declaracao_local ';' { $$ = $1; };
@@ -343,10 +339,11 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo);
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
 	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_loadI($3->valor_token,$3->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->temporario,registrador_escopo,deslocamento_atual));
 };
 
-bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = $2; };
+bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = $2;  /*imprimeInstrucoesNodo($$);*/};
 bloco_comandos:	'{' '}' 		{ /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
@@ -365,7 +362,7 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	
 	$$->info->codigo = $3->info->codigo;
 	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->info->temporario,registrador_escopo,deslocamento_atual));
-	//imprimeInstrucoesNodo($$);
+	//imprimeInstrucoesNodo($$); 
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
@@ -532,7 +529,7 @@ expressao4: expressao4 TK_OC_GE expressao5
   	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_GE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 
-expressao5: expressao6 	{ $$ = $1;};
+expressao5: expressao6 	{ $$ = $1; };
 
 expressao5: expressao5 '+' expressao6 			
 { 
@@ -609,6 +606,7 @@ expressao7: TK_IDENTIFICADOR
 	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo);
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
 	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->temporario,registrador_escopo,deslocamento_atual));
+	//imprimeInstrucoesNodo($$);
 };
 
 literal: TK_LIT_INT  	
@@ -619,7 +617,6 @@ literal: TK_LIT_INT
 	
 	$1->temporario = temporario_atual;
 	temporario_atual++;
-	insereInstrucao(&($$->codigo), criaInstrucao_loadI($1->valor_token,$1->temporario));
 };
 
 literal: TK_LIT_FLOAT 	
