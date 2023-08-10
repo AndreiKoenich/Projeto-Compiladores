@@ -46,6 +46,9 @@
 #define NOME_REGISTRADOR_GLOBAL "rbss"
 #define NOME_REGISTRADOR_LOCAL "rfp"
 
+#define ESCOPO_GLOBAL 0
+#define ESCOPO_LOCAL 1
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -157,7 +160,8 @@ void imprimeLoadStore(Instrucao *instrucao);
 void imprimeAritmeticaLogica(Instrucao *instrucao);
 Codigo* concatenaCodigo (Codigo *codigo1, Codigo *codigo2);
 void atualizaRegistradorGeral(char *str, int N);
-void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador);
+void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_escopo, char *valor_token);
 int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token);
+int achaEscopo(Lista_tabelas *lista_tabelas, char *valor_token);
 
 #endif

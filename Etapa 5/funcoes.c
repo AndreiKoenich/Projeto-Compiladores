@@ -595,7 +595,7 @@ int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token)
     	}
 }
 
-int achaTemporario(Lista_tabelas *lista_tabelas, char *valor_token)
+int achaEscopo(Lista_tabelas *lista_tabelas, char *valor_token)
 {
 	Lista_tabelas *lista_atual = lista_tabelas;
     	while (lista_atual->proximo != NULL)
@@ -608,7 +608,13 @@ int achaTemporario(Lista_tabelas *lista_tabelas, char *valor_token)
 		while (tabela_atual != NULL)
 		{
 		    if (strcmp(valor_token, tabela_atual->info->valor_token) == 0)
-			return tabela_atual->info->temporario;	
+		    {
+		    	if (lista_atual->anterior != NULL)
+		    		return ESCOPO_LOCAL;
+		    	else
+		    		return ESCOPO_GLOBAL;
+		    }
+
 		    tabela_atual = tabela_atual->proximo;
 		}
 
@@ -616,11 +622,13 @@ int achaTemporario(Lista_tabelas *lista_tabelas, char *valor_token)
     	}
 }
 
-void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_escopo)
+void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_escopo, char *valor_token)
 {
-	if (lista_tabelas->proximo == NULL)
+	int escopo = achaEscopo(lista_tabelas,valor_token);
+	
+	if (escopo == ESCOPO_GLOBAL)
 		strcpy(registrador_escopo,NOME_REGISTRADOR_GLOBAL);
-	else
+	else if (escopo == ESCOPO_LOCAL)
 		strcpy(registrador_escopo,NOME_REGISTRADOR_LOCAL);
 }
 
