@@ -251,6 +251,8 @@ ERR_UNDECLARED - Caso o identificador não tenha sido declarado no seu uso; */
 void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas, char *valor_token, int linha_token)
 {
 	Lista_tabelas *lista_atual = lista_tabelas;
+	
+	int achou_funcao = -1;
 
 	while (lista_atual != NULL)
 	{
@@ -260,11 +262,10 @@ void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas,
 		{
 		    if (strcmp(valor_token, tabela_atual->info->valor_token) == 0)
 		    {
-		   	if (tabela_atual->info->natureza_token != FUNCTION)
-		   	{
-		   		printf("ERRO DE SEMANTICA - LINHA %d - VARIAVEL '%s' SENDO USADA COMO FUNCAO\n", linha_token, valor_token);
-		   		exit(ERR_VARIABLE);
-		   	}     	
+		   	if (tabela_atual->info->natureza_token == FUNCTION)
+		   		achou_funcao = 1;
+		   	else
+		   		achou_funcao = 0;	
 		    }
 		        
 		    tabela_atual = tabela_atual->proximo;
@@ -272,9 +273,21 @@ void verificaERR_VARIABLE_UNDECLARED_chamadafuncao(Lista_tabelas *lista_tabelas,
 
         	lista_atual = lista_atual->proximo;
     	}
-    
-	printf("ERRO DE SEMANTICA - LINHA %d - IDENTIFICADOR '%s' NAO DECLARADO\n", linha_token, valor_token);
-	exit(ERR_UNDECLARED);	
+    	
+    	if (achou_funcao == 1)
+    		return;
+    		
+    	else if (achou_funcao == 0)
+    	{
+		printf("ERRO DE SEMANTICA - LINHA %d - VARIAVEL '%s' SENDO USADA COMO FUNCAO\n", linha_token, valor_token);
+		exit(ERR_VARIABLE);    		
+    	}
+    	
+    	else if (achou_funcao == -1)
+    	{
+		printf("ERRO DE SEMANTICA - LINHA %d - IDENTIFICADOR '%s' NAO DECLARADO\n", linha_token, valor_token);
+		exit(ERR_UNDECLARED);	    	
+    	}
 }
 
 /* Verifica o seguinte erro de semantica:
