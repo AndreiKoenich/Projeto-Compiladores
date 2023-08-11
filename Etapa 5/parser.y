@@ -158,8 +158,10 @@ bloco_comandos
 {
 	$$ = criaNodo($1);
 	if($9 != NULL)
+	{
 		adicionaNodo($$, $9);
-	$$->info->codigo = $9->info->codigo;
+		$$->info->codigo = $9->info->codigo;
+	}
 }
 
 definicao_funcao: TK_IDENTIFICADOR '(' push_tabela_escopo ')' TK_OC_MAP tipo
