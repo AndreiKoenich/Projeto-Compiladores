@@ -113,10 +113,11 @@ programa: lista
 	imprimeTabela(lista_tabelas->tabela_simbolos);
 	printf("------------------\n");*/
 	
-	
+	/*
 	printf("\nLISTA DE INSTRUCOES DA RAIZ:\n\n");
 	imprimeInstrucoesNodo($$);
 	popTabela(&lista_tabelas);
+	*/
 };
 
 programa: /* Vazio */ { $$ = NULL; };
@@ -345,7 +346,7 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->temporario,registrador_escopo,deslocamento_atual));
 };
 
-bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = $2;  /*imprimeInstrucoesNodo($$);*/};
+bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = $2;  };
 bloco_comandos:	'{' '}' 		{ /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao

@@ -1,4 +1,4 @@
-/* PROJETO DE COMPILADORES - ETAPA 4  */
+/* PROJETO DE COMPILADORES - ETAPA 5  */
 
 /* Andrei Pochmann Koenich 	 - Matrícula 00308680 */
 /* Izaias Saturnino de Lima Neto - Matrícula 00326872 */
@@ -40,18 +40,22 @@
 #define FLOAT 1
 #define BOOL 2
 
+/* Constantes para definir o tamanho maximo do nome dos operandos e das instrucoes ILOC (linguagem intermediaria). */
 #define TAMANHO_NOME_OPERANDO 10
 #define TAMANHO_NOME_INSTRUCAO 10
 
+/* Constantes para definir os nomes dos registradores (global e local) referentes aos deslocamentos na memoria. */
 #define NOME_REGISTRADOR_GLOBAL "rbss"
 #define NOME_REGISTRADOR_LOCAL "rfp"
 
+/* Constantes para identificar se um escopo atual corresponde ao global ou ao atual. */
 #define ESCOPO_GLOBAL 0
 #define ESCOPO_LOCAL 1
 
 #include <string.h>
 #include <stdlib.h>
 
+/* Estrutura contendo o nome da operacao e o dos operandos de uma instrucao ILOC (linguagem intermediaria). */
 typedef struct 
 {
 	char operando1[TAMANHO_NOME_OPERANDO];
@@ -61,6 +65,7 @@ typedef struct
 	
 } Instrucao;
 
+/* Estrutura contendo todos os elementos de uma lista de instrucoes ILOC (linguagem intermediaria). */
 typedef struct codigo
 {
 	Instrucao *instrucao;
@@ -152,12 +157,11 @@ Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int ope
 Instrucao* criaInstrucao_loadI (char *operando1, int operando2);
 Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3);
 Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3);
-void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao);
-void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador);
-void imprimeInstrucaoPadrao (Instrucao *instrucao);
-void imprimeInstrucoesNodo (Nodo *nodo);
 Codigo* concatenaCodigo (Codigo *codigo1, Codigo *codigo2);
+void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao);
+void imprimeInstrucaoPadrao (Instrucao *instrucao);
 void atualizaRegistradorGeral(char *str, int N);
+void imprimeInstrucoesNodo (Nodo *nodo);
 void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_escopo, char *valor_token);
 int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token);
 int achaEscopo(Lista_tabelas *lista_tabelas, char *valor_token);

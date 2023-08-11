@@ -470,6 +470,7 @@ void concatenate_list(Nodo* list1, Nodo* list2)
     adicionaNodo(last_node_from_list, list2);
 }
 
+/* Cria uma instrucao ILOC do tipo aritmetica ou logica, e imprime o seu conteudo na saida padrao. */
 Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
@@ -481,6 +482,7 @@ Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int ope
     return instrucao;
 }
 
+/* Cria uma instrucao ILOC do tipo "load I", e imprime o seu conteudo na saida padrao. */
 Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
@@ -492,6 +494,7 @@ Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
     return instrucao;
 }
 
+/* Cria uma instrucao ILOC do tipo "load AI", e imprime o seu conteudo na saida padrao. */
 Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
@@ -503,6 +506,7 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
     return instrucao;
 }
 
+/* Cria uma instrucao ILOC do tipo "store AI", e imprime o seu conteudo na saida padrao. */
 Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
@@ -514,6 +518,7 @@ Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
     return instrucao;
 }
 
+/* Insere uma instrucao ILOC em uma lista de instrucoes ILOC (ou seja, um codigo). */
 void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao)
 {
     Codigo *nova_instrucao = (Codigo*)malloc(sizeof(Codigo));
@@ -532,19 +537,13 @@ void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao)
     }
 }
 
-void atualizaNomeRegistrador(Lista_tabelas *lista_tabelas, char *registrador)
-{
-	if (lista_tabelas->proximo == NULL)
-		strcpy(registrador,NOME_REGISTRADOR_GLOBAL);
-	else
-		strcpy(registrador,NOME_REGISTRADOR_LOCAL);
-}
-
+/* Imprime a operacao e os tres operandos de uma instrucao ILOC, sem nenhuma formatacao. */
 void imprimeInstrucaoPadrao (Instrucao *instrucao)
 {
 	printf("%s\t%s\t%s\t%s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
 }
 
+/* Imprime todas as instrucoes ILOC que estao armazenadas em um nodo da arvore AST. */
 void imprimeInstrucoesNodo(Nodo *nodo)
 {
 	if (nodo == NULL)
@@ -560,6 +559,7 @@ void imprimeInstrucoesNodo(Nodo *nodo)
 	}
 }
 
+/* Concatena os codigos ILOC presentes em dois nos diferentes da arvore AST. */
 Codigo* concatenaCodigo (Codigo *codigo1, Codigo *codigo2)
 {
     if (codigo1 == NULL)
@@ -574,6 +574,7 @@ Codigo* concatenaCodigo (Codigo *codigo1, Codigo *codigo2)
     return codigo1;
 }
 
+/* Acha o deslocamento de um determinado literal ou identificador, na tabela de simbolos. */
 int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token)
 {
 	Lista_tabelas *lista_atual = lista_tabelas;
@@ -595,6 +596,7 @@ int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token)
     	}
 }
 
+/* Determina se o escopo atual e global ou local. */
 int achaEscopo(Lista_tabelas *lista_tabelas, char *valor_token)
 {
 	Lista_tabelas *lista_atual = lista_tabelas;
@@ -622,6 +624,7 @@ int achaEscopo(Lista_tabelas *lista_tabelas, char *valor_token)
     	}
 }
 
+/* Atualiza algum dos dois registrados (rfp ou rbss), depois de verificar se o escopo da execucao e global ou local. */
 void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_escopo, char *valor_token)
 {
 	int escopo = achaEscopo(lista_tabelas,valor_token);
@@ -630,10 +633,5 @@ void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_e
 		strcpy(registrador_escopo,NOME_REGISTRADOR_GLOBAL);
 	else if (escopo == ESCOPO_LOCAL)
 		strcpy(registrador_escopo,NOME_REGISTRADOR_LOCAL);
-}
-
-void atualizaRegistradorGeral(char *str, int N) 
-{
-    sprintf(str, "r%d", N);
 }
 
