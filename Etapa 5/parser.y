@@ -3,6 +3,13 @@
 /* Andrei Pochmann Koenich 	 - Matrícula 00308680 */
 /* Izaias Saturnino de Lima Neto - Matrícula 00326872 */
 
+/* A geração de código ILOC está sendo feita EM UMA ÚNICA PASSAGEM.
+   A impressão das instruções na sintaxe da linguagem intermediária
+   é feita no momento em que as instruções são criadas, especificamente
+   nas linhas 481, 493, 505 e 517 do arquivo funcoes.c. Os códigos
+   gerados em cada nó estão sendo concatenados por meio da função
+   concatenaCodigo(), e sendo levados até a raiz da árvore AST. */	
+
 %{
 
 #include <stdio.h>
