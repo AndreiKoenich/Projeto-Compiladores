@@ -635,3 +635,49 @@ void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_e
 		strcpy(registrador_escopo,NOME_REGISTRADOR_LOCAL);
 }
 
+/* Cria um linha de codigo contendo apenas um rotulo. */
+Instrucao* criaRotulo(int numero_rotulo)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    sprintf(instrucao->operacao, "L%d", numero_rotulo);
+    strcpy(instrucao->operando1, "");
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+   // imprimeRotulo(numero_rotulo);
+    return instrucao;	
+}
+
+/* Recebe um numero de rotulo (referente a uma linha do codigo ILOC), e imprime esse rotulo na saida padrao. */
+void imprimeRotulo(int numero_rotulo)
+{
+	printf("L%d:\n", numero_rotulo);
+}
+
+/* Cria uma instrucao ILOC do tipo "cbr", e imprime o seu conteudo na saida padrao. */
+Instrucao* criaInstrucao_cbr (int operando1, int operando2, int operando3)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "cbr");
+    sprintf(instrucao->operando1, "r%d", operando1);
+    sprintf(instrucao->operando2, "L%d", operando2);
+    sprintf(instrucao->operando3, "L%d", operando3);
+    return instrucao;
+}
+
+void imprimeInstrucao_cbr (int operando1, int operando2, int operando3)
+{
+	printf("cbr\tr%d => L%d, L%d\n", operando1, operando2, operando3);	
+}
+
+/* Cria uma instrucao ILOC do tipo "jumpI", e imprime o seu conteudo na saida padrao. */
+Instrucao* criaInstrucao_jumpI (int operando1)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "jumpI");
+    sprintf(instrucao->operando1, "L%d", operando1);
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    printf("%s\t%s\n", instrucao->operacao, instrucao->operando1);
+    return instrucao;
+}
+

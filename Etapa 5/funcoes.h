@@ -157,12 +157,18 @@ Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int ope
 Instrucao* criaInstrucao_loadI (char *operando1, int operando2);
 Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3);
 Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3);
+Instrucao* criaRotulo(int numero_rotulo);
+Instrucao* criaInstrucao_cbr (int operando1, int operando2, int operando3);
+Instrucao* criaInstrucao_jumpI (int operando1);
 Codigo* concatenaCodigo (Codigo *codigo1, Codigo *codigo2);
 void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao);
 void imprimeInstrucaoPadrao (Instrucao *instrucao);
+void imprimeInstrucao_cbr (int operando1, int operando2, int operando3);
 void atualizaRegistradorGeral(char *str, int N);
 void imprimeInstrucoesNodo (Nodo *nodo);
 void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_escopo, char *valor_token);
+void imprimeRotulo(int numero_rotulo);
+void imprimeInstrucao_cbr (int operando1, int operando2, int operando3);
 int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token);
 int achaEscopo(Lista_tabelas *lista_tabelas, char *valor_token);
 

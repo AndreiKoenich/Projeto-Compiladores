@@ -15,6 +15,7 @@ Tabela *tabela_escopo = NULL;
 int tipo_atual = -1;
 int temporario_atual = 1;
 int deslocamento_atual = 0;
+int rotulo_atual = 1;
 
 char registrador_escopo[TAMANHO_NOME_OPERANDO];
 

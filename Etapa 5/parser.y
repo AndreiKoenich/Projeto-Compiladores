@@ -31,6 +31,7 @@ extern int tipo_atual;
 
 extern int temporario_atual;
 extern int deslocamento_atual;
+extern int rotulo_atual;
 
 extern char registrador_escopo[TAMANHO_NOME_OPERANDO];
 
@@ -120,11 +121,10 @@ programa: lista
 	imprimeTabela(lista_tabelas->tabela_simbolos);
 	printf("------------------\n");*/
 	
-	/*
+
 	printf("\nLISTA DE INSTRUCOES DA RAIZ:\n\n");
 	imprimeInstrucoesNodo($$);
 	popTabela(&lista_tabelas);
-	*/
 };
 
 programa: /* Vazio */ { $$ = NULL; };
@@ -398,34 +398,83 @@ lista_expressoes: expressao ',' lista_expressoes	{ $$ = $1; adicionaNodo($$, $3)
 
 retorno: TK_PR_RETURN expressao { $1->tipo_token = infereTipoExpressao($2); $$ = criaNodo($1); adicionaNodo($$, $2); };
 
-clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' push_tabela_escopo bloco_comandos
+impressaoRotulo: /* Vazio */ { imprimeRotulo(rotulo_atual); };
+impressaoRotuloElse: /* Vazio */ { imprimeRotulo(rotulo_atual+2); };
+impressao_cbrRotulo: /* Vazio */ { imprimeInstrucao_cbr(temporario_atual-1, rotulo_atual+1, rotulo_atual+2); imprimeRotulo(rotulo_atual+1); }
+
+clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_tabela_escopo impressao_cbrRotulo bloco_comandos
 {
-	$1->tipo_token = infereTipoExpressao($3);
+	$1->tipo_token = infereTipoExpressao($4);
 	$$ = criaNodo($1);
-	adicionaNodo($$, $3);
+	adicionaNodo($$, $4);
 	
-	if($6 != NULL)
-		adicionaNodo($$, $6);
-};
-clausula_if_com_else_opcional: TK_PR_IF '(' expressao ')' push_tabela_escopo bloco_comandos TK_PR_ELSE push_tabela_escopo bloco_comandos
-{
-	$1->tipo_token = infereTipoExpressao($3);
-	$$ = criaNodo($1);
-	adicionaNodo($$, $3);
+	if($8 != NULL)
+		adicionaNodo($$, $8);
+		
+  	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual));	/* Rotulo da expressao de teste. */
+  	rotulo_atual++;
+  	
+  	$$->info->codigo = concatenaCodigo($$->info->codigo, $4->info->codigo);	/* Carrega o codigo da expressao de teste. */
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_cbr ($4->info->temporario, rotulo_atual, rotulo_atual+1));	
+  	
+   	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando. */
+    	rotulo_atual++;	
+   	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
 	
-	if($6 != NULL)
-		adicionaNodo($$, $6);
-	if($9 != NULL)
-		adicionaNodo($$, $9);
+   	imprimeRotulo(rotulo_atual);
+   	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo de desvio do bloco */
+    	rotulo_atual++;	
 };
 
-iterativo: TK_PR_WHILE '(' expressao ')' push_tabela_escopo bloco_comandos
+clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_tabela_escopo impressao_cbrRotulo bloco_comandos TK_PR_ELSE push_tabela_escopo impressaoRotuloElse bloco_comandos
 {
-	$1->tipo_token = infereTipoExpressao($3);
+  	$1->tipo_token = infereTipoExpressao($4);
 	$$ = criaNodo($1);
-	adicionaNodo($$, $3);
-	if($6 != NULL)
-		adicionaNodo($$, $6);
+	adicionaNodo($$, $4);
+	
+	if($8 != NULL)
+		adicionaNodo($$, $8);
+	if($12 != NULL)
+		adicionaNodo($$, $12);
+  	
+  	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual));	/* Rotulo da expressao de teste. */
+  	rotulo_atual++;
+  	
+  	$$->info->codigo = concatenaCodigo($$->info->codigo, $4->info->codigo);	/* Carrega o codigo da expressao de teste. */
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_cbr ($4->info->temporario, rotulo_atual, rotulo_atual+1));	
+  	
+   	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando IF. */
+    	rotulo_atual++;	
+   	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando IF. */
+
+   	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando ELSE. */
+    	rotulo_atual++;	
+   	$$->info->codigo = concatenaCodigo($$->info->codigo, $12->info->codigo); /* Carrega o codigo do bloco de comando ELSE. */
+};
+
+iterativo: TK_PR_WHILE impressaoRotulo '(' expressao ')' push_tabela_escopo impressao_cbrRotulo bloco_comandos
+{
+	$1->tipo_token = infereTipoExpressao($4);
+	$$ = criaNodo($1);
+	adicionaNodo($$, $4);
+	if($8 != NULL)
+		adicionaNodo($$, $8);
+		
+  	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual));	/* Rotulo da expressao de teste. */
+  	rotulo_atual++;
+  	
+  	$$->info->codigo = concatenaCodigo($$->info->codigo, $4->info->codigo);	/* Carrega o codigo da expressao de teste. */
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_cbr ($4->info->temporario, rotulo_atual, rotulo_atual+1));	
+  	
+   	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando. */
+    	rotulo_atual++;	
+   	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
+   	
+   	insereInstrucao(&($$->info->codigo), criaInstrucao_jumpI (rotulo_atual-2));	
+   		
+   	imprimeRotulo(rotulo_atual);
+   	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo da saida do laco. */
+    	rotulo_atual++;	
 };
 
 expressao:  expressao2	{ $$ = $1; };
@@ -619,6 +668,8 @@ expressao7: TK_IDENTIFICADOR
 
 literal: TK_LIT_INT  	
 { 
+	printf("VALOR:%s\n", $1->valor_token);
+	
 	$$ = $1;
 	$1->tipo_token = INT;
 	insereUltimaTabela(&lista_tabelas, $1); 
