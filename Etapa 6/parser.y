@@ -668,7 +668,7 @@ expressao7: TK_IDENTIFICADOR
 
 literal: TK_LIT_INT  	
 { 
-	printf("VALOR:%s\n", $1->valor_token);
+	//printf("VALOR:%s\n", $1->valor_token);
 	
 	$$ = $1;
 	$1->tipo_token = INT;
