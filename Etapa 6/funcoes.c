@@ -681,3 +681,51 @@ Instrucao* criaInstrucao_jumpI (int operando1)
     return instrucao;
 }
 
+void printDataSegment(Tabela *tabela_global){
+    Tabela* atual = tabela_global;
+
+    char defaultFunctionName[] = "main";
+
+	while (atual != NULL)
+	{
+        if(atual->info->natureza_token == VARIABLE){
+            printf("\t.text\n");
+            printf("\t.globl\t%s\n", atual->info->valor_token);
+            printf("\t.bss\n");
+            printf("\t.align 4\n");
+            printf("\t.type\t%s, @object\n", atual->info->valor_token);
+            printf("\t.size\t%s, 4\n", atual->info->valor_token);
+            printf("%s:\n", atual->info->valor_token);
+            printf("\t.zero\t4\n", atual->info->valor_token);
+        }
+		atual = atual->proximo;
+	}
+}
+
+void printFunctionStart(char *func_name){
+    printf("\t.text\n");
+    printf("\t.globl\t%s\n", func_name);
+    printf("\t.type\t%s, @function\n", func_name);
+    printf("%s:\n", func_name);
+}
+
+void printDefaultFunctionStart(){
+    printFunctionStart("main");
+}
+
+void printFunctionEnd(char *func_name){
+    printf("\t.size\t%s, .-%s\n", func_name, func_name);
+}
+
+void printDefaultFunctionEnd(){
+    printFunctionEnd("main");
+}
+
+void printProgramStart(Tabela *tabela_global){
+    printDataSegment(tabela_global);
+    printDefaultFunctionStart();
+}
+
+void printProgramEnd(){
+    printDefaultFunctionEnd();
+}
