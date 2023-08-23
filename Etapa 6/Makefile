@@ -19,7 +19,7 @@ compile: parser scanner
 
 # Comando para linkar os arquivos compilados e gerar o executável
 link: compile
-	gcc -g -o etapa5 main.c parser.tab.o lex.yy.o funcoes.o -lfl -Wall
+	gcc -g -o etapa6 main.c parser.tab.o lex.yy.o funcoes.o -lfl -Wall
 
 # Comando para limpar os arquivos gerados
 	rm -f lex.yy.c lex.yy.o parser.tab.c parser.tab.o parser.tab.h parser.output funcoes.o
