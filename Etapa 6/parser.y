@@ -110,7 +110,14 @@ extern char registrador_escopo[TAMANHO_NOME_OPERANDO];
 
 %%
 
-inicio_programa: { pushTabela(&lista_tabelas, tabela_global); } programa
+inicio_programa: {
+	pushTabela(&lista_tabelas, tabela_global); 
+	printProgramStart(lista_tabelas->tabela_simbolos);
+}
+programa
+{
+	printProgramEnd();
+}
 
 programa: lista 
 {
@@ -122,8 +129,8 @@ programa: lista
 	printf("------------------\n");*/
 	
 
-	printf("\nLISTA DE INSTRUCOES DA RAIZ:\n\n");
-	imprimeInstrucoesNodo($$);
+	//printf("\nLISTA DE INSTRUCOES DA RAIZ:\n");
+	//imprimeInstrucoesNodo($$);
 	popTabela(&lista_tabelas);
 };
 
@@ -136,18 +143,28 @@ lista: elemento lista
 		$$ = $1;
 		adicionaNodo($$, $2);
 	}
-	
-	else if($1 != NULL)
+	else if($1 != NULL){
 		$$ = $1;
-		
-	else if($2 != NULL)
+	}
+	else if($2 != NULL){
 		$$ = $2;
-		
-	else
+	}
+	else{
 		$$ = NULL;
+	}
+
+	if(strcmp($$->info->valor_token, "main") == 0){
+		imprimeInstrucoesNodo($$);
+	}
 };
 
-lista: elemento { $$ = $1; };
+lista: elemento
+{
+	$$ = $1;
+	if(strcmp($$->info->valor_token, "main") == 0){
+		imprimeInstrucoesNodo($$);
+	}
+};
 
 elemento: definicao_funcao 	{ $$ = $1; };
 elemento: declaracao_global 	{ $$ = NULL; };
@@ -288,11 +305,11 @@ lista_comandos: declaracao_local ';' lista_comandos
 
 lista_comandos:	declaracao_local ';' { $$ = $1; };
 
-comando_simples: chamada_funcao 			{ $$ = $1; };
-comando_simples: atribuicao 				{ $$ = $1; };
-comando_simples: retorno 				{ $$ = $1; };
+comando_simples: chamada_funcao 					{ $$ = $1; };
+comando_simples: atribuicao 						{ $$ = $1; };
+comando_simples: retorno 							{ $$ = $1; };
 comando_simples: clausula_if_com_else_opcional 		{ $$ = $1; };
-comando_simples: iterativo 				{ $$ = $1; };
+comando_simples: iterativo 							{ $$ = $1; };
 
 declaracao_local: tipo_local lista_identificadores { $$ = $2; }; 
 
@@ -354,7 +371,7 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 };
 
 bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = $2;  };
-bloco_comandos:	'{' '}' 		{ /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = NULL; };
+bloco_comandos:	'{' '}' 				{ /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = NULL; };
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {

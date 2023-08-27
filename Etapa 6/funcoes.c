@@ -475,10 +475,10 @@ Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int ope
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, operacao);
-    sprintf(instrucao->operando1, "r%d", operando1);
-    sprintf(instrucao->operando2, "r%d", operando2);
-    sprintf(instrucao->operando3, "r%d", operando3);
-    printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
+    //sprintf(instrucao->operando1, "r%d", operando1);
+    //sprintf(instrucao->operando2, "r%d", operando2);
+    //sprintf(instrucao->operando3, "r%d", operando3);
+    //printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
     return instrucao;
 }
 
@@ -488,9 +488,9 @@ Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "loadI");
     strcpy(instrucao->operando1, operando1);
-    sprintf(instrucao->operando2, "r%d", operando2);
+    //sprintf(instrucao->operando2, "r%d", operando2);
     strcpy(instrucao->operando3, "");
-    printf("%s\t%s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2);
+    //printf("%s\t%s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2);
     return instrucao;
 }
 
@@ -499,10 +499,10 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "loadAI");
-    sprintf(instrucao->operando1, "r%d", operando1);
+    //sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
-    sprintf(instrucao->operando3, "%d", operando3);
-    printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando2, instrucao->operando3, instrucao->operando1);
+    //sprintf(instrucao->operando3, "%d", operando3);
+    //printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando2, instrucao->operando3, instrucao->operando1);
     return instrucao;
 }
 
@@ -511,10 +511,10 @@ Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "storeAI");
-    sprintf(instrucao->operando1, "r%d", operando1);
+    //sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
-    sprintf(instrucao->operando3, "%d", operando3);
-    printf("%s\t%s => %s, %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
+    //sprintf(instrucao->operando3, "%d", operando3);
+    //printf("%s\t%s => %s, %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
     return instrucao;
 }
 
@@ -639,7 +639,7 @@ void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_e
 Instrucao* criaRotulo(int numero_rotulo)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    sprintf(instrucao->operacao, "L%d", numero_rotulo);
+    //sprintf(instrucao->operacao, "L%d", numero_rotulo);
     strcpy(instrucao->operando1, "");
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
@@ -658,9 +658,9 @@ Instrucao* criaInstrucao_cbr (int operando1, int operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "cbr");
-    sprintf(instrucao->operando1, "r%d", operando1);
-    sprintf(instrucao->operando2, "L%d", operando2);
-    sprintf(instrucao->operando3, "L%d", operando3);
+    //sprintf(instrucao->operando1, "r%d", operando1);
+    //sprintf(instrucao->operando2, "L%d", operando2);
+    //sprintf(instrucao->operando3, "L%d", operando3);
     return instrucao;
 }
 
@@ -674,17 +674,15 @@ Instrucao* criaInstrucao_jumpI (int operando1)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "jumpI");
-    sprintf(instrucao->operando1, "L%d", operando1);
+    //sprintf(instrucao->operando1, "L%d", operando1);
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
-    printf("%s\t%s\n", instrucao->operacao, instrucao->operando1);
+    //printf("%s\t%s\n", instrucao->operacao, instrucao->operando1);
     return instrucao;
 }
 
 void printDataSegment(Tabela *tabela_global){
     Tabela* atual = tabela_global;
-
-    char defaultFunctionName[] = "main";
 
 	while (atual != NULL)
 	{
@@ -703,10 +701,11 @@ void printDataSegment(Tabela *tabela_global){
 }
 
 void printFunctionStart(char *func_name){
-    printf("\t.text\n");
+    printf("\t.text\n");//data block type
     printf("\t.globl\t%s\n", func_name);
-    printf("\t.type\t%s, @function\n", func_name);
-    printf("%s:\n", func_name);
+    printf("\t.type\t%s, @function\n", func_name);//type
+    printf("%s:\n", func_name);//label
+    printf("\t.cfi_startproc\n");//procedure start for debugging
 }
 
 void printDefaultFunctionStart(){
@@ -714,7 +713,8 @@ void printDefaultFunctionStart(){
 }
 
 void printFunctionEnd(char *func_name){
-    printf("\t.size\t%s, .-%s\n", func_name, func_name);
+    printf("\t.cfi_endproc\n");//procedure end for debugging
+    printf("\t.size\t%s, .-%s\n", func_name, func_name);//procedure size
 }
 
 void printDefaultFunctionEnd(){
@@ -728,4 +728,5 @@ void printProgramStart(Tabela *tabela_global){
 
 void printProgramEnd(){
     printDefaultFunctionEnd();
+    printf("\t.ident\t\"UFRGS 2023/1 PLAIN AND BASIC COMPILER 1.0\"");//compiler identification
 }

@@ -96,7 +96,6 @@ typedef struct nodo
 	ValorLexico *info;
 	struct nodo** filho;
 	int numeroFilhos;
-  
 } Nodo;
 
 /* Estrutura representando cada entrada de uma tabela, implementada como uma lista simplesmente encadeada. */
@@ -171,5 +170,8 @@ void imprimeRotulo(int numero_rotulo);
 void imprimeInstrucao_cbr (int operando1, int operando2, int operando3);
 int achaDeslocamento(Lista_tabelas *lista_tabelas, char *valor_token);
 int achaEscopo(Lista_tabelas *lista_tabelas, char *valor_token);
+
+void printProgramStart(Tabela *tabela_global);
+void printProgramEnd();
 
 #endif
