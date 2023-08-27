@@ -130,7 +130,6 @@ programa: lista
 	
 
 	//printf("\nLISTA DE INSTRUCOES DA RAIZ:\n");
-	//imprimeInstrucoesNodo($$);
 	popTabela(&lista_tabelas);
 };
 
@@ -152,21 +151,18 @@ lista: elemento lista
 	else{
 		$$ = NULL;
 	}
-
-	if(strcmp($$->info->valor_token, "main") == 0){
-		imprimeInstrucoesNodo($$);
-	}
 };
 
-lista: elemento
-{
+lista: elemento { $$ = $1; };
+
+elemento: definicao_funcao 		{
 	$$ = $1;
 	if(strcmp($$->info->valor_token, "main") == 0){
+		defaultFunctionStackManagement(&($$->info->codigo));
+		addFunctionMetaData(&($$->info->codigo), "main");
 		imprimeInstrucoesNodo($$);
 	}
 };
-
-elemento: definicao_funcao 	{ $$ = $1; };
 elemento: declaracao_global 	{ $$ = NULL; };
 
 definicao_funcao: TK_IDENTIFICADOR '(' push_tabela_escopo lista_parametros ')' TK_OC_MAP tipo
@@ -361,7 +357,7 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	$2->tipo_token = $3->tipo_token;
 	
 	verificaERR_DECLARED(lista_tabelas, $1);
-	insereUltimaTabela(&lista_tabelas, $1); 
+	insereUltimaTabela(&lista_tabelas, $1);
 	
 	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo, $1->valor_token);
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
@@ -370,8 +366,16 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->temporario,registrador_escopo,deslocamento_atual));
 };
 
-bloco_comandos:	'{' lista_comandos '}'  { /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = $2;  };
-bloco_comandos:	'{' '}' 				{ /*imprimeUltimaTabela(lista_tabelas);*/ popTabela(&lista_tabelas); $$ = NULL; };
+bloco_comandos:	'{' lista_comandos '}' {
+	/*imprimeUltimaTabela(lista_tabelas);*/
+	$$ = $2;
+	popTabela(&lista_tabelas);
+};
+bloco_comandos:	'{' '}' {
+	/*imprimeUltimaTabela(lista_tabelas);*/
+	$$ = NULL;
+	popTabela(&lista_tabelas);
+};
 
 atribuicao: TK_IDENTIFICADOR '=' expressao
 {
@@ -415,9 +419,9 @@ lista_expressoes: expressao ',' lista_expressoes	{ $$ = $1; adicionaNodo($$, $3)
 
 retorno: TK_PR_RETURN expressao { $1->tipo_token = infereTipoExpressao($2); $$ = criaNodo($1); adicionaNodo($$, $2); };
 
-impressaoRotulo: /* Vazio */ { imprimeRotulo(rotulo_atual); };
-impressaoRotuloElse: /* Vazio */ { imprimeRotulo(rotulo_atual+2); };
-impressao_cbrRotulo: /* Vazio */ { imprimeInstrucao_cbr(temporario_atual-1, rotulo_atual+1, rotulo_atual+2); imprimeRotulo(rotulo_atual+1); }
+impressaoRotulo: /* Vazio */ { /*imprimeRotulo(rotulo_atual);*/ };
+impressaoRotuloElse: /* Vazio */ { /*imprimeRotulo(rotulo_atual+2);*/ };
+impressao_cbrRotulo: /* Vazio */ { /*imprimeInstrucao_cbr(temporario_atual-1, rotulo_atual+1, rotulo_atual+2);*/ /*imprimeRotulo(rotulo_atual+1);*/ }
 
 clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_tabela_escopo impressao_cbrRotulo bloco_comandos
 {
@@ -438,7 +442,7 @@ clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_t
     	rotulo_atual++;	
    	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
 	
-   	imprimeRotulo(rotulo_atual);
+   	//imprimeRotulo(rotulo_atual);
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo de desvio do bloco */
     	rotulo_atual++;	
 };
@@ -489,7 +493,7 @@ iterativo: TK_PR_WHILE impressaoRotulo '(' expressao ')' push_tabela_escopo impr
    	
    	insereInstrucao(&($$->info->codigo), criaInstrucao_jumpI (rotulo_atual-2));	
    		
-   	imprimeRotulo(rotulo_atual);
+   	//imprimeRotulo(rotulo_atual);
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo da saida do laco. */
     	rotulo_atual++;	
 };

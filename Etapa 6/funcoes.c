@@ -305,7 +305,6 @@ void verificaERR_DECLARED(Lista_tabelas *lista_tabelas, ValorLexico* identificad
 
 	while (tabela_atual != NULL)
 	{
-
 		if (strcmp(identificador->valor_token, tabela_atual->info->valor_token) == 0)
 		{
 			printf("ERRO DE SEMANTICA - LINHA %d - REDECLARACAO DO IDENTIFICADOR '%s'\n", identificador->linha_token, identificador->valor_token);
@@ -475,9 +474,9 @@ Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int ope
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, operacao);
-    //sprintf(instrucao->operando1, "r%d", operando1);
-    //sprintf(instrucao->operando2, "r%d", operando2);
-    //sprintf(instrucao->operando3, "r%d", operando3);
+    sprintf(instrucao->operando1, "r%d", operando1);
+    sprintf(instrucao->operando2, "r%d", operando2);
+    sprintf(instrucao->operando3, "r%d", operando3);
     //printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
     return instrucao;
 }
@@ -488,8 +487,15 @@ Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "loadI");
     strcpy(instrucao->operando1, operando1);
-    //sprintf(instrucao->operando2, "r%d", operando2);
+    sprintf(instrucao->operando2, "r%d", operando2);
     strcpy(instrucao->operando3, "");
+    // operando2 = operando2*4;
+    // strcpy(instrucao->operacao, "movl");
+    // char* new_op1 = malloc(sizeof(char)*(TAMANHO_NOME_OPERANDO+1));
+    // sprintf(new_op1, "$%d", atoi(operando1));
+    // strcpy(instrucao->operando1, new_op1);
+    // sprintf(instrucao->operando2, "-%d(%rbp)", operando2);
+    // strcpy(instrucao->operando3, "");
     //printf("%s\t%s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2);
     return instrucao;
 }
@@ -499,9 +505,9 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "loadAI");
-    //sprintf(instrucao->operando1, "r%d", operando1);
+    sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
-    //sprintf(instrucao->operando3, "%d", operando3);
+    sprintf(instrucao->operando3, "%d", operando3);
     //printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando2, instrucao->operando3, instrucao->operando1);
     return instrucao;
 }
@@ -511,9 +517,9 @@ Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "storeAI");
-    //sprintf(instrucao->operando1, "r%d", operando1);
+    sprintf(instrucao->operando1, "r%d", operando1);
     strcpy(instrucao->operando2, operando2);
-    //sprintf(instrucao->operando3, "%d", operando3);
+    sprintf(instrucao->operando3, "%d", operando3);
     //printf("%s\t%s => %s, %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
     return instrucao;
 }
@@ -639,11 +645,11 @@ void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_e
 Instrucao* criaRotulo(int numero_rotulo)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    //sprintf(instrucao->operacao, "L%d", numero_rotulo);
+    sprintf(instrucao->operacao, "L%d:", numero_rotulo);
     strcpy(instrucao->operando1, "");
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
-   // imprimeRotulo(numero_rotulo);
+    //imprimeRotulo(numero_rotulo);
     return instrucao;	
 }
 
@@ -658,9 +664,9 @@ Instrucao* criaInstrucao_cbr (int operando1, int operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "cbr");
-    //sprintf(instrucao->operando1, "r%d", operando1);
-    //sprintf(instrucao->operando2, "L%d", operando2);
-    //sprintf(instrucao->operando3, "L%d", operando3);
+    sprintf(instrucao->operando1, "r%d", operando1);
+    sprintf(instrucao->operando2, "L%d", operando2);
+    sprintf(instrucao->operando3, "L%d", operando3);
     return instrucao;
 }
 
@@ -674,11 +680,53 @@ Instrucao* criaInstrucao_jumpI (int operando1)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "jumpI");
-    //sprintf(instrucao->operando1, "L%d", operando1);
+    sprintf(instrucao->operando1, "L%d", operando1);
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
     //printf("%s\t%s\n", instrucao->operacao, instrucao->operando1);
     return instrucao;
+}
+
+void insereInstrucaoInicio(Codigo **inicio_codigo, Instrucao *instrucao)
+{
+    Codigo *nova_instrucao = (Codigo*)malloc(sizeof(Codigo));
+    if (nova_instrucao == NULL)
+        return;
+    nova_instrucao->instrucao = instrucao;
+    nova_instrucao->proxima_instrucao = *inicio_codigo;
+    *inicio_codigo = nova_instrucao;
+}
+
+/* Recebe uma lista de tabelas de simbolos, e imprime o código assembly necessário para administrar a pilha. */
+void defaultFunctionStackManagement(Codigo** codigo)
+{
+    Instrucao* instrucao;
+    //block start
+    //printf("\tpushq\t%%rpb\n");
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "pushq");
+    strcpy(instrucao->operando1, "%rpb");
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    insereInstrucaoInicio(codigo, instrucao);
+
+    //printf("\tmovq\t%%rsp, %%rbp\n");
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "movq");
+    strcpy(instrucao->operando1, "%rsp");
+    strcpy(instrucao->operando2, "%rbp");
+    strcpy(instrucao->operando3, "");
+    insereInstrucaoInicio(codigo, instrucao);
+
+    //block end
+    //printf("\tpopq\t%%rbp\n");
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "popq");
+    strcpy(instrucao->operando1, "%rbp");
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    insereInstrucao(codigo, instrucao);
+    //printf("block end\n");
 }
 
 void printDataSegment(Tabela *tabela_global){
@@ -700,33 +748,65 @@ void printDataSegment(Tabela *tabela_global){
 	}
 }
 
-void printFunctionStart(char *func_name){
-    printf("\t.text\n");//data block type
-    printf("\t.globl\t%s\n", func_name);
-    printf("\t.type\t%s, @function\n", func_name);//type
-    printf("%s:\n", func_name);//label
-    printf("\t.cfi_startproc\n");//procedure start for debugging
-}
+void addFunctionMetaData(Codigo** codigo, char *func_name){
+    Instrucao* instrucao;
 
-void printDefaultFunctionStart(){
-    printFunctionStart("main");
-}
+    //start of procedure
 
-void printFunctionEnd(char *func_name){
-    printf("\t.cfi_endproc\n");//procedure end for debugging
-    printf("\t.size\t%s, .-%s\n", func_name, func_name);//procedure size
-}
+    //printf("%s:\n", func_name);//label
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    char* operator;
+    sprintf(operator, "%s:", func_name);
+    strcpy(instrucao->operacao, operator);
+    strcpy(instrucao->operando1, "");
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    insereInstrucaoInicio(codigo, instrucao);
 
-void printDefaultFunctionEnd(){
-    printFunctionEnd("main");
+    //printf("\t.type\t%s, @function\n", func_name);//type
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, ".type");
+    strcpy(instrucao->operando1, func_name);
+    strcpy(instrucao->operando2, "@function");
+    strcpy(instrucao->operando3, "");
+    insereInstrucaoInicio(codigo, instrucao);
+
+    //printf("\t.globl\t%s\n", func_name);
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, ".globl");
+    strcpy(instrucao->operando1, func_name);
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    insereInstrucaoInicio(codigo, instrucao);
+
+    //printf("\t.text\n");//data block type
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, ".text");
+    strcpy(instrucao->operando1, "");
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    insereInstrucaoInicio(codigo, instrucao);
+
+    //printf("\t.cfi_startproc\n");//procedure start for debugging
+
+    //end of procedure
+
+    //printf("\t.cfi_endproc\n");//procedure end for debugging
+    //printf("\t.size\t%s, .-%s\n", func_name, func_name);//procedure size
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, ".size");
+    strcpy(instrucao->operando1, func_name);
+    char* desloc = malloc(sizeof(char)*(TAMANHO_NOME_OPERANDO));
+    sprintf(desloc, ".-%s", func_name);
+    strcpy(instrucao->operando2, desloc);
+    strcpy(instrucao->operando3, "");
+    insereInstrucao(codigo, instrucao);
 }
 
 void printProgramStart(Tabela *tabela_global){
     printDataSegment(tabela_global);
-    printDefaultFunctionStart();
 }
 
 void printProgramEnd(){
-    printDefaultFunctionEnd();
-    printf("\t.ident\t\"UFRGS 2023/1 PLAIN AND BASIC COMPILER 1.0\"");//compiler identification
+    printf(".ident\t\"UFRGS 2023/1 PLAIN AND BASIC COMPILER 1.0\"");//compiler identification
 }

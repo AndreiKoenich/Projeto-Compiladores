@@ -173,5 +173,7 @@ int achaEscopo(Lista_tabelas *lista_tabelas, char *valor_token);
 
 void printProgramStart(Tabela *tabela_global);
 void printProgramEnd();
+void defaultFunctionStackManagement(Codigo** codigo);
+void addFunctionMetaData(Codigo** codigo, char *func_name);
 
 #endif
