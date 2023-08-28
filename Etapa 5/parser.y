@@ -419,7 +419,9 @@ clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_t
   	
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando. */
     	rotulo_atual++;	
-   	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
+    	
+    	if ($8 != NULL)
+   		$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
 	
    	imprimeRotulo(rotulo_atual);
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo de desvio do bloco */
@@ -445,11 +447,15 @@ clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_t
   	
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando IF. */
     	rotulo_atual++;	
-   	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando IF. */
+    	
+    	if ($8 != NULL)
+   		$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando IF. */
 
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando ELSE. */
     	rotulo_atual++;	
-   	$$->info->codigo = concatenaCodigo($$->info->codigo, $12->info->codigo); /* Carrega o codigo do bloco de comando ELSE. */
+    	
+    	if ($12 != NULL)
+   		$$->info->codigo = concatenaCodigo($$->info->codigo, $12->info->codigo); /* Carrega o codigo do bloco de comando ELSE. */
 };
 
 iterativo: TK_PR_WHILE impressaoRotulo '(' expressao ')' push_tabela_escopo impressao_cbrRotulo bloco_comandos
@@ -468,7 +474,9 @@ iterativo: TK_PR_WHILE impressaoRotulo '(' expressao ')' push_tabela_escopo impr
   	
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando. */
     	rotulo_atual++;	
-   	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
+    	
+    	if ($8 != NULL)
+   		$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
    	
    	insereInstrucao(&($$->info->codigo), criaInstrucao_jumpI (rotulo_atual-2));	
    		
