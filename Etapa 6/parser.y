@@ -684,7 +684,7 @@ expressao7: TK_IDENTIFICADOR
 	temporario_atual++;
 	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo, $1->valor_token);
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
-	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->temporario,registrador_escopo,deslocamento_atual));
+	//insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->temporario,registrador_escopo,deslocamento_atual));
 };
 
 literal: TK_LIT_INT  	
