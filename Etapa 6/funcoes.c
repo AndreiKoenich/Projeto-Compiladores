@@ -623,6 +623,18 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
     return instrucao;
 }
 
+Instrucao* criaInstrucao_loadAI_ret(int operando1, char *operando2, int operando3)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+
+    strcpy(instrucao->operacao, "movl");
+    strcpy(instrucao->operando1, "%edx");
+    strcpy(instrucao->operando2, "%eax");
+    strcpy(instrucao->operando3, "");
+    
+    return instrucao;
+}
+
 //done
 /* Cria uma instrucao ILOC do tipo "store AI", e imprime o seu conteudo. */
 Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
@@ -964,14 +976,26 @@ void addFunctionMetaData(Codigo** codigo, char *func_name){
 
     //end of procedure
 
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "popq");
+    strcpy(instrucao->operando1, "%rbp");
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    insereInstrucao(codigo, instrucao);
+
+    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "ret");
+    strcpy(instrucao->operando1, "");
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    insereInstrucao(codigo, instrucao);
+
     //printf("\t.cfi_endproc\n");//procedure end for debugging
     //printf("\t.size\t%s, .-%s\n", func_name, func_name);//procedure size
     instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, ".size");
     strcpy(instrucao->operando1, func_name);
-    char* desloc = malloc(sizeof(char)*(TAMANHO_NOME_OPERANDO));
-    sprintf(desloc, ".-%s", func_name);
-    strcpy(instrucao->operando2, desloc);
+    sprintf(instrucao->operando2, ".-%s", func_name);
     strcpy(instrucao->operando3, "");
     insereInstrucao(codigo, instrucao);
 }

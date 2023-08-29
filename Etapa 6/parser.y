@@ -417,7 +417,16 @@ chamada_funcao: TK_IDENTIFICADOR '(' ')'
 lista_expressoes: expressao 				{ $$ = $1; };
 lista_expressoes: expressao ',' lista_expressoes	{ $$ = $1; adicionaNodo($$, $3); };
 
-retorno: TK_PR_RETURN expressao { $1->tipo_token = infereTipoExpressao($2); $$ = criaNodo($1); adicionaNodo($$, $2); };
+retorno: TK_PR_RETURN expressao {
+	$1->tipo_token = infereTipoExpressao($2);
+	$$ = criaNodo($1);
+	adicionaNodo($$, $2);
+
+	$$->info->codigo = concatenaCodigo($$->info->codigo, $2->info->codigo);	/* Carrega o codigo da expressao de retorno. */
+	if($$->info->temporario%2 == 0){
+		insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI_ret($2->info->temporario,NULL,$$->info->temporario));
+	}
+};
 
 impressaoRotulo: /* Vazio */ { /*imprimeRotulo(rotulo_atual);*/ };
 impressaoRotuloElse: /* Vazio */ { /*imprimeRotulo(rotulo_atual+2);*/ };

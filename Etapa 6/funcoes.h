@@ -181,5 +181,6 @@ Instrucao* criaInstrucao_cmp(int operando1, int operando2, int operando3);
 Instrucao* criaInstrucao_set(char *operacao, int operando1, int operando2, int operando3);
 Instrucao* criaInstrucao_cltd();
 Instrucao* criaInstrucaoDiv(int operando1);
+Instrucao* criaInstrucao_loadAI_ret(int operando1, char *operando2, int operando3);
 
 #endif
