@@ -41,8 +41,8 @@
 #define BOOL 2
 
 /* Constantes para definir o tamanho maximo do nome dos operandos e das instrucoes ILOC (linguagem intermediaria). */
-#define TAMANHO_NOME_OPERANDO 10
-#define TAMANHO_NOME_INSTRUCAO 10
+#define TAMANHO_NOME_OPERANDO 20
+#define TAMANHO_NOME_INSTRUCAO 20
 
 /* Constantes para definir os nomes dos registradores (global e local) referentes aos deslocamentos na memoria. */
 #define NOME_REGISTRADOR_GLOBAL "rbss"

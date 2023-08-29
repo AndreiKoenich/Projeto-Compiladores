@@ -923,7 +923,7 @@ void printDataSegment(Tabela *tabela_global){
             printf("\t.type\t%s, @object\n", atual->info->valor_token);
             printf("\t.size\t%s, 4\n", atual->info->valor_token);
             printf("%s:\n", atual->info->valor_token);
-            printf("\t.zero\t4\n", atual->info->valor_token);
+            printf("\t.zero\t4\n");
         }
 		atual = atual->proximo;
 	}
