@@ -481,12 +481,12 @@ Instrucao* criaInstrucaoAritmeticaLogica(char *operacao, int operando1, int oper
     }
 
     if(operando3%2 == 1){
-        strcpy(instrucao->operando1, "%eax");
-        strcpy(instrucao->operando2, "%edx");
+        sprintf(instrucao->operando1, "%ceax", '%');
+        sprintf(instrucao->operando2, "%cedx", '%');
     }
     else{
-        strcpy(instrucao->operando1, "%edx");
-        strcpy(instrucao->operando2, "%eax");
+        sprintf(instrucao->operando1, "%cedx", '%');
+        sprintf(instrucao->operando2, "%ceax", '%');
     }
     strcpy(instrucao->operando3, "");
 
@@ -500,12 +500,12 @@ Instrucao* criaInstrucao_cmp(int operando1, int operando2, int operando3){
     strcpy(instrucao->operacao, "cmp");
 
     if(operando3%2 == 1){
-        strcpy(instrucao->operando1, "%eax");
-        strcpy(instrucao->operando2, "%edx");
+        sprintf(instrucao->operando1, "%ceax", '%');
+        sprintf(instrucao->operando2, "%cedx", '%');
     }
     else{
-        strcpy(instrucao->operando1, "%edx");
-        strcpy(instrucao->operando2, "%eax");
+        sprintf(instrucao->operando1, "%cedx", '%');
+        sprintf(instrucao->operando2, "%ceax", '%');
     }
     strcpy(instrucao->operando3, "");
 
@@ -536,10 +536,10 @@ Instrucao* criaInstrucao_set(char *operacao, int operando1, int operando2, int o
     }
 
     if(operando3%2 == 1){
-        strcpy(instrucao->operando1, "%eax");
+        sprintf(instrucao->operando1, "%ceax", '%');
     }
     else{
-        strcpy(instrucao->operando1, "%edx");
+        sprintf(instrucao->operando1, "%cedx", '%');
     }
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
@@ -565,7 +565,7 @@ Instrucao* criaInstrucaoDiv(int operando1)
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
 
     strcpy(instrucao->operacao, "idivl");
-    sprintf(instrucao->operando1, "-%d(%rbp)", operando1);
+    sprintf(instrucao->operando1, "-%d(%crbp)", operando1, '%');
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando2, "");
     
@@ -584,10 +584,10 @@ Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
 
     char* new_op2 = malloc(sizeof(char)*TAMANHO_NOME_OPERANDO);
     if(operando2%2 == 1){
-        strcpy(new_op2, "%eax");
+        sprintf(new_op2, "%ceax", '%');
     }
     else{
-        strcpy(new_op2, "%edx");
+        sprintf(new_op2, "%cedx", '%');
     }
 
     operando2 = operando2*4;
@@ -611,12 +611,12 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
     // sprintf(instrucao->operando3, "%d", operando3);
 
     strcpy(instrucao->operacao, "movl");
-    sprintf(instrucao->operando1, "-%d(%rbp)", operando3+4);
+    sprintf(instrucao->operando1, "-%d(%crbp)", operando3+4, '%');
     if(operando1%2 == 1){
-        strcpy(instrucao->operando2, "%eax");
+        sprintf(instrucao->operando2, "%ceax", '%');
     }
     else{
-        strcpy(instrucao->operando2, "%edx");
+        sprintf(instrucao->operando2, "%cedx", '%');
     }
     strcpy(instrucao->operando3, "");
     
@@ -628,8 +628,8 @@ Instrucao* criaInstrucao_loadAI_ret(int operando1, char *operando2, int operando
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
 
     strcpy(instrucao->operacao, "movl");
-    strcpy(instrucao->operando1, "%edx");
-    strcpy(instrucao->operando2, "%eax");
+    sprintf(instrucao->operando1, "%cedx", '%');
+    sprintf(instrucao->operando2, "%ceax", '%');
     strcpy(instrucao->operando3, "");
     
     return instrucao;
@@ -648,12 +648,12 @@ Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
     int new_op2_i = operando1*4;
     strcpy(instrucao->operacao, "movl");
     if(operando1%2 == 1){
-        strcpy(instrucao->operando1, "%eax");
+        sprintf(instrucao->operando1, "%ceax", '%');
     }
     else{
-        strcpy(instrucao->operando1, "%edx");
+        sprintf(instrucao->operando1, "%cedx", '%');
     }
-    sprintf(instrucao->operando2, "-%d(%rbp)", operando3+4);
+    sprintf(instrucao->operando2, "-%d(%crbp)", operando3+4, '%');
     strcpy(instrucao->operando3, "");
     return instrucao;
 }
@@ -874,7 +874,7 @@ void insereInstrucaoReturn(Codigo **codigo){
 
     instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "popq");
-    strcpy(instrucao->operando1, "%rbp");
+    sprintf(instrucao->operando1, "%crbp", '%');
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
     insereInstrucao(codigo, instrucao);
@@ -896,15 +896,15 @@ void defaultFunctionStackManagement(Codigo** codigo)
     //printf("\tmovq\t%%rsp, %%rbp\n");
     instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "movq");
-    strcpy(instrucao->operando1, "%rsp");
-    strcpy(instrucao->operando2, "%rbp");
+    sprintf(instrucao->operando1, "%crsp", '%');
+    sprintf(instrucao->operando2, "%crbp", '%');
     strcpy(instrucao->operando3, "");
     insereInstrucaoInicio(codigo, instrucao);
 
     //printf("\tpushq\t%%rbp\n");
     instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "pushq");
-    strcpy(instrucao->operando1, "%rbp");
+    sprintf(instrucao->operando1, "%crbp", '%');
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
     insereInstrucaoInicio(codigo, instrucao);
