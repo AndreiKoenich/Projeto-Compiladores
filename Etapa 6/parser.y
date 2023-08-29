@@ -423,9 +423,10 @@ retorno: TK_PR_RETURN expressao {
 	adicionaNodo($$, $2);
 
 	$$->info->codigo = concatenaCodigo($$->info->codigo, $2->info->codigo);	/* Carrega o codigo da expressao de retorno. */
-	if($$->info->temporario%2 == 0){
+	if(temporario_atual%2 == 1){
 		insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI_ret($2->info->temporario,NULL,$$->info->temporario));
 	}
+	insereInstrucaoReturn(&($$->info->codigo));
 };
 
 impressaoRotulo: /* Vazio */ { /*imprimeRotulo(rotulo_atual);*/ };

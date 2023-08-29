@@ -869,11 +869,9 @@ void insereInstrucaoInicio(Codigo **inicio_codigo, Instrucao *instrucao)
     *inicio_codigo = nova_instrucao;
 }
 
-void returnImplementation(Codigo **codigo){
+void insereInstrucaoReturn(Codigo **codigo){
     Instrucao* instrucao;
 
-    //block end
-    //printf("\tpopq\t%%rbp\n");
     instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "popq");
     strcpy(instrucao->operando1, "%rbp");
@@ -881,14 +879,12 @@ void returnImplementation(Codigo **codigo){
     strcpy(instrucao->operando3, "");
     insereInstrucao(codigo, instrucao);
 
-    //printf("\tret\n");
     instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "ret");
     strcpy(instrucao->operando1, "");
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
     insereInstrucao(codigo, instrucao);
-    //printf("block end\n");
 }
 
 /* Recebe uma lista de tabelas de simbolos, e imprime o código assembly necessário para administrar a pilha. */
@@ -975,20 +971,6 @@ void addFunctionMetaData(Codigo** codigo, char *func_name){
     //printf("\t.cfi_startproc\n");//procedure start for debugging
 
     //end of procedure
-
-    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    strcpy(instrucao->operacao, "popq");
-    strcpy(instrucao->operando1, "%rbp");
-    strcpy(instrucao->operando2, "");
-    strcpy(instrucao->operando3, "");
-    insereInstrucao(codigo, instrucao);
-
-    instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    strcpy(instrucao->operacao, "ret");
-    strcpy(instrucao->operando1, "");
-    strcpy(instrucao->operando2, "");
-    strcpy(instrucao->operando3, "");
-    insereInstrucao(codigo, instrucao);
 
     //printf("\t.cfi_endproc\n");//procedure end for debugging
     //printf("\t.size\t%s, .-%s\n", func_name, func_name);//procedure size
