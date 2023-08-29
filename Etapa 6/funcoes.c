@@ -512,6 +512,25 @@ Instrucao* criaInstrucao_cmp(int operando1, int operando2, int operando3){
     return instrucao;
 }
 
+Instrucao* criaInstrucao_mov_al(int operando1, int operando2, int operando3){
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+
+    strcpy(instrucao->operacao, "movzbl");
+
+    sprintf(instrucao->operando1, "%cal", '%');
+
+    if(operando3%2 == 1){
+        sprintf(instrucao->operando2, "%ceax", '%');
+    }
+    else{
+        sprintf(instrucao->operando2, "%cedx", '%');
+    }
+
+    strcpy(instrucao->operando3, "");
+    
+    return instrucao;
+}
+
 //done
 Instrucao* criaInstrucao_set(char *operacao, int operando1, int operando2, int operando3){
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
@@ -535,12 +554,15 @@ Instrucao* criaInstrucao_set(char *operacao, int operando1, int operando2, int o
         strcpy(instrucao->operacao, "sete");
     }
 
-    if(operando3%2 == 1){
-        sprintf(instrucao->operando1, "%ceax", '%');
-    }
-    else{
-        sprintf(instrucao->operando1, "%cedx", '%');
-    }
+    sprintf(instrucao->operando1, "%cal", '%');
+
+    // if(operando3%2 == 1){
+    //     sprintf(instrucao->operando1, "%ceax", '%');
+    // }
+    // else{
+    //     sprintf(instrucao->operando1, "%cedx", '%');
+    // }
+
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
     
@@ -936,9 +958,7 @@ void addFunctionMetaData(Codigo** codigo, char *func_name){
 
     //printf("%s:\n", func_name);//label
     instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    char* operator;
-    sprintf(operator, "%s:", func_name);
-    strcpy(instrucao->operacao, operator);
+    sprintf(instrucao->operacao, "%s:", func_name);
     strcpy(instrucao->operando1, "");
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
@@ -987,5 +1007,5 @@ void printProgramStart(Tabela *tabela_global){
 }
 
 void printProgramEnd(){
-    printf(".ident\t\"UFRGS 2023/1 PLAIN AND BASIC COMPILER 1.0\"");//compiler identification
+    printf(".ident\t\"UFRGS 2023/1 PLAIN AND BASIC COMPILER 1.0\"\n");//compiler identification
 }
