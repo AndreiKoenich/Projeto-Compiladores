@@ -480,7 +480,7 @@ Instrucao* criaInstrucaoAritmeticaLogica(char *operacao, int operando1, int oper
         strcpy(instrucao->operacao, "imull");
     }
 
-    if(operando3%2 == 1){
+    if(operando3%2 == 0){
         sprintf(instrucao->operando1, "%ceax", '%');
         sprintf(instrucao->operando2, "%cedx", '%');
     }
