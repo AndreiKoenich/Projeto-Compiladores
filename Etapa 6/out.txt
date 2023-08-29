@@ -1,0 +1,21 @@
+.text	
+.globl	main
+.type	main, @function
+main:	
+pushq	main:
+movq	%rsp, %rbp
+movl	$1, %eax
+movl	%eax, -8(%rbp)
+movl	$2, %edx
+movl	%edx, -16(%rbp)
+movl	-16(%rbp), %eax
+movl	%eax, -8(%rbp)
+movl	-8(%rbp), %edx
+movl	%edx, %eax
+popq	%rbp
+ret	
+movl	-16(%rbp), %eax
+popq	%rbp
+ret	
+.size	main, .-main
+.ident	"UFRGS 2023/1 PLAIN AND BASIC COMPILER 1.0"
