@@ -469,63 +469,110 @@ void concatenate_list(Nodo* list1, Nodo* list2)
     adicionaNodo(last_node_from_list, list2);
 }
 
-/* Cria uma instrucao ILOC do tipo aritmetica ou logica, e imprime o seu conteudo. */
-Instrucao* criaInstrucaoAritmeticaLogica (char *operacao, int operando1, int operando2, int operando3)
+//done
+/* Cria uma instrucao ILOC do tipo aritmetica (exceto divisao), e imprime o seu conteudo. */
+Instrucao* criaInstrucaoAritmeticaLogica(char *operacao, int operando1, int operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    strcpy(instrucao->operacao, operacao);
-    sprintf(instrucao->operando1, "r%d", operando1);
-    sprintf(instrucao->operando2, "r%d", operando2);
-    sprintf(instrucao->operando3, "r%d", operando3);
+    sprintf(instrucao->operacao, "%sl", operacao);
 
-    // char *new_op = malloc(sizeof(char)*TAMANHO_NOME_INSTRUCAO);
-    // sprintf(new_op, "%sl", operacao);
+    if(strcmp(operacao, "mult") == 0){
+        strcpy(instrucao->operacao, "imull");
+    }
 
-    // if(strcmp(operacao, "mult") == 0){
-    //     strcpy(new_op, "mull");
-    // }
-    // if(strcmp(operacao, "div") == 0){
-    //     strcpy(new_op, "idiv");
-    // }
-    // char* operacao_copy = strdup(operacao);
-    // int length = strlen(operacao_copy);
-    // if(length==5){
-    //     operacao_copy[3] = '\0';
-    // }
-    // if(strcmp(operacao_copy, "cmp") == 0){
-    //     strcpy(new_op, "cmp");
-    // }
-    // if(strcmp(operacao, "cmp_NE") == 0){
+    if(operando3%2 == 1){
+        strcpy(instrucao->operando1, "%eax");
+        strcpy(instrucao->operando2, "%edx");
+    }
+    else{
+        strcpy(instrucao->operando1, "%edx");
+        strcpy(instrucao->operando2, "%eax");
+    }
+    strcpy(instrucao->operando3, "");
 
-    // }
-    // if(strcmp(operacao, "cmp_GE") == 0){
-
-    // }
-    // if(strcmp(operacao, "cmp_LE") == 0){
-
-    // }
-    // if(strcmp(operacao, "cmp_LT") == 0){
-
-    // }
-    // if(strcmp(operacao, "cmp_GT") == 0){
-
-    // }
-    // if(strcmp(operacao, "cmp_EQ") == 0){
-        
-    // }
-
-    // operando2 = operando2*4;
-    // strcpy(instrucao->operacao, "movl");
-    // char* new_op1 = malloc(sizeof(char)*TAMANHO_NOME_OPERANDO);
-    // sprintf(new_op1, "$%d", operando1);
-    // strcpy(instrucao->operando1, new_op1);
-    // sprintf(instrucao->operando2, "-%d(%rbp)", operando2);
-    // strcpy(instrucao->operando3, "");
-
-    //printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
     return instrucao;
 }
 
+//done
+Instrucao* criaInstrucao_cmp(int operando1, int operando2, int operando3){
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+
+    strcpy(instrucao->operacao, "cmp");
+
+    if(operando3%2 == 1){
+        strcpy(instrucao->operando1, "%eax");
+        strcpy(instrucao->operando2, "%edx");
+    }
+    else{
+        strcpy(instrucao->operando1, "%edx");
+        strcpy(instrucao->operando2, "%eax");
+    }
+    strcpy(instrucao->operando3, "");
+
+    return instrucao;
+}
+
+//done
+Instrucao* criaInstrucao_set(char *operacao, int operando1, int operando2, int operando3){
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+
+    if(strcmp(operacao, "cmp_NE") == 0){
+        strcpy(instrucao->operacao, "setne");
+    }
+    else if(strcmp(operacao, "cmp_GE") == 0){
+        strcpy(instrucao->operacao, "setge");
+    }
+    else if(strcmp(operacao, "cmp_LE") == 0){
+        strcpy(instrucao->operacao, "setle");
+    }
+    else if(strcmp(operacao, "cmp_LT") == 0){
+        strcpy(instrucao->operacao, "setl");
+    }
+    else if(strcmp(operacao, "cmp_GT") == 0){
+        strcpy(instrucao->operacao, "setg");
+    }
+    else if(strcmp(operacao, "cmp_EQ") == 0){
+        strcpy(instrucao->operacao, "sete");
+    }
+
+    if(operando3%2 == 1){
+        strcpy(instrucao->operando1, "%eax");
+    }
+    else{
+        strcpy(instrucao->operando1, "%edx");
+    }
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    
+    return instrucao;
+}
+
+//done
+Instrucao* criaInstrucao_cltd()
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    strcpy(instrucao->operacao, "cltd");
+    strcpy(instrucao->operando1, "");
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+
+    return instrucao;
+}
+
+//done
+Instrucao* criaInstrucaoDiv(int operando1)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+
+    strcpy(instrucao->operacao, "idivl");
+    sprintf(instrucao->operando1, "-%d(%rbp)", operando1);
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando2, "");
+    
+    return instrucao;
+}
+
+//done
 /* Cria uma instrucao ILOC do tipo "load I", e imprime o seu conteudo. */
 Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
 {
@@ -535,31 +582,48 @@ Instrucao* criaInstrucao_loadI (char *operando1, int operando2)
     // sprintf(instrucao->operando2, "r%d", operando2);
     // strcpy(instrucao->operando3, "");
 
+    char* new_op2 = malloc(sizeof(char)*TAMANHO_NOME_OPERANDO);
+    if(operando2%2 == 1){
+        strcpy(new_op2, "%eax");
+    }
+    else{
+        strcpy(new_op2, "%edx");
+    }
+
     operando2 = operando2*4;
     strcpy(instrucao->operacao, "movl");
-    char* new_op1 = malloc(sizeof(char)*TAMANHO_NOME_OPERANDO);
-    sprintf(new_op1, "$%d", atoi(operando1));
-    strcpy(instrucao->operando1, new_op1);
-    sprintf(instrucao->operando2, "-%d(%rbp)", operando2);
+    sprintf(instrucao->operando1, "$%d", atoi(operando1));
+    //printf("loadI op1:%d op2:%d\n", operando1, operando2);
+    strcpy(instrucao->operando2, new_op2);
     strcpy(instrucao->operando3, "");
 
-    //printf("%s\t%s => %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2);
     return instrucao;
 }
 
+//done
 /* Cria uma instrucao ILOC do tipo "load AI", e imprime o seu conteudo. */
 Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    strcpy(instrucao->operacao, "loadAI");
-    sprintf(instrucao->operando1, "r%d", operando1);
-    strcpy(instrucao->operando2, operando2);
-    sprintf(instrucao->operando3, "%d", operando3);
+    // strcpy(instrucao->operacao, "loadAI");
+    // sprintf(instrucao->operando1, "r%d", operando1);
+    // strcpy(instrucao->operando2, operando2);
+    // sprintf(instrucao->operando3, "%d", operando3);
+
+    strcpy(instrucao->operacao, "movl");
+    sprintf(instrucao->operando1, "-%d(%rbp)", operando3+4);
+    if(operando1%2 == 1){
+        strcpy(instrucao->operando2, "%eax");
+    }
+    else{
+        strcpy(instrucao->operando2, "%edx");
+    }
+    strcpy(instrucao->operando3, "");
     
-    //printf("%s\t%s, %s => %s\n", instrucao->operacao, instrucao->operando2, instrucao->operando3, instrucao->operando1);
     return instrucao;
 }
 
+//done
 /* Cria uma instrucao ILOC do tipo "store AI", e imprime o seu conteudo. */
 Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
 {
@@ -571,10 +635,14 @@ Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
 
     int new_op2_i = operando1*4;
     strcpy(instrucao->operacao, "movl");
-    sprintf(instrucao->operando1, "-%d(%rbp)", new_op2_i);
-    sprintf(instrucao->operando2, "-%d(%rbp)", operando3);
+    if(operando1%2 == 1){
+        strcpy(instrucao->operando1, "%eax");
+    }
+    else{
+        strcpy(instrucao->operando1, "%edx");
+    }
+    sprintf(instrucao->operando2, "-%d(%rbp)", operando3+4);
     strcpy(instrucao->operando3, "");
-    //printf("%s\t%s => %s, %s\n", instrucao->operacao, instrucao->operando1, instrucao->operando2, instrucao->operando3);
     return instrucao;
 }
 
@@ -708,7 +776,7 @@ void atualizaRegistradorEscopo(Lista_tabelas *lista_tabelas, char *registrador_e
 Instrucao* criaRotulo(int numero_rotulo)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    sprintf(instrucao->operacao, "L%d:", numero_rotulo);
+    sprintf(instrucao->operacao, ".L%d:", numero_rotulo);
     strcpy(instrucao->operando1, "");
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
@@ -719,32 +787,60 @@ Instrucao* criaRotulo(int numero_rotulo)
 /* Recebe um numero de rotulo (referente a uma linha do codigo ILOC), e imprime esse rotulo na saida padrao. */
 void imprimeRotulo(int numero_rotulo)
 {
-	printf("L%d:\n", numero_rotulo);
+	printf(".L%d:\n", numero_rotulo);
 }
 
+//done
+//maybe have to change order
+Instrucao* criaInstrucao_jne(int operando3)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+
+    strcpy(instrucao->operacao, "jne");
+    sprintf(instrucao->operando1, ".L%d", operando3);
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    return instrucao;
+}
+
+//done
+//maybe have to change order
+Instrucao* criaInstrucao_je(int operando2)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+
+    strcpy(instrucao->operacao, "je");
+    sprintf(instrucao->operando1, ".L%d", operando2);
+    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operando3, "");
+    return instrucao;
+}
+
+//removed
 /* Cria uma instrucao ILOC do tipo "cbr", e imprime o seu conteudo na saida padrao. */
 Instrucao* criaInstrucao_cbr (int operando1, int operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "cbr");
     sprintf(instrucao->operando1, "r%d", operando1);
-    sprintf(instrucao->operando2, "L%d", operando2);
-    sprintf(instrucao->operando3, "L%d", operando3);
+    sprintf(instrucao->operando2, ".L%d", operando2);
+    sprintf(instrucao->operando3, ".L%d", operando3);
     return instrucao;
 }
 
 void imprimeInstrucao_cbr (int operando1, int operando2, int operando3)
 {
-	printf("cbr\tr%d => L%d, L%d\n", operando1, operando2, operando3);	
+	printf("cbr\tr%d => .L%d, .L%d\n", operando1, operando2, operando3);	
 }
 
+//done
 /* Cria uma instrucao ILOC do tipo "jumpI", e imprime o seu conteudo na saida padrao. */
 Instrucao* criaInstrucao_jumpI (int operando1)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     //strcpy(instrucao->operacao, "jumpI");
     strcpy(instrucao->operacao, "jmp");
-    sprintf(instrucao->operando1, "L%d", operando1);
+    sprintf(instrucao->operando1, ".L%d", operando1);
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
     //printf("%s\t%s\n", instrucao->operacao, instrucao->operando1);
@@ -797,10 +893,10 @@ void defaultFunctionStackManagement(Codigo** codigo)
     strcpy(instrucao->operando3, "");
     insereInstrucaoInicio(codigo, instrucao);
 
-    //printf("\tpushq\t%%rpb\n");
+    //printf("\tpushq\t%%rbp\n");
     instrucao = (Instrucao*)malloc(sizeof(Instrucao));
     strcpy(instrucao->operacao, "pushq");
-    strcpy(instrucao->operando1, "%rpb");
+    strcpy(instrucao->operando1, "%rbp");
     strcpy(instrucao->operando2, "");
     strcpy(instrucao->operando3, "");
     insereInstrucaoInicio(codigo, instrucao);

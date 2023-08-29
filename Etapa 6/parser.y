@@ -436,11 +436,14 @@ clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_t
   	rotulo_atual++;
   	
   	$$->info->codigo = concatenaCodigo($$->info->codigo, $4->info->codigo);	/* Carrega o codigo da expressao de teste. */
-  	insereInstrucao(&($$->info->codigo), criaInstrucao_cbr ($4->info->temporario, rotulo_atual, rotulo_atual+1));	
+  	//insereInstrucao(&($$->info->codigo), criaInstrucao_cbr ($4->info->temporario, rotulo_atual, rotulo_atual+1));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_jne(rotulo_atual));	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_je(rotulo_atual+1));	
   	
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando. */
     	rotulo_atual++;	
-   	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
+	if ($8 != NULL)
+   		$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
 	
    	//imprimeRotulo(rotulo_atual);
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo de desvio do bloco */
@@ -462,15 +465,19 @@ clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_t
   	rotulo_atual++;
   	
   	$$->info->codigo = concatenaCodigo($$->info->codigo, $4->info->codigo);	/* Carrega o codigo da expressao de teste. */
-  	insereInstrucao(&($$->info->codigo), criaInstrucao_cbr ($4->info->temporario, rotulo_atual, rotulo_atual+1));	
-  	
+  	//insereInstrucao(&($$->info->codigo), criaInstrucao_cbr ($4->info->temporario, rotulo_atual, rotulo_atual+1));	
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_jne(rotulo_atual));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_je(rotulo_atual+1));	
+
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando IF. */
-    	rotulo_atual++;	
-   	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando IF. */
+    	rotulo_atual++;
+	if ($8 != NULL)
+   		$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando IF. */
 
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando ELSE. */
-    	rotulo_atual++;	
-   	$$->info->codigo = concatenaCodigo($$->info->codigo, $12->info->codigo); /* Carrega o codigo do bloco de comando ELSE. */
+    	rotulo_atual++;
+	if ($12 != NULL)
+   		$$->info->codigo = concatenaCodigo($$->info->codigo, $12->info->codigo); /* Carrega o codigo do bloco de comando ELSE. */
 };
 
 iterativo: TK_PR_WHILE impressaoRotulo '(' expressao ')' push_tabela_escopo impressao_cbrRotulo bloco_comandos
@@ -485,11 +492,14 @@ iterativo: TK_PR_WHILE impressaoRotulo '(' expressao ')' push_tabela_escopo impr
   	rotulo_atual++;
   	
   	$$->info->codigo = concatenaCodigo($$->info->codigo, $4->info->codigo);	/* Carrega o codigo da expressao de teste. */
-  	insereInstrucao(&($$->info->codigo), criaInstrucao_cbr ($4->info->temporario, rotulo_atual, rotulo_atual+1));	
-  	
+  	//insereInstrucao(&($$->info->codigo), criaInstrucao_cbr ($4->info->temporario, rotulo_atual, rotulo_atual+1));	
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_jne(rotulo_atual));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_je(rotulo_atual+1));	
+
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando. */
-    	rotulo_atual++;	
-   	$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
+    	rotulo_atual++;
+	if ($8 != NULL)
+		$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
    	
    	insereInstrucao(&($$->info->codigo), criaInstrucao_jumpI (rotulo_atual-2));	
    		
@@ -539,7 +549,8 @@ expressao3: expressao3 TK_OC_EQ expressao4
   	temporario_atual++;
   	
   	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
-  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_EQ",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_EQ",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 }; 		
  	
 expressao3: expressao3 TK_OC_NE expressao4
@@ -552,7 +563,8 @@ expressao3: expressao3 TK_OC_NE expressao4
   	temporario_atual++;
   	
   	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
-  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_NE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_NE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };		
 	
 expressao4: expressao5 	{ $$ = $1; };
@@ -566,7 +578,8 @@ expressao4: expressao4 '<' expressao5
   	temporario_atual++;
   	
   	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
-  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_LT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_LT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 			
 expressao4: expressao4 '>' expressao5
@@ -579,7 +592,8 @@ expressao4: expressao4 '>' expressao5
   	temporario_atual++;
   	
   	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
-  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_GT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_GT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 			
 expressao4: expressao4 TK_OC_LE expressao5
@@ -592,7 +606,8 @@ expressao4: expressao4 TK_OC_LE expressao5
   	temporario_atual++;
   	
   	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
-  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_LE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_LE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 
 expressao4: expressao4 TK_OC_GE expressao5
@@ -605,7 +620,8 @@ expressao4: expressao4 TK_OC_GE expressao5
   	temporario_atual++;
   	
   	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
-  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("cmp_GE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_GE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 };
 
 expressao5: expressao6 	{ $$ = $1; };
@@ -661,8 +677,10 @@ expressao6: expressao6 '/' expressao7
   	temporario_atual++;
   	
   	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
-  	insereInstrucao(&($$->info->codigo), criaInstrucaoAritmeticaLogica("div",$1->info->temporario,$3->info->temporario,$$->info->temporario));
-  	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->info->temporario,NULL,$$->info->temporario));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_cltd("div",$1->info->temporario,$3->info->temporario,$$->info->temporario));
+	insereInstrucao(&($$->info->codigo), criaInstrucaoDiv($1->info->temporario));
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($1->info->temporario,NULL,$$->info->temporario));
 };	
 		
 expressao6: expressao6 '%' expressao7 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };
@@ -684,7 +702,7 @@ expressao7: TK_IDENTIFICADOR
 	temporario_atual++;
 	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo, $1->valor_token);
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
-	//insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->temporario,registrador_escopo,deslocamento_atual));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->temporario,registrador_escopo,deslocamento_atual));
 };
 
 literal: TK_LIT_INT  	
