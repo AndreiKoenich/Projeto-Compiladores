@@ -599,6 +599,18 @@ Instrucao* criaInstrucao_div_clear()
     return instrucao;
 }
 
+Instrucao* criaInstrucao_copyR()
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+
+    strcpy(instrucao->operacao, "movl");
+    sprintf(instrucao->operando1, "%ceax", '%');
+    sprintf(instrucao->operando2, "%cedx", '%');
+    strcpy(instrucao->operando3, "");
+    
+    return instrucao;
+}
+
 //done
 Instrucao* criaInstrucaoDiv(int operando1)
 {
