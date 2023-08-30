@@ -715,10 +715,10 @@ expressao6: expressao6 '/' expressao7
   	temporario_atual++;
   	
   	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
-	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->info->temporario,NULL,$$->info->temporario));
-	insereInstrucao(&($$->info->codigo), criaInstrucao_cltd("div",$1->info->temporario,$3->info->temporario,$$->info->temporario));
-	insereInstrucao(&($$->info->codigo), criaInstrucaoDiv($1->info->temporario));
-  	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($1->info->temporario,NULL,$$->info->temporario));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI(1,NULL,($1->info->temporario-1)*4));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_div_clear());
+	insereInstrucao(&($$->info->codigo), criaInstrucaoDiv(($$->info->temporario)*4));
+  	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($1->info->temporario,NULL,($1->info->temporario-1)*4));
 };	
 		
 expressao6: expressao6 '%' expressao7 			{ $$ = criaNodo($2); adicionaNodo($$, $1); adicionaNodo($$, $3); };

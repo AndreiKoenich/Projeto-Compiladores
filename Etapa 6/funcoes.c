@@ -583,12 +583,12 @@ Instrucao* criaInstrucao_set(char *operacao, int operando1, int operando2, int o
 }
 
 //done
-Instrucao* criaInstrucao_cltd()
+Instrucao* criaInstrucao_div_clear()
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
-    strcpy(instrucao->operacao, "cltd");
-    strcpy(instrucao->operando1, "");
-    strcpy(instrucao->operando2, "");
+    strcpy(instrucao->operacao, "movl");
+    strcpy(instrucao->operando1, "$0");
+    sprintf(instrucao->operando2, "%cedx", '%');
     strcpy(instrucao->operando3, "");
 
     return instrucao;
