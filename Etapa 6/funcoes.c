@@ -518,7 +518,12 @@ Instrucao* criaInstrucao_cmpI(int operando1, int operando2, int operando3){
     strcpy(instrucao->operacao, "cmp");
 
     sprintf(instrucao->operando1, "$%d", operando1);
-    sprintf(instrucao->operando2, "%ceax", '%');
+    if(operando3%2 == 1){
+        sprintf(instrucao->operando2, "%ceax", '%');
+    }
+    else{
+        sprintf(instrucao->operando2, "%cedx", '%');
+    }
     
     strcpy(instrucao->operando3, "");
 
