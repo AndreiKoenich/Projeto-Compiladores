@@ -364,8 +364,6 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	
 	insereInstrucao(&($$->info->codigo), criaInstrucao_loadI($3->valor_token,$3->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->temporario,registrador_escopo,deslocamento_atual));
-
-	temporario_atual++;
 };
 
 bloco_comandos:	'{' lista_comandos '}' {
@@ -717,10 +715,11 @@ expressao6: expressao6 '/' expressao7
   	temporario_atual++;
   	
   	$$->info->codigo = concatenaCodigo($1->info->codigo, $3->info->codigo);
-	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI(1,NULL,($1->info->temporario)*4));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($$->info->temporario+1,NULL,($$->info->temporario-1)*4));
+	insereInstrucao(&($$->info->codigo), criaInstrucao_copyR($$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_div_clear());
 	insereInstrucao(&($$->info->codigo), criaInstrucaoDiv(($$->info->temporario)*4));
-	insereInstrucao(&($$->info->codigo), criaInstrucao_copyR());
+	insereInstrucao(&($$->info->codigo), criaInstrucao_copyR(1));
   	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($1->info->temporario,NULL,($$->info->temporario-1)*4));
 };	
 		
@@ -733,11 +732,7 @@ expressao7: chamada_funcao				{ $$ = $1; };
 expressao7: literal 					{
 	$$ = criaNodo($1);
 
-	$$->info->temporario = temporario_atual;
-  	temporario_atual++;
-
 	insereInstrucao(&($$->info->codigo), criaInstrucao_loadI($1->valor_token,$1->temporario));
-	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($1->temporario,NULL,($1->temporario)*4));
 };
 
 expressao7: TK_IDENTIFICADOR				

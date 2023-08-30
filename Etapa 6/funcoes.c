@@ -599,13 +599,19 @@ Instrucao* criaInstrucao_div_clear()
     return instrucao;
 }
 
-Instrucao* criaInstrucao_copyR()
+Instrucao* criaInstrucao_copyR(int operando1)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
 
     strcpy(instrucao->operacao, "movl");
-    sprintf(instrucao->operando1, "%ceax", '%');
-    sprintf(instrucao->operando2, "%cedx", '%');
+    if(operando1%2 == 1){
+        sprintf(instrucao->operando1, "%ceax", '%');
+        sprintf(instrucao->operando2, "%cedx", '%');
+    }
+    else{
+        sprintf(instrucao->operando1, "%cedx", '%');
+        sprintf(instrucao->operando2, "%ceax", '%');
+    }
     strcpy(instrucao->operando3, "");
     
     return instrucao;
