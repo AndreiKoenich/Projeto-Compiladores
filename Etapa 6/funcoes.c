@@ -512,6 +512,19 @@ Instrucao* criaInstrucao_cmp(int operando1, int operando2, int operando3){
     return instrucao;
 }
 
+Instrucao* criaInstrucao_cmpI(int operando1, int operando2, int operando3){
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+
+    strcpy(instrucao->operacao, "cmp");
+
+    sprintf(instrucao->operando1, "$%d", operando1);
+    sprintf(instrucao->operando2, "%ceax", '%');
+    
+    strcpy(instrucao->operando3, "");
+
+    return instrucao;
+}
+
 Instrucao* criaInstrucao_mov_al(int operando1, int operando2, int operando3){
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
 
@@ -536,22 +549,22 @@ Instrucao* criaInstrucao_set(char *operacao, int operando1, int operando2, int o
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
 
     if(strcmp(operacao, "cmp_NE") == 0){
-        strcpy(instrucao->operacao, "setne");
+        strcpy(instrucao->operacao, "sete");
     }
     else if(strcmp(operacao, "cmp_GE") == 0){
-        strcpy(instrucao->operacao, "setge");
-    }
-    else if(strcmp(operacao, "cmp_LE") == 0){
-        strcpy(instrucao->operacao, "setle");
-    }
-    else if(strcmp(operacao, "cmp_LT") == 0){
-        strcpy(instrucao->operacao, "setl");
-    }
-    else if(strcmp(operacao, "cmp_GT") == 0){
         strcpy(instrucao->operacao, "setg");
     }
+    else if(strcmp(operacao, "cmp_LE") == 0){
+        strcpy(instrucao->operacao, "setl");
+    }
+    else if(strcmp(operacao, "cmp_LT") == 0){
+        strcpy(instrucao->operacao, "setle");
+    }
+    else if(strcmp(operacao, "cmp_GT") == 0){
+        strcpy(instrucao->operacao, "setge");
+    }
     else if(strcmp(operacao, "cmp_EQ") == 0){
-        strcpy(instrucao->operacao, "sete");
+        strcpy(instrucao->operacao, "setne");
     }
 
     sprintf(instrucao->operando1, "%cal", '%');

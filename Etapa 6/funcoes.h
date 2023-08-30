@@ -184,5 +184,6 @@ Instrucao* criaInstrucaoDiv(int operando1);
 Instrucao* criaInstrucao_loadAI_ret(int operando1, char *operando2, int operando3);
 void insereInstrucaoReturn(Codigo **codigo);
 Instrucao* criaInstrucao_mov_al(int operando1, int operando2, int operando3);
+Instrucao* criaInstrucao_cmpI(int operando1, int operando2, int operando3);
 
 #endif

@@ -562,6 +562,8 @@ expressao3: expressao3 TK_OC_EQ expressao4
   	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_EQ",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_mov_al($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_cmpI(1,$3->info->temporario,$$->info->temporario));
 }; 		
  	
 expressao3: expressao3 TK_OC_NE expressao4
@@ -577,6 +579,8 @@ expressao3: expressao3 TK_OC_NE expressao4
   	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_NE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_mov_al($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_cmpI(1,$3->info->temporario,$$->info->temporario));
 };		
 	
 expressao4: expressao5 	{ $$ = $1; };
@@ -593,6 +597,8 @@ expressao4: expressao4 '<' expressao5
   	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_LT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_mov_al($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_cmpI(1,$3->info->temporario,$$->info->temporario));
 };
 			
 expressao4: expressao4 '>' expressao5
@@ -608,6 +614,8 @@ expressao4: expressao4 '>' expressao5
   	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_GT",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_mov_al($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_cmpI(1,$3->info->temporario,$$->info->temporario));
 };
 			
 expressao4: expressao4 TK_OC_LE expressao5
@@ -623,6 +631,8 @@ expressao4: expressao4 TK_OC_LE expressao5
   	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_LE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_mov_al($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_cmpI(1,$3->info->temporario,$$->info->temporario));
 };
 
 expressao4: expressao4 TK_OC_GE expressao5
@@ -638,6 +648,8 @@ expressao4: expressao4 TK_OC_GE expressao5
   	insereInstrucao(&($$->info->codigo), criaInstrucao_cmp($1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_set("cmp_GE",$1->info->temporario,$3->info->temporario,$$->info->temporario));
 	insereInstrucao(&($$->info->codigo), criaInstrucao_mov_al($1->info->temporario,$3->info->temporario,$$->info->temporario));
+	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_cmpI(1,$3->info->temporario,$$->info->temporario));
 };
 
 expressao5: expressao6 	{ $$ = $1; };
