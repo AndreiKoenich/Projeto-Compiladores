@@ -455,9 +455,14 @@ clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_t
 	if ($8 != NULL)
    		$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando. */
 	
+	insereInstrucao(&($$->info->codigo), criaInstrucao_jumpI (rotulo_atual+1));
+
    	//imprimeRotulo(rotulo_atual);
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo de desvio do bloco */
-    	rotulo_atual++;	
+    	rotulo_atual++;
+
+	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual));
+		rotulo_atual++;
 };
 
 clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_tabela_escopo impressao_cbrRotulo bloco_comandos TK_PR_ELSE push_tabela_escopo impressaoRotuloElse bloco_comandos
@@ -484,10 +489,15 @@ clausula_if_com_else_opcional: TK_PR_IF impressaoRotulo '(' expressao ')' push_t
 	if ($8 != NULL)
    		$$->info->codigo = concatenaCodigo($$->info->codigo, $8->info->codigo); /* Carrega o codigo do bloco de comando IF. */
 
+	insereInstrucao(&($$->info->codigo), criaInstrucao_jumpI (rotulo_atual+1));
+
    	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual)); /* Rotulo do bloco de comando ELSE. */
     	rotulo_atual++;
 	if ($12 != NULL)
    		$$->info->codigo = concatenaCodigo($$->info->codigo, $12->info->codigo); /* Carrega o codigo do bloco de comando ELSE. */
+	
+	insereInstrucao(&($$->info->codigo), criaRotulo(rotulo_atual));
+		rotulo_atual++;
 };
 
 iterativo: TK_PR_WHILE impressaoRotulo '(' expressao ')' push_tabela_escopo impressao_cbrRotulo bloco_comandos

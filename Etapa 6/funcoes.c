@@ -715,7 +715,15 @@ void insereInstrucao(Codigo **inicio_codigo, Instrucao *instrucao)
 /* Imprime a operacao e os tres operandos de uma instrucao ILOC, sem nenhuma formatacao. */
 void imprimeInstrucaoPadrao (Instrucao *instrucao)
 {
-    printf("%s\t%s", instrucao->operacao, instrucao->operando1);
+    int opr_len = strlen(instrucao->operacao);
+    if(instrucao->operacao[opr_len-1] != ':'){
+        printf("\t");
+    }
+    printf("%s", instrucao->operacao);
+    if (strcmp(instrucao->operando1, "") != 0)
+    {
+        printf("\t%s", instrucao->operando1);
+    }
     if (strcmp(instrucao->operando2, "") != 0)
     {
         printf(", %s", instrucao->operando2);
@@ -1020,5 +1028,5 @@ void printProgramStart(Tabela *tabela_global){
 }
 
 void printProgramEnd(){
-    printf(".ident\t\"UFRGS 2023/1 PLAIN AND BASIC COMPILER 1.0\"\n");//compiler identification
+    printf("\t.ident\t\"UFRGS 2023/1 PLAIN AND BASIC COMPILER 1.0\"\n");//compiler identification
 }

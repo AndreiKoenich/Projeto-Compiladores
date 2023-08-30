@@ -1,0 +1,35 @@
+.text	
+.globl	main
+.type	main, @function
+main:	
+pushq	%rbp
+movq	%rsp, %rbp
+movl	$50, %eax
+movl	%eax, -12(%rbp)
+movl	$4, %edx
+movl	$11, %eax
+addl	%eax, %edx
+movl	%edx, -4(%rbp)
+.L1:	
+movl	-4(%rbp), %eax
+movl	$15, %edx
+cmp	%eax, %edx
+setne	%al
+movzbl	%al, %eax
+cmp	$1, %eax
+jne	.L2
+je	.L3
+.L2:	
+movl	-4(%rbp), %edx
+movl	-12(%rbp), %eax
+addl	%eax, %edx
+movl	%edx, -4(%rbp)
+.L3:	
+movl	-12(%rbp), %eax
+movl	%eax, -4(%rbp)
+movl	-4(%rbp), %edx
+movl	%edx, %eax
+popq	%rbp
+ret	
+.size	main, .-main
+.ident	"UFRGS 2023/1 PLAIN AND BASIC COMPILER 1.0"
