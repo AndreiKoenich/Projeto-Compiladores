@@ -111,8 +111,7 @@ extern char registrador_escopo[TAMANHO_NOME_OPERANDO];
 %%
 
 inicio_programa: {
-	pushTabela(&lista_tabelas, tabela_global); 
-	printProgramStart(lista_tabelas->tabela_simbolos);
+	pushTabela(&lista_tabelas, tabela_global);
 }
 programa
 {
@@ -158,6 +157,7 @@ lista: elemento { $$ = $1; };
 elemento: definicao_funcao 		{
 	$$ = $1;
 	if(strcmp($$->info->valor_token, "main") == 0){
+		printProgramStart(lista_tabelas->tabela_simbolos);
 		defaultFunctionStackManagement(&($$->info->codigo));
 		addFunctionMetaData(&($$->info->codigo), "main");
 		imprimeInstrucoesNodo($$);
@@ -363,7 +363,15 @@ identificador_local: TK_IDENTIFICADOR TK_OC_LE literal
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
 	
 	insereInstrucao(&($$->info->codigo), criaInstrucao_loadI($3->valor_token,$3->temporario));
-	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->temporario,registrador_escopo,deslocamento_atual));
+
+	int escopo = achaEscopo(lista_tabelas,$1->valor_token);
+
+	if(escopo == ESCOPO_LOCAL){
+		insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->temporario,registrador_escopo,deslocamento_atual));
+	}
+	else{
+		insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI_global($3->temporario,registrador_escopo,deslocamento_atual,$1->valor_token));
+	}
 };
 
 bloco_comandos:	'{' lista_comandos '}' {
@@ -392,7 +400,15 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
 	
 	$$->info->codigo = $3->info->codigo;
-	insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->info->temporario,registrador_escopo,deslocamento_atual));
+
+	int escopo = achaEscopo(lista_tabelas,$1->valor_token);
+
+	if(escopo == ESCOPO_LOCAL){
+		insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI($3->info->temporario,registrador_escopo,deslocamento_atual));
+	}
+	else{
+		insereInstrucao(&($$->info->codigo), criaInstrucao_storeAI_global($3->info->temporario,registrador_escopo,deslocamento_atual,$1->valor_token));
+	}
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' lista_expressoes ')'
@@ -746,7 +762,15 @@ expressao7: TK_IDENTIFICADOR
 	temporario_atual++;
 	atualizaRegistradorEscopo(lista_tabelas, registrador_escopo, $1->valor_token);
 	deslocamento_atual = achaDeslocamento(lista_tabelas,$1->valor_token);
-	insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->temporario,registrador_escopo,deslocamento_atual));
+	
+	int escopo = achaEscopo(lista_tabelas,$1->valor_token);
+
+	if(escopo == ESCOPO_LOCAL){
+		insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI($1->temporario,registrador_escopo,deslocamento_atual));
+	}
+	else{
+		insereInstrucao(&($$->info->codigo), criaInstrucao_loadAI_global($1->temporario,registrador_escopo,deslocamento_atual,$1->valor_token));
+	}
 };
 
 literal: TK_LIT_INT  	

@@ -681,6 +681,27 @@ Instrucao* criaInstrucao_loadAI (int operando1, char *operando2, int operando3)
     return instrucao;
 }
 
+Instrucao* criaInstrucao_loadAI_global(int operando1, char *operando2, int operando3, char* variable_name)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    // strcpy(instrucao->operacao, "loadAI");
+    // sprintf(instrucao->operando1, "r%d", operando1);
+    // strcpy(instrucao->operando2, operando2);
+    // sprintf(instrucao->operando3, "%d", operando3);
+
+    strcpy(instrucao->operacao, "movl");
+    sprintf(instrucao->operando1, "%s(%crip)", variable_name, '%');
+    if(operando1%2 == 1){
+        sprintf(instrucao->operando2, "%ceax", '%');
+    }
+    else{
+        sprintf(instrucao->operando2, "%cedx", '%');
+    }
+    strcpy(instrucao->operando3, "");
+    
+    return instrucao;
+}
+
 Instrucao* criaInstrucao_loadAI_ret(int operando1, char *operando2, int operando3)
 {
     Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
@@ -712,6 +733,27 @@ Instrucao* criaInstrucao_storeAI (int operando1, char *operando2, int operando3)
         sprintf(instrucao->operando1, "%cedx", '%');
     }
     sprintf(instrucao->operando2, "-%d(%crbp)", operando3+4, '%');
+    strcpy(instrucao->operando3, "");
+    return instrucao;
+}
+
+Instrucao* criaInstrucao_storeAI_global(int operando1, char *operando2, int operando3, char* variable_name)
+{
+    Instrucao* instrucao = (Instrucao*)malloc(sizeof(Instrucao));
+    // strcpy(instrucao->operacao, "storeAI");
+    // sprintf(instrucao->operando1, "r%d", operando1);
+    // strcpy(instrucao->operando2, operando2);
+    // sprintf(instrucao->operando3, "%d", operando3);
+
+    int new_op2_i = operando1*4;
+    strcpy(instrucao->operacao, "movl");
+    if(operando1%2 == 1){
+        sprintf(instrucao->operando1, "%ceax", '%');
+    }
+    else{
+        sprintf(instrucao->operando1, "%cedx", '%');
+    }
+    sprintf(instrucao->operando2, "%s(%crip)", variable_name, '%');
     strcpy(instrucao->operando3, "");
     return instrucao;
 }

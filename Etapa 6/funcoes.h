@@ -186,5 +186,7 @@ void insereInstrucaoReturn(Codigo **codigo);
 Instrucao* criaInstrucao_mov_al(int operando1, int operando2, int operando3);
 Instrucao* criaInstrucao_cmpI(int operando1, int operando2, int operando3);
 Instrucao* criaInstrucao_copyR(int operando1);
+Instrucao* criaInstrucao_storeAI_global(int operando1, char *operando2, int operando3, char* variable_name);
+Instrucao* criaInstrucao_loadAI_global(int operando1, char *operando2, int operando3, char* variable_name);
 
 #endif
